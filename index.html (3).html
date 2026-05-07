@@ -4,531 +4,780 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>UCAT Review Tracker</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
-  :root {
-    --bg: #0a0a0f;
-    --bg2: #111118;
-    --bg3: #18181f;
-    --bg4: #202028;
-    --border: rgba(255,255,255,0.08);
-    --border2: rgba(255,255,255,0.14);
-    --text: #e8e8f0;
-    --text2: #8888a0;
-    --text3: #555568;
-    --blue: #4d9fff;
-    --blue-dim: rgba(77,159,255,0.12);
-    --green: #3ecf8e;
-    --green-dim: rgba(62,207,142,0.12);
-    --red: #f87171;
-    --red-dim: rgba(248,113,113,0.12);
-    --amber: #fbbf24;
-    --amber-dim: rgba(251,191,36,0.12);
-    --purple: #a78bfa;
-    --purple-dim: rgba(167,139,250,0.12);
-    --mono: 'IBM Plex Mono', monospace;
-    --sans: 'IBM Plex Sans', sans-serif;
-    --radius: 10px;
-    --radius-lg: 16px;
-  }
+:root{
+  --bg:#03030d;
+  --bg2:rgba(255,255,255,0.03);
+  --bg3:rgba(255,255,255,0.05);
+  --bg4:rgba(255,255,255,0.08);
+  --border:rgba(255,255,255,0.07);
+  --border2:rgba(255,255,255,0.14);
+  --border3:rgba(255,255,255,0.22);
+  --text:#e2e8f8;
+  --text2:#8892b0;
+  --text3:#4a5280;
+  --cyan:#00d4ff;
+  --cyan-dim:rgba(0,212,255,0.08);
+  --cyan-glow:rgba(0,212,255,0.25);
+  --purple:#a855f7;
+  --purple-dim:rgba(168,85,247,0.08);
+  --green:#10d98a;
+  --green-dim:rgba(16,217,138,0.08);
+  --green-glow:rgba(16,217,138,0.2);
+  --red:#f4607a;
+  --red-dim:rgba(244,96,122,0.08);
+  --amber:#f5a623;
+  --amber-dim:rgba(245,166,35,0.08);
+  --blue:#4d9fff;
+  --sans:'DM Sans',sans-serif;
+  --display:'Syne',sans-serif;
+  --mono:'DM Mono',monospace;
+  --radius:12px;
+  --radius-lg:18px;
+  --radius-xl:24px;
+}
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--sans);
-    font-size: 15px;
-    line-height: 1.6;
-    min-height: 100vh;
-  }
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--sans);
+  font-size:15px;
+  line-height:1.6;
+  min-height:100vh;
+  overflow-x:hidden;
+  cursor:none;
+}
 
-  /* Layout */
-  .app { display: flex; min-height: 100vh; }
-  .sidebar {
-    width: 220px; min-height: 100vh; background: var(--bg2);
-    border-right: 1px solid var(--border); padding: 24px 16px;
-    position: fixed; top: 0; left: 0; bottom: 0;
-    display: flex; flex-direction: column; gap: 4px;
-  }
-  .main { margin-left: 220px; padding: 36px 40px; max-width: 960px; width: 100%; }
+/* Custom cursor */
+#cursor{
+  position:fixed;width:12px;height:12px;
+  background:var(--cyan);border-radius:50%;
+  pointer-events:none;z-index:9999;
+  transform:translate(-50%,-50%);
+  transition:transform 0.1s,width 0.2s,height 0.2s,opacity 0.2s;
+  mix-blend-mode:screen;
+}
+#cursor-ring{
+  position:fixed;width:36px;height:36px;
+  border:1px solid rgba(0,212,255,0.4);border-radius:50%;
+  pointer-events:none;z-index:9998;
+  transform:translate(-50%,-50%);
+  transition:transform 0.08s,width 0.3s,height 0.3s,border-color 0.3s;
+}
+body:has(button:hover) #cursor,body:has(a:hover) #cursor{width:20px;height:20px;}
+body:has(button:hover) #cursor-ring,body:has(a:hover) #cursor-ring{width:48px;height:48px;border-color:rgba(0,212,255,0.7);}
 
-  .logo {
-    font-family: var(--mono); font-size: 13px; color: var(--blue);
-    letter-spacing: 0.08em; padding: 0 8px 20px; border-bottom: 1px solid var(--border);
-    margin-bottom: 12px; font-weight: 500;
-  }
-  .logo span { color: var(--text3); }
+/* Background orbs */
+.bg-canvas{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.orb{
+  position:absolute;border-radius:50%;filter:blur(80px);opacity:0.5;
+  animation:drift 20s ease-in-out infinite;
+}
+.orb1{width:600px;height:600px;background:radial-gradient(circle,rgba(0,212,255,0.15),transparent 70%);top:-200px;left:-100px;animation-delay:0s;animation-duration:25s;}
+.orb2{width:500px;height:500px;background:radial-gradient(circle,rgba(168,85,247,0.12),transparent 70%);bottom:-100px;right:-100px;animation-delay:-8s;animation-duration:22s;}
+.orb3{width:400px;height:400px;background:radial-gradient(circle,rgba(16,217,138,0.08),transparent 70%);top:40%;left:40%;animation-delay:-4s;animation-duration:30s;}
+.orb4{width:300px;height:300px;background:radial-gradient(circle,rgba(0,212,255,0.06),transparent 70%);bottom:20%;left:10%;animation-delay:-12s;animation-duration:18s;}
 
-  .nav-btn {
-    display: flex; align-items: center; gap: 10px; padding: 9px 12px;
-    border-radius: var(--radius); border: none; background: none;
-    color: var(--text2); font-family: var(--sans); font-size: 14px;
-    cursor: pointer; width: 100%; text-align: left; transition: all 0.15s;
-  }
-  .nav-btn:hover { background: var(--bg3); color: var(--text); }
-  .nav-btn.active { background: var(--blue-dim); color: var(--blue); }
-  .nav-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; opacity: 0.6; flex-shrink: 0; }
+@keyframes drift{
+  0%,100%{transform:translate(0,0) scale(1);}
+  33%{transform:translate(40px,-30px) scale(1.08);}
+  66%{transform:translate(-20px,40px) scale(0.95);}
+}
 
-  .sidebar-footer { margin-top: auto; font-size: 12px; color: var(--text3); padding: 12px 8px 0; border-top: 1px solid var(--border); }
+/* Grid overlay */
+.bg-grid{
+  position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.015) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,0.015) 1px,transparent 1px);
+  background-size:60px 60px;
+}
 
-  /* Views */
-  .view { display: none; animation: fadeIn 0.2s ease; }
-  .view.active { display: block; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+/* App layout */
+.app{display:flex;min-height:100vh;position:relative;z-index:1;}
 
-  /* Typography */
-  h1 { font-size: 26px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 4px; }
-  h2 { font-size: 17px; font-weight: 500; margin-bottom: 16px; }
-  h3 { font-size: 14px; font-weight: 500; color: var(--text2); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px; }
-  .subtitle { color: var(--text2); font-size: 14px; margin-bottom: 32px; }
+/* Sidebar */
+.sidebar{
+  width:230px;min-height:100vh;
+  background:rgba(3,3,13,0.8);
+  backdrop-filter:blur(24px);
+  border-right:1px solid var(--border2);
+  padding:28px 16px;
+  position:fixed;top:0;left:0;bottom:0;
+  display:flex;flex-direction:column;gap:4px;
+  z-index:100;
+}
 
-  /* Cards */
-  .card {
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: var(--radius-lg); padding: 20px 24px; margin-bottom: 16px;
-  }
-  .card-sm {
-    background: var(--bg3); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 14px 16px;
-  }
+.logo{
+  padding:0 10px 24px;
+  margin-bottom:8px;
+  border-bottom:1px solid var(--border);
+}
+.logo-text{
+  font-family:var(--display);font-size:20px;font-weight:800;
+  letter-spacing:-0.02em;
+  background:linear-gradient(135deg,var(--cyan),var(--purple));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.logo-sub{font-size:11px;color:var(--text3);font-family:var(--mono);letter-spacing:0.06em;margin-top:2px;}
 
-  /* Stats row */
-  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 28px; }
-  .stat-card {
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: var(--radius-lg); padding: 18px 20px;
-  }
-  .stat-label { font-size: 12px; color: var(--text3); font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
-  .stat-val { font-size: 28px; font-weight: 600; letter-spacing: -0.02em; line-height: 1; }
-  .stat-sub { font-size: 12px; color: var(--text2); margin-top: 4px; }
+.nav-btn{
+  display:flex;align-items:center;gap:12px;padding:10px 14px;
+  border-radius:var(--radius);border:1px solid transparent;
+  background:none;color:var(--text2);
+  font-family:var(--sans);font-size:14px;font-weight:500;
+  cursor:none;width:100%;text-align:left;
+  transition:all 0.2s;position:relative;overflow:hidden;
+}
+.nav-btn::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,var(--cyan-dim),var(--purple-dim));
+  opacity:0;transition:opacity 0.2s;border-radius:var(--radius);
+}
+.nav-btn:hover{color:var(--text);border-color:var(--border2);}
+.nav-btn:hover::before{opacity:1;}
+.nav-btn.active{
+  color:var(--cyan);border-color:rgba(0,212,255,0.2);
+  background:var(--cyan-dim);
+  box-shadow:inset 0 0 20px rgba(0,212,255,0.05),0 0 0 1px rgba(0,212,255,0.1);
+}
+.nav-icon{
+  width:28px;height:28px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;background:var(--bg4);flex-shrink:0;
+  transition:all 0.2s;
+}
+.nav-btn.active .nav-icon{background:rgba(0,212,255,0.15);box-shadow:0 0 12px rgba(0,212,255,0.3);}
+.nav-label{font-size:14px;}
 
-  /* Mock list */
-  .mock-list { display: flex; flex-direction: column; gap: 10px; }
-  .mock-item {
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: var(--radius-lg); padding: 16px 20px;
-    display: flex; align-items: center; justify-content: space-between;
-    cursor: pointer; transition: all 0.15s;
-  }
-  .mock-item:hover { border-color: var(--border2); background: var(--bg3); }
-  .mock-item-left { display: flex; flex-direction: column; gap: 3px; }
-  .mock-item-name { font-weight: 500; font-size: 15px; }
-  .mock-item-date { font-size: 12px; color: var(--text3); font-family: var(--mono); }
-  .mock-item-right { display: flex; align-items: center; gap: 16px; }
-  .score-badge {
-    font-family: var(--mono); font-size: 18px; font-weight: 500;
-    padding: 4px 12px; border-radius: 8px;
-  }
-  .score-badge.high { background: var(--green-dim); color: var(--green); }
-  .score-badge.mid { background: var(--blue-dim); color: var(--blue); }
-  .score-badge.low { background: var(--red-dim); color: var(--red); }
-  .percentile-tag { font-size: 12px; color: var(--text2); }
-  .arrow-icon { color: var(--text3); font-size: 18px; }
+.sidebar-divider{height:1px;background:var(--border);margin:8px 10px;}
 
-  /* Category pills */
-  .cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px; }
-  .cat-pill {
-    background: var(--bg3); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 10px 14px;
-    display: flex; justify-content: space-between; align-items: center;
-  }
-  .cat-name { font-size: 13px; font-weight: 500; }
-  .cat-score { font-family: var(--mono); font-size: 13px; }
-  .cat-score.good { color: var(--green); }
-  .cat-score.ok { color: var(--amber); }
-  .cat-score.bad { color: var(--red); }
+.sidebar-section-label{
+  font-size:10px;font-family:var(--mono);color:var(--text3);
+  letter-spacing:0.1em;text-transform:uppercase;padding:8px 14px 4px;
+}
 
-  /* Wizard */
-  .wizard-progress { display: flex; gap: 6px; margin-bottom: 32px; align-items: center; }
-  .prog-step {
-    height: 3px; border-radius: 2px; flex: 1; background: var(--bg4);
-    transition: background 0.3s;
-  }
-  .prog-step.done { background: var(--green); }
-  .prog-step.active { background: var(--blue); }
-  .prog-label { font-size: 12px; font-family: var(--mono); color: var(--text3); white-space: nowrap; }
+.sidebar-footer{
+  margin-top:auto;padding:14px 10px 0;border-top:1px solid var(--border);
+  font-size:11px;color:var(--text3);font-family:var(--mono);
+}
+.status-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);margin-right:6px;box-shadow:0 0 6px var(--green);}
 
-  .phase-card {
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: var(--radius-lg); padding: 28px 32px; margin-bottom: 20px;
-  }
-  .phase-tag {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: var(--blue-dim); color: var(--blue);
-    font-size: 11px; font-family: var(--mono); font-weight: 500;
-    letter-spacing: 0.08em; padding: 4px 10px; border-radius: 6px;
-    text-transform: uppercase; margin-bottom: 14px;
-  }
-  .phase-title { font-size: 20px; font-weight: 600; margin-bottom: 6px; }
-  .phase-desc { color: var(--text2); font-size: 13px; margin-bottom: 24px; line-height: 1.7; }
+/* Main */
+.main{margin-left:230px;padding:40px 44px;max-width:1080px;width:100%;}
 
-  /* Form elements */
-  label { font-size: 13px; font-weight: 500; color: var(--text2); display: block; margin-bottom: 6px; }
-  input[type="text"], input[type="number"], textarea, select {
-    width: 100%; background: var(--bg3); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 10px 14px;
-    color: var(--text); font-family: var(--sans); font-size: 14px;
-    transition: border-color 0.15s; outline: none; resize: vertical;
-  }
-  input[type="text"]:focus, input[type="number"]:focus, textarea:focus, select:focus {
-    border-color: var(--blue);
-  }
-  select option { background: var(--bg3); }
-  .field { margin-bottom: 18px; }
-  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .field-hint { font-size: 12px; color: var(--text3); margin-top: 5px; }
+/* Views */
+.view{display:none;animation:fadeUp 0.3s ease;}
+.view.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
 
-  /* Toggle group */
-  .toggle-group { display: flex; gap: 8px; }
-  .toggle-btn {
-    flex: 1; padding: 8px 14px; border-radius: var(--radius);
-    border: 1px solid var(--border); background: var(--bg3);
-    color: var(--text2); font-family: var(--sans); font-size: 13px;
-    cursor: pointer; transition: all 0.15s; font-weight: 500;
-  }
-  .toggle-btn:hover { border-color: var(--border2); color: var(--text); }
-  .toggle-btn.sel-yes { background: var(--green-dim); border-color: var(--green); color: var(--green); }
-  .toggle-btn.sel-no { background: var(--red-dim); border-color: var(--red); color: var(--red); }
+/* Page header */
+.page-header{margin-bottom:32px;}
+.page-title{font-family:var(--display);font-size:30px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;}
+.page-subtitle{color:var(--text2);font-size:14px;margin-top:6px;}
 
-  /* Category row in phase 2 */
-  .cat-row {
-    background: var(--bg3); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 14px 16px; margin-bottom: 10px;
-  }
-  .cat-row-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-  .cat-row-name { font-weight: 500; font-size: 14px; }
-  .tally-row { display: flex; gap: 10px; margin-bottom: 10px; }
-  .tally-input { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
-  .tally-input label { font-size: 11px; text-align: center; }
-  .tally-input input { text-align: center; padding: 8px 6px; }
-  .tally-correct label { color: var(--green); }
-  .tally-partial label { color: var(--amber); }
-  .tally-wrong label { color: var(--red); }
+/* Glass card */
+.card{
+  background:rgba(255,255,255,0.025);
+  backdrop-filter:blur(16px);
+  border:1px solid var(--border);
+  border-radius:var(--radius-xl);
+  padding:24px 28px;
+  margin-bottom:18px;
+  position:relative;
+  transition:border-color 0.3s,box-shadow 0.3s;
+}
+.card:hover{
+  border-color:var(--border2);
+  box-shadow:0 0 40px rgba(0,212,255,0.04),0 8px 32px rgba(0,0,0,0.3);
+}
+.card-inner{
+  background:rgba(255,255,255,0.03);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  padding:16px 20px;
+  margin-bottom:12px;
+}
 
-  /* Type sections in phase 3 */
-  .type-section { margin-bottom: 20px; }
-  .type-header {
-    display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
-  }
-  .type-badge {
-    font-family: var(--mono); font-size: 11px; font-weight: 500;
-    padding: 3px 8px; border-radius: 5px; letter-spacing: 0.04em;
-  }
-  .type-a { background: var(--red-dim); color: var(--red); }
-  .type-b { background: var(--amber-dim); color: var(--amber); }
-  .type-c { background: var(--blue-dim); color: var(--blue); }
-  .type-label { font-size: 13px; color: var(--text2); }
+/* Stats row */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px;}
+.stat-card{
+  background:rgba(255,255,255,0.025);
+  backdrop-filter:blur(16px);
+  border:1px solid var(--border);
+  border-radius:var(--radius-xl);
+  padding:20px 22px;
+  position:relative;overflow:hidden;
+  transition:all 0.3s;cursor:none;
+}
+.stat-card::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 0%,var(--glow-color,rgba(0,212,255,0.06)),transparent 70%);
+  opacity:0;transition:opacity 0.3s;
+}
+.stat-card:hover{border-color:var(--border2);transform:translateY(-2px);}
+.stat-card:hover::after{opacity:1;}
+.stat-card.cyan{--glow-color:rgba(0,212,255,0.08);}
+.stat-card.green{--glow-color:rgba(16,217,138,0.08);}
+.stat-card.purple{--glow-color:rgba(168,85,247,0.08);}
+.stat-card.amber{--glow-color:rgba(245,166,35,0.08);}
+.stat-label{font-size:11px;color:var(--text3);font-family:var(--mono);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;}
+.stat-val{font-family:var(--display);font-size:32px;font-weight:700;letter-spacing:-0.03em;line-height:1;}
+.stat-sub{font-size:12px;color:var(--text2);margin-top:6px;}
+.stat-glow{text-shadow:0 0 20px currentColor;}
 
-  /* Buttons */
-  .btn-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 8px; }
-  .btn {
-    padding: 10px 22px; border-radius: var(--radius);
-    font-family: var(--sans); font-size: 14px; font-weight: 500;
-    cursor: pointer; transition: all 0.15s; border: none;
-  }
-  .btn-primary { background: var(--blue); color: #fff; }
-  .btn-primary:hover { background: #6db3ff; }
-  .btn-secondary {
-    background: var(--bg3); color: var(--text2);
-    border: 1px solid var(--border);
-  }
-  .btn-secondary:hover { color: var(--text); border-color: var(--border2); }
-  .btn-danger { background: var(--red-dim); color: var(--red); border: 1px solid transparent; }
-  .btn-danger:hover { border-color: var(--red); }
-  .btn-full { width: 100%; text-align: center; justify-content: center; display: flex; }
-  .btn-sm { padding: 6px 14px; font-size: 13px; }
+/* Section header */
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.section-title{font-family:var(--display);font-size:14px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.06em;}
 
-  /* Detail view */
-  .detail-header { margin-bottom: 28px; }
-  .detail-score { font-family: var(--mono); font-size: 42px; font-weight: 500; letter-spacing: -0.02em; }
-  .detail-score.high { color: var(--green); }
-  .detail-score.mid { color: var(--blue); }
-  .detail-score.low { color: var(--red); }
+/* Mock list */
+.mock-item{
+  background:rgba(255,255,255,0.025);
+  backdrop-filter:blur(12px);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  padding:18px 22px;
+  display:flex;align-items:center;justify-content:space-between;
+  cursor:none;transition:all 0.25s;
+  margin-bottom:10px;position:relative;overflow:hidden;
+}
+.mock-item::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:linear-gradient(180deg,var(--cyan),var(--purple));
+  opacity:0;transition:opacity 0.25s;
+  border-radius:3px 0 0 3px;
+}
+.mock-item:hover{border-color:var(--border2);transform:translateX(4px);box-shadow:0 0 30px rgba(0,0,0,0.3);}
+.mock-item:hover::before{opacity:1;}
+.mock-name{font-family:var(--display);font-size:15px;font-weight:600;margin-bottom:3px;}
+.mock-date{font-size:12px;color:var(--text3);font-family:var(--mono);}
+.mock-right{display:flex;align-items:center;gap:20px;}
+.score-badge{
+  font-family:var(--display);font-size:22px;font-weight:700;
+  padding:6px 16px;border-radius:10px;letter-spacing:-0.02em;
+}
+.score-badge.high{background:var(--green-dim);color:var(--green);box-shadow:0 0 20px var(--green-glow);}
+.score-badge.mid{background:var(--cyan-dim);color:var(--cyan);box-shadow:0 0 20px var(--cyan-glow);}
+.score-badge.low{background:var(--red-dim);color:var(--red);}
+.pct-tag{font-size:12px;color:var(--text2);font-family:var(--mono);}
+.arrow-btn{
+  width:32px;height:32px;border-radius:8px;background:var(--bg4);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--text3);font-size:16px;transition:all 0.2s;
+}
+.mock-item:hover .arrow-btn{background:var(--cyan-dim);color:var(--cyan);}
 
-  .phase-review-section { margin-bottom: 24px; }
-  .phase-review-title {
-    font-size: 12px; font-family: var(--mono); font-weight: 500;
-    color: var(--blue); text-transform: uppercase; letter-spacing: 0.08em;
-    margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border);
-  }
+/* Tab row */
+.tab-row{
+  display:flex;gap:4px;margin-bottom:28px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid var(--border);
+  border-radius:var(--radius);padding:4px;
+}
+.tab{
+  flex:1;padding:9px 16px;border-radius:9px;border:none;
+  background:none;color:var(--text2);
+  font-family:var(--sans);font-size:13px;font-weight:500;
+  cursor:none;transition:all 0.2s;text-align:center;
+}
+.tab.active{
+  background:rgba(0,212,255,0.08);color:var(--cyan);
+  box-shadow:0 0 12px rgba(0,212,255,0.1);
+  border:1px solid rgba(0,212,255,0.15);
+}
 
-  .info-row { display: flex; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
-  .info-row:last-child { border-bottom: none; }
-  .info-key { font-size: 12px; color: var(--text3); min-width: 160px; padding-top: 2px; }
-  .info-val { font-size: 14px; color: var(--text); flex: 1; }
+/* Charts */
+.chart-wrap{position:relative;height:220px;margin-top:8px;}
+.chart-wrap-sm{position:relative;height:140px;}
 
-  .action-item {
-    display: flex; gap: 12px; padding: 12px 0;
-    border-bottom: 1px solid var(--border); align-items: flex-start;
-  }
-  .action-item:last-child { border-bottom: none; }
-  .action-num {
-    width: 24px; height: 24px; border-radius: 50%;
-    background: var(--blue-dim); color: var(--blue);
-    font-size: 11px; font-family: var(--mono); font-weight: 500;
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-  }
+/* Category performance grid */
+.cat-perf-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
+.cat-perf-card{
+  background:rgba(255,255,255,0.025);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  padding:18px 20px;
+  transition:all 0.3s;cursor:none;
+  position:relative;overflow:hidden;
+}
+.cat-perf-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--cat-color,var(--cyan));
+  opacity:0.6;
+}
+.cat-perf-card:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.3);}
+.cat-perf-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;}
+.cat-perf-name{font-family:var(--display);font-size:13px;font-weight:600;}
+.cat-perf-latest{
+  font-family:var(--display);font-size:20px;font-weight:700;
+  color:var(--cat-color,var(--cyan));
+  text-shadow:0 0 16px var(--cat-color,var(--cyan));
+}
+.cat-trend{font-size:11px;font-family:var(--mono);margin-top:2px;}
+.cat-trend.up{color:var(--green);}
+.cat-trend.down{color:var(--red);}
+.cat-trend.same{color:var(--text3);}
 
-  /* Chart container */
-  .chart-wrap { position: relative; height: 180px; margin-top: 8px; }
+/* Improvement indicator */
+.improvement-bar{
+  height:4px;border-radius:2px;background:rgba(255,255,255,0.06);
+  margin-top:10px;overflow:hidden;
+}
+.improvement-fill{
+  height:100%;border-radius:2px;
+  background:var(--cat-color,var(--cyan));
+  transition:width 1s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow:0 0 8px var(--cat-color,var(--cyan));
+}
 
-  /* Empty state */
-  .empty {
-    text-align: center; padding: 60px 24px; color: var(--text3);
-  }
-  .empty-icon { font-size: 40px; margin-bottom: 12px; }
-  .empty-text { font-size: 15px; margin-bottom: 20px; }
+/* Wizard */
+.wizard-progress{display:flex;gap:8px;margin-bottom:32px;align-items:center;}
+.prog-step{
+  height:3px;border-radius:2px;flex:1;
+  background:rgba(255,255,255,0.06);transition:all 0.4s;
+}
+.prog-step.done{background:var(--green);box-shadow:0 0 8px var(--green-glow);}
+.prog-step.active{background:var(--cyan);box-shadow:0 0 8px var(--cyan-glow);}
+.prog-label{font-size:11px;font-family:var(--mono);color:var(--text3);white-space:nowrap;}
 
-  /* Tabs */
-  .tab-row { display: flex; gap: 4px; margin-bottom: 24px; background: var(--bg2); border-radius: var(--radius); padding: 4px; border: 1px solid var(--border); }
-  .tab {
-    flex: 1; padding: 7px 12px; border-radius: 7px;
-    border: none; background: none; color: var(--text2);
-    font-family: var(--sans); font-size: 13px; font-weight: 500;
-    cursor: pointer; transition: all 0.15s; text-align: center;
-  }
-  .tab.active { background: var(--bg3); color: var(--text); }
+.phase-card{
+  background:rgba(255,255,255,0.025);
+  backdrop-filter:blur(16px);
+  border:1px solid var(--border);
+  border-radius:var(--radius-xl);
+  padding:32px 36px;margin-bottom:22px;
+  position:relative;overflow:hidden;
+}
+.phase-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+  opacity:0.4;
+}
+.phase-tag{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--cyan-dim);color:var(--cyan);
+  font-size:11px;font-family:var(--mono);font-weight:500;
+  letter-spacing:0.08em;padding:5px 12px;border-radius:20px;
+  border:1px solid rgba(0,212,255,0.2);
+  text-transform:uppercase;margin-bottom:16px;
+}
+.phase-title{font-family:var(--display);font-size:22px;font-weight:700;margin-bottom:8px;letter-spacing:-0.01em;}
+.phase-desc{color:var(--text2);font-size:13px;margin-bottom:28px;line-height:1.75;max-width:560px;}
 
-  /* Responsive */
-  @media (max-width: 700px) {
-    .sidebar { width: 60px; }
-    .sidebar .nav-label, .logo span, .sidebar-footer { display: none; }
-    .main { margin-left: 60px; padding: 24px 20px; }
-    .stats-row { grid-template-columns: 1fr 1fr; }
-    .field-row { grid-template-columns: 1fr; }
-    .cat-grid { grid-template-columns: 1fr; }
-  }
+/* Form elements */
+label{font-size:12px;font-weight:500;color:var(--text3);display:block;margin-bottom:7px;font-family:var(--mono);text-transform:uppercase;letter-spacing:0.04em;}
+input[type="text"],input[type="number"],textarea,select{
+  width:100%;
+  background:rgba(255,255,255,0.04);
+  border:1px solid var(--border2);
+  border-radius:var(--radius);
+  padding:12px 16px;
+  color:var(--text);
+  font-family:var(--sans);font-size:14px;
+  transition:all 0.2s;outline:none;resize:vertical;
+}
+input[type="text"]:focus,input[type="number"]:focus,textarea:focus,select:focus{
+  border-color:rgba(0,212,255,0.4);
+  background:rgba(0,212,255,0.04);
+  box-shadow:0 0 0 3px rgba(0,212,255,0.08);
+}
+input::placeholder,textarea::placeholder{color:var(--text3);}
+select option{background:#0a0a1a;}
+.field{margin-bottom:20px;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.field-hint{font-size:11px;color:var(--text3);margin-top:6px;font-family:var(--mono);}
 
-  .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
-  .tag {
-    font-size: 12px; font-family: var(--mono); padding: 3px 10px;
-    border-radius: 6px; background: var(--bg4); color: var(--text2);
-    border: 1px solid var(--border);
-  }
+/* Toggle group */
+.toggle-group{display:flex;gap:8px;}
+.toggle-btn{
+  flex:1;padding:10px 16px;border-radius:var(--radius);
+  border:1px solid var(--border2);
+  background:rgba(255,255,255,0.03);
+  color:var(--text2);font-family:var(--sans);font-size:13px;font-weight:500;
+  cursor:none;transition:all 0.2s;
+}
+.toggle-btn:hover{border-color:var(--border3);color:var(--text);}
+.toggle-btn.sel-yes{background:var(--green-dim);border-color:rgba(16,217,138,0.3);color:var(--green);box-shadow:0 0 12px var(--green-glow);}
+.toggle-btn.sel-no{background:var(--red-dim);border-color:rgba(244,96,122,0.3);color:var(--red);}
+.toggle-btn.sel-partial{background:var(--amber-dim);border-color:rgba(245,166,35,0.3);color:var(--amber);}
 
-  .divider { height: 1px; background: var(--border); margin: 24px 0; }
-  .scroll-top { padding-top: 8px; }
+/* Category row */
+.cat-row{
+  background:rgba(255,255,255,0.03);border:1px solid var(--border);
+  border-radius:var(--radius-lg);padding:18px 20px;margin-bottom:12px;
+  transition:border-color 0.2s;
+}
+.cat-row:hover{border-color:var(--border2);}
+.cat-row-name{font-family:var(--display);font-weight:600;font-size:14px;margin-bottom:14px;}
+.tally-row{display:flex;gap:12px;margin-bottom:14px;}
+.tally-input{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;}
+.tally-input label{font-size:10px;text-align:center;}
+.tally-input input{text-align:center;padding:10px 6px;}
+.tally-correct label{color:var(--green);}
+.tally-partial label{color:var(--amber);}
+.tally-wrong label{color:var(--red);}
+
+/* Type sections */
+.type-section{margin-bottom:22px;}
+.type-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.type-badge{
+  font-family:var(--mono);font-size:11px;font-weight:500;
+  padding:4px 10px;border-radius:20px;letter-spacing:0.04em;border:1px solid;
+}
+.type-a{background:rgba(244,96,122,0.1);color:var(--red);border-color:rgba(244,96,122,0.3);}
+.type-b{background:var(--amber-dim);color:var(--amber);border-color:rgba(245,166,35,0.3);}
+.type-c{background:var(--cyan-dim);color:var(--cyan);border-color:rgba(0,212,255,0.3);}
+.type-label{font-size:13px;color:var(--text2);}
+
+/* Buttons */
+.btn-row{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-top:10px;}
+.btn{
+  padding:12px 24px;border-radius:var(--radius);
+  font-family:var(--sans);font-size:14px;font-weight:500;
+  cursor:none;transition:all 0.2s;border:none;
+  position:relative;overflow:hidden;
+}
+.btn-primary{
+  background:linear-gradient(135deg,var(--cyan),#0099dd);
+  color:#000;font-weight:600;
+  box-shadow:0 0 24px rgba(0,212,255,0.2);
+}
+.btn-primary:hover{box-shadow:0 0 36px rgba(0,212,255,0.4);transform:translateY(-1px);}
+.btn-secondary{
+  background:rgba(255,255,255,0.05);color:var(--text2);
+  border:1px solid var(--border2);
+}
+.btn-secondary:hover{background:rgba(255,255,255,0.08);color:var(--text);border-color:var(--border3);}
+.btn-danger{background:var(--red-dim);color:var(--red);border:1px solid rgba(244,96,122,0.2);}
+.btn-danger:hover{border-color:rgba(244,96,122,0.4);}
+.btn-sm{padding:8px 16px;font-size:13px;}
+
+/* Detail view */
+.detail-score-block{
+  display:flex;align-items:baseline;gap:16px;margin:10px 0 28px;
+  padding:24px 28px;
+  background:rgba(255,255,255,0.025);
+  border:1px solid var(--border);border-radius:var(--radius-xl);
+  position:relative;overflow:hidden;
+}
+.detail-score-block::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 0% 0%,rgba(0,212,255,0.06),transparent 60%);
+}
+.detail-score-num{
+  font-family:var(--display);font-size:56px;font-weight:800;
+  letter-spacing:-0.04em;line-height:1;
+}
+.detail-score-num.high{color:var(--green);text-shadow:0 0 32px var(--green-glow);}
+.detail-score-num.mid{color:var(--cyan);text-shadow:0 0 32px var(--cyan-glow);}
+.detail-score-num.low{color:var(--red);}
+.detail-score-meta{display:flex;flex-direction:column;gap:4px;}
+.detail-pct{font-size:16px;color:var(--text2);}
+.detail-date{font-size:13px;color:var(--text3);font-family:var(--mono);}
+
+.cat-result-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+.cat-result{
+  background:rgba(255,255,255,0.03);border:1px solid var(--border);
+  border-radius:var(--radius);padding:12px 16px;
+  display:flex;justify-content:space-between;align-items:center;
+  transition:border-color 0.2s;
+}
+.cat-result:hover{border-color:var(--border2);}
+.cat-result-name{font-size:13px;font-weight:500;}
+.cat-result-score{font-family:var(--mono);font-size:13px;}
+.c-good{color:var(--green);}
+.c-ok{color:var(--amber);}
+.c-bad{color:var(--red);}
+
+.phase-section{margin-bottom:22px;}
+.phase-section-title{
+  font-size:11px;font-family:var(--mono);color:var(--cyan);
+  text-transform:uppercase;letter-spacing:0.1em;
+  margin-bottom:14px;padding-bottom:10px;
+  border-bottom:1px solid rgba(0,212,255,0.1);
+}
+.info-row{
+  display:flex;gap:16px;padding:10px 0;
+  border-bottom:1px solid var(--border);align-items:flex-start;
+}
+.info-row:last-child{border-bottom:none;}
+.info-key{font-size:12px;color:var(--text3);font-family:var(--mono);min-width:170px;padding-top:2px;}
+.info-val{font-size:14px;color:var(--text);flex:1;line-height:1.6;}
+
+.action-card{
+  background:rgba(0,212,255,0.04);
+  border:1px solid rgba(0,212,255,0.15);
+  border-radius:var(--radius-xl);padding:24px 28px;
+  margin-bottom:18px;
+  position:relative;overflow:hidden;
+}
+.action-card::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at top left,rgba(0,212,255,0.04),transparent 60%);
+}
+.action-item{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid rgba(0,212,255,0.08);align-items:flex-start;}
+.action-item:last-child{border-bottom:none;}
+.action-num{
+  width:26px;height:26px;border-radius:50%;
+  background:rgba(0,212,255,0.12);color:var(--cyan);
+  font-size:12px;font-family:var(--mono);font-weight:500;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  box-shadow:0 0 10px rgba(0,212,255,0.2);
+}
+.action-label{font-size:11px;color:var(--text3);font-family:var(--mono);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.04em;}
+
+/* Empty state */
+.empty{text-align:center;padding:70px 24px;color:var(--text3);}
+.empty-icon{font-size:48px;margin-bottom:16px;opacity:0.4;}
+.empty-text{font-size:15px;margin-bottom:24px;line-height:1.6;}
+
+/* Legend */
+.chart-legend{display:flex;flex-wrap:wrap;gap:16px;margin-bottom:12px;}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);}
+.legend-dot{width:8px;height:8px;border-radius:50%;}
+
+/* Glow divider */
+.glow-divider{
+  height:1px;margin:24px 0;
+  background:linear-gradient(90deg,transparent,rgba(0,212,255,0.2),rgba(168,85,247,0.2),transparent);
+}
+
+/* Pulse animation for live data */
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.5;}}
+
+/* Scroll */
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:rgba(0,212,255,0.3);}
 </style>
 </head>
 <body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<div class="bg-canvas">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+  <div class="orb orb4"></div>
+</div>
+<div class="bg-grid"></div>
+
 <div class="app">
   <nav class="sidebar">
-    <div class="logo">UCAT<span>/review</span></div>
+    <div class="logo">
+      <div class="logo-text">UCAT Track</div>
+      <div class="logo-sub">Decision Making</div>
+    </div>
+
     <button class="nav-btn active" id="nav-dash" onclick="showView('dashboard')">
-      <span class="nav-dot"></span>
+      <span class="nav-icon">⬡</span>
       <span class="nav-label">Dashboard</span>
     </button>
+    <button class="nav-btn" id="nav-perf" onclick="showView('performance')">
+      <span class="nav-icon">◈</span>
+      <span class="nav-label">Performance</span>
+    </button>
+
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section-label">Actions</div>
+
     <button class="nav-btn" id="nav-new" onclick="showView('new-mock')">
-      <span class="nav-dot" style="background:var(--blue)"></span>
+      <span class="nav-icon">+</span>
       <span class="nav-label">New Review</span>
     </button>
-    <div class="sidebar-footer">Decision Making tracker</div>
+
+    <div class="sidebar-footer">
+      <span class="status-dot"></span>Data saved locally
+    </div>
   </nav>
 
   <main class="main">
 
-    <!-- DASHBOARD VIEW -->
+    <!-- DASHBOARD -->
     <div class="view active" id="view-dashboard">
-      <h1>Your Reviews</h1>
-      <p class="subtitle">Decision Making mini-mock tracker</p>
+      <div class="page-header">
+        <div class="page-title">Dashboard</div>
+        <div class="page-subtitle">Your Decision Making mini-mock history</div>
+      </div>
 
       <div class="stats-row" id="stats-row"></div>
 
-      <div style="margin-bottom: 28px;">
-        <h3>Score trend</h3>
-        <div class="card" style="padding: 16px 20px;">
-          <div class="chart-wrap">
-            <canvas id="scoreChart" role="img" aria-label="Score trend across mini-mocks">No data yet.</canvas>
-          </div>
+      <div class="card">
+        <div class="section-header">
+          <div class="section-title">Score trend</div>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="scoreChart" role="img" aria-label="Score trend across mini-mocks">No data yet.</canvas>
         </div>
       </div>
 
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-        <h3 style="margin:0">All reviews</h3>
+      <div class="section-header" style="margin-top:8px">
+        <div class="section-title">All reviews</div>
         <button class="btn btn-primary btn-sm" onclick="showView('new-mock')">+ New Review</button>
       </div>
-      <div class="mock-list" id="mock-list"></div>
+      <div id="mock-list"></div>
+    </div>
+
+    <!-- PERFORMANCE -->
+    <div class="view" id="view-performance">
+      <div class="page-header">
+        <div class="page-title">Performance</div>
+        <div class="page-subtitle">Accuracy rate per category across every mock</div>
+      </div>
+
+      <div id="perf-overview"></div>
+
+      <div class="glow-divider"></div>
+
+      <div class="section-header">
+        <div class="section-title">Category breakdown</div>
+      </div>
+      <div class="cat-perf-grid" id="cat-perf-grid"></div>
+
+      <div class="card">
+        <div class="section-header">
+          <div class="section-title">All categories — improvement over time</div>
+        </div>
+        <div class="chart-wrap" style="height:260px">
+          <canvas id="multiCatChart" role="img" aria-label="All category accuracy over time">No data yet.</canvas>
+        </div>
+      </div>
     </div>
 
     <!-- NEW MOCK WIZARD -->
     <div class="view" id="view-new-mock">
-      <h1>New Mock Review</h1>
-      <p class="subtitle">Work through each phase carefully — it takes ~50 minutes</p>
-
+      <div class="page-header">
+        <div class="page-title">New Mock Review</div>
+        <div class="page-subtitle">Complete all 5 phases — takes ~50 minutes</div>
+      </div>
       <div class="wizard-progress" id="wizard-progress"></div>
 
-      <!-- Phase 0: Mock Info -->
+      <!-- Phase 0 -->
       <div id="phase-0" class="wizard-phase">
         <div class="phase-card">
-          <div class="phase-tag">Setup</div>
+          <div class="phase-tag">◈ Setup</div>
           <div class="phase-title">Mock details</div>
-          <div class="phase-desc">Enter the basics before you start the review process.</div>
-
-          <div class="field">
-            <label>Mock name</label>
-            <input type="text" id="mockName" placeholder="e.g. Decision Making Mini-Mock 3" />
-          </div>
+          <div class="phase-desc">Start by entering the basics. You'll fill in the detailed review across the next phases.</div>
+          <div class="field"><label>Mock name</label><input type="text" id="mockName" placeholder="e.g. Decision Making Mini-Mock 3 – Revised 2025"/></div>
           <div class="field-row">
-            <div class="field">
-              <label>Date completed</label>
-              <input type="text" id="mockDate" placeholder="e.g. 14 May 2025" />
-            </div>
-            <div class="field">
-              <label>Score</label>
-              <input type="number" id="mockScore" placeholder="e.g. 640" min="300" max="900" />
-            </div>
+            <div class="field"><label>Date completed</label><input type="text" id="mockDate" placeholder="e.g. 14 May 2025"/></div>
+            <div class="field"><label>Score</label><input type="number" id="mockScore" placeholder="e.g. 640" min="300" max="900"/></div>
           </div>
-          <div class="field">
-            <label>Percentile</label>
-            <input type="number" id="mockPercentile" placeholder="e.g. 55" min="1" max="99" />
-          </div>
+          <div class="field"><label>Percentile</label><input type="number" id="mockPercentile" placeholder="e.g. 55" min="1" max="99"/></div>
         </div>
         <div class="btn-row">
           <button class="btn btn-secondary" onclick="showView('dashboard')">Cancel</button>
-          <button class="btn btn-primary" onclick="nextPhase(1)">Next: Immediate reflection →</button>
+          <button class="btn btn-primary" onclick="nextPhase(1)">Phase 1: Immediate reflection →</button>
         </div>
       </div>
 
-      <!-- Phase 1: Immediate Reflection -->
+      <!-- Phase 1 -->
       <div id="phase-1" class="wizard-phase" style="display:none">
         <div class="phase-card">
-          <div class="phase-tag">Phase 1 · 5 min</div>
+          <div class="phase-tag">◈ Phase 1 · 5 min</div>
           <div class="phase-title">Immediate reflection</div>
-          <div class="phase-desc">Before looking at results in detail — capture your raw feelings while they're fresh. Do this before you analyse anything.</div>
-
-          <div class="field">
-            <label>Where did time hurt you? Which specific questions felt rushed or panicked?</label>
-            <textarea id="p1-timeHurt" rows="3" placeholder="e.g. Q6 took way too long, Q33 was a panic click, ran out of time on all probability..."></textarea>
-          </div>
-          <div class="field">
-            <label>Which category felt hardest today?</label>
-            <input type="text" id="p1-hardest" placeholder="e.g. Syllogisms — kept second-guessing myself" />
-          </div>
+          <div class="phase-desc">Do this before looking at results in detail. Capture your raw feelings now — you'll lose this data if you wait.</div>
+          <div class="field"><label>Where did time hurt you? Which specific questions felt rushed or panicked?</label><textarea id="p1-timeHurt" rows="3" placeholder="e.g. Q6 took way too long, Q33 was a 3-second panic click, ran out of time completely on probability..."></textarea></div>
+          <div class="field"><label>Which category felt hardest today?</label><input type="text" id="p1-hardest" placeholder="e.g. Syllogisms — kept second-guessing myself under pressure"/></div>
           <div class="field">
             <label>Did you use the 90-second skip rule?</label>
             <div class="toggle-group">
-              <button class="toggle-btn" id="skip-yes" onclick="setToggle('skip','yes')">Yes</button>
-              <button class="toggle-btn" id="skip-no" onclick="setToggle('skip','no')">No</button>
-              <button class="toggle-btn" id="skip-partial" onclick="setToggle('skip','partial')">Partially</button>
+              <button class="toggle-btn" id="skip-yes" onclick="setToggle('yes')">Yes</button>
+              <button class="toggle-btn" id="skip-no" onclick="setToggle('no')">No</button>
+              <button class="toggle-btn" id="skip-partial" onclick="setToggle('partial')">Partially</button>
             </div>
           </div>
-          <div class="field">
-            <label>Skip rule notes — where did you get stuck and not skip when you should have?</label>
-            <textarea id="p1-skipNotes" rows="2" placeholder="e.g. Q6 — spent 2+ minutes on a syllogism instead of moving on..."></textarea>
-          </div>
+          <div class="field"><label>Where did you get stuck and not skip when you should have?</label><textarea id="p1-skipNotes" rows="2" placeholder="e.g. Q6 — spent 2+ minutes on one syllogism instead of skipping at 90 seconds..."></textarea></div>
         </div>
         <div class="btn-row">
           <button class="btn btn-secondary" onclick="nextPhase(0)">← Back</button>
-          <button class="btn btn-primary" onclick="nextPhase(2)">Next: Category tallies →</button>
+          <button class="btn btn-primary" onclick="nextPhase(2)">Phase 2: Category tallies →</button>
         </div>
       </div>
 
-      <!-- Phase 2: Category Tallies -->
+      <!-- Phase 2 -->
       <div id="phase-2" class="wizard-phase" style="display:none">
         <div class="phase-card">
-          <div class="phase-tag">Phase 2 · 10 min</div>
+          <div class="phase-tag">◈ Phase 2 · 10 min</div>
           <div class="phase-title">Category results</div>
-          <div class="phase-desc">Tally each category from the results screen. Green = correct, yellow = partial (1/2 marks), red = wrong. Add a note on time patterns — where did you spend too long, or panic click?</div>
-
+          <div class="phase-desc">Tally each category from the results screen. Correct = full marks, Partial = half marks (yellow), Wrong = zero. Add time notes — where did you spend too long or panic click?</div>
           <div id="cat-inputs"></div>
         </div>
         <div class="btn-row">
           <button class="btn btn-secondary" onclick="nextPhase(1)">← Back</button>
-          <button class="btn btn-primary" onclick="nextPhase(3)">Next: Question review →</button>
+          <button class="btn btn-primary" onclick="nextPhase(3)">Phase 3: Question review →</button>
         </div>
       </div>
 
-      <!-- Phase 3: Question Analysis -->
+      <!-- Phase 3 -->
       <div id="phase-3" class="wizard-phase" style="display:none">
         <div class="phase-card">
-          <div class="phase-tag">Phase 3 · 20–30 min</div>
+          <div class="phase-tag">◈ Phase 3 · 20–30 min</div>
           <div class="phase-title">Question analysis</div>
-          <div class="phase-desc">Go through each question and classify it. Write notes on the ones that matter — focus on Type A first (confident but wrong). Skip Type D (correct and confident) entirely.</div>
-
+          <div class="phase-desc">Go through every question. Focus on Type A first — that's where your logic is broken. Skip Type D (confident and right) entirely.</div>
           <div class="type-section">
-            <div class="type-header">
-              <span class="type-badge type-a">Type A</span>
-              <span class="type-label">Confident but wrong — your logic is broken somewhere</span>
-            </div>
-            <textarea id="p3-typeA" rows="4" placeholder="e.g. Q6 — I was certain 'all cats are mammals' implied 'all mammals are cats' but that's wrong. Q11 — misread the venn overlap..."></textarea>
-            <div class="field-hint">Most important to review. Find the exact step where your logic diverged.</div>
+            <div class="type-header"><span class="type-badge type-a">Type A</span><span class="type-label">Confident but wrong — find exactly where your logic broke</span></div>
+            <textarea id="p3-typeA" rows="4" placeholder="e.g. Q6 — I was certain the syllogism conclusion followed but missed that 'some' doesn't imply 'all'. Q11 — misread the venn overlap region..."></textarea>
+            <div class="field-hint">// Most important. Find the precise step where your reasoning diverged from correct.</div>
           </div>
-
           <div class="type-section">
-            <div class="type-header">
-              <span class="type-badge type-b">Type B</span>
-              <span class="type-label">Knew you were guessing or ran out of time</span>
-            </div>
-            <textarea id="p3-typeB" rows="3" placeholder="e.g. Q33 — 3 second answer, complete panic click. Q28 — ran out of time, picked randomly..."></textarea>
-            <div class="field-hint">Ask: what earlier question stole the time that should have gone here?</div>
+            <div class="type-header"><span class="type-badge type-b">Type B</span><span class="type-label">Guessing or ran out of time</span></div>
+            <textarea id="p3-typeB" rows="3" placeholder="e.g. Q33 — 3 second panic click. Q28 — randomly guessed with 4 seconds left. Ask: what earlier question stole this time?"></textarea>
+            <div class="field-hint">// Time management casualty. What earlier question stole this time?</div>
           </div>
-
           <div class="type-section">
-            <div class="type-header">
-              <span class="type-badge type-c">Type C</span>
-              <span class="type-label">Got it right but felt unsure — was your reasoning actually correct?</span>
-            </div>
-            <textarea id="p3-typeC" rows="3" placeholder="e.g. Q14 — narrowed to two options and guessed correctly. Need to confirm my reasoning was right not just the answer..."></textarea>
+            <div class="type-header"><span class="type-badge type-c">Type C</span><span class="type-label">Right but unsure — was your reasoning actually correct?</span></div>
+            <textarea id="p3-typeC" rows="3" placeholder="e.g. Q14 — narrowed to two options and guessed correctly. Need to verify my logic was right, not just the answer..."></textarea>
           </div>
         </div>
         <div class="btn-row">
           <button class="btn btn-secondary" onclick="nextPhase(2)">← Back</button>
-          <button class="btn btn-primary" onclick="nextPhase(4)">Next: Pattern analysis →</button>
+          <button class="btn btn-primary" onclick="nextPhase(4)">Phase 4: Pattern analysis →</button>
         </div>
       </div>
 
-      <!-- Phase 4: Pattern Analysis -->
+      <!-- Phase 4 -->
       <div id="phase-4" class="wizard-phase" style="display:none">
         <div class="phase-card">
-          <div class="phase-tag">Phase 4 · 10 min</div>
+          <div class="phase-tag">◈ Phase 4 · 10 min</div>
           <div class="phase-title">Category pattern analysis</div>
-          <div class="phase-desc">Write one sentence per category identifying your specific pattern today. This is what drives your next practice session.</div>
-
+          <div class="phase-desc">One sentence per category. This single sentence drives your next practice session — be specific about what the actual problem was today.</div>
           <div id="pattern-inputs"></div>
         </div>
         <div class="btn-row">
           <button class="btn btn-secondary" onclick="nextPhase(3)">← Back</button>
-          <button class="btn btn-primary" onclick="nextPhase(5)">Next: Action notes →</button>
+          <button class="btn btn-primary" onclick="nextPhase(5)">Phase 5: Action notes →</button>
         </div>
       </div>
 
-      <!-- Phase 5: Action Notes -->
+      <!-- Phase 5 -->
       <div id="phase-5" class="wizard-phase" style="display:none">
         <div class="phase-card">
-          <div class="phase-tag">Phase 5 · 5 min</div>
+          <div class="phase-tag">◈ Phase 5 · 5 min</div>
           <div class="phase-title">Action notes</div>
-          <div class="phase-desc">The three things that make this review actually change your next performance. Be specific. Look at these before every practice session until your next mock.</div>
-
-          <div class="field">
-            <label>1. One technique I will drill before my next mini-mock</label>
-            <textarea id="p5-drill" rows="2" placeholder="e.g. Do 5 syllogisms daily with 60-second timer — not 'practice syllogisms more'"></textarea>
-          </div>
-          <div class="field">
-            <label>2. One time management rule I broke today</label>
-            <textarea id="p5-rule" rows="2" placeholder="e.g. Spent more than 90 seconds on Q6 and didn't skip it"></textarea>
-          </div>
-          <div class="field">
-            <label>3. One category to prioritise in my next practice session</label>
-            <input type="text" id="p5-category" placeholder="e.g. Logic Puzzles — only got 3/6 and barely practised them" />
-          </div>
-          <div class="field">
-            <label>Any other notes or observations</label>
-            <textarea id="p5-other" rows="3" placeholder="Anything else you want to remember about this mock..."></textarea>
-          </div>
+          <div class="phase-desc">The three things that make the difference. Be specific — "practice syllogisms more" is not specific. Read these before every session until your next mock.</div>
+          <div class="field"><label>1. Technique to drill before next mini-mock</label><textarea id="p5-drill" rows="2" placeholder="e.g. 5 syllogisms daily with 60-second per-question timer — stop mid-thought when timer goes, pick best answer, move on"></textarea></div>
+          <div class="field"><label>2. Time management rule I broke today</label><textarea id="p5-rule" rows="2" placeholder="e.g. Spent 2 minutes 22 seconds on Q6 without using the 90-second skip rule"></textarea></div>
+          <div class="field"><label>3. Priority category for next practice session</label><input type="text" id="p5-category" placeholder="e.g. Syllogisms — collapsed from 5/7 to 0/6, must be timed from now on"/></div>
+          <div class="field"><label>Other notes</label><textarea id="p5-other" rows="3" placeholder="Anything else worth remembering about this mock..."></textarea></div>
         </div>
         <div class="btn-row">
           <button class="btn btn-secondary" onclick="nextPhase(4)">← Back</button>
           <button class="btn btn-primary" onclick="saveMock()">Save review ✓</button>
         </div>
       </div>
-
     </div>
 
-    <!-- DETAIL VIEW -->
+    <!-- DETAIL -->
     <div class="view" id="view-detail">
-      <button class="btn btn-secondary btn-sm" onclick="showView('dashboard')" style="margin-bottom:20px">← All reviews</button>
+      <button class="btn btn-secondary btn-sm" onclick="showView('dashboard')" style="margin-bottom:24px">← All reviews</button>
       <div id="detail-content"></div>
     </div>
 
@@ -536,352 +785,487 @@
 </div>
 
 <script>
-const CATS = [
-  { id: 'syllogisms', label: 'Syllogisms', color: 'var(--purple)' },
-  { id: 'logicPuzzles', label: 'Logic Puzzles', color: 'var(--blue)' },
-  { id: 'strongestArg', label: 'Strongest Argument', color: 'var(--green)' },
-  { id: 'inference', label: 'Inference', color: 'var(--amber)' },
-  { id: 'vennDiagrams', label: 'Venn Diagrams', color: 'var(--blue)' },
-  { id: 'probability', label: 'Probability', color: 'var(--red)' }
+// Cursor
+const cur = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+function animRing(){rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing);}
+animRing();
+
+// Data
+const CATS=[
+  {id:'syllogisms',label:'Syllogisms',color:'#a855f7'},
+  {id:'logicPuzzles',label:'Logic Puzzles',color:'#00d4ff'},
+  {id:'strongestArg',label:'Strongest Argument',color:'#10d98a'},
+  {id:'inference',label:'Inference',color:'#f5a623'},
+  {id:'vennDiagrams',label:'Venn Diagrams',color:'#4d9fff'},
+  {id:'probability',label:'Probability',color:'#f4607a'}
 ];
 
-let mocks = JSON.parse(localStorage.getItem('ucat_mocks') || '[]');
-let currentPhase = 0;
-let skipToggle = null;
-let chartInstance = null;
+let mocks=JSON.parse(localStorage.getItem('ucat_mocks_v2')||'[]');
+let currentPhase=0,skipToggle=null;
+let scoreChartInst=null,multiChartInst=null;
 
-function save() {
-  localStorage.setItem('ucat_mocks', JSON.stringify(mocks));
+function save(){localStorage.setItem('ucat_mocks_v2',JSON.stringify(mocks));}
+
+function scoreClass(s){return s>=660?'high':s>=600?'mid':'low';}
+
+function catAccuracy(cat){
+  const t=(cat.correct||0)+(cat.partial||0)+(cat.wrong||0);
+  if(!t)return null;
+  return Math.round(((cat.correct||0)+(cat.partial||0)*0.5)/t*100);
 }
 
-function showView(name) {
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-
-  if (name === 'dashboard') {
+function showView(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  if(name==='dashboard'){
     document.getElementById('view-dashboard').classList.add('active');
     document.getElementById('nav-dash').classList.add('active');
     renderDashboard();
-  } else if (name === 'new-mock') {
+  } else if(name==='performance'){
+    document.getElementById('view-performance').classList.add('active');
+    document.getElementById('nav-perf').classList.add('active');
+    renderPerformance();
+  } else if(name==='new-mock'){
     document.getElementById('view-new-mock').classList.add('active');
     document.getElementById('nav-new').classList.add('active');
     resetWizard();
-  } else if (name === 'detail') {
+  } else if(name==='detail'){
     document.getElementById('view-detail').classList.add('active');
   }
 }
 
-function scoreClass(s) {
-  if (s >= 660) return 'high';
-  if (s >= 600) return 'mid';
-  return 'low';
-}
-
-function renderDashboard() {
-  const sorted = [...mocks].sort((a,b) => b.savedAt - a.savedAt);
+function renderDashboard(){
+  const sorted=[...mocks].sort((a,b)=>b.savedAt-a.savedAt);
+  const avg=mocks.length?Math.round(mocks.reduce((a,m)=>a+m.score,0)/mocks.length):null;
+  const latest=sorted[0];
+  const best=mocks.length?Math.max(...mocks.map(m=>m.score)):null;
 
   // Stats
-  const statsEl = document.getElementById('stats-row');
-  const avg = mocks.length ? Math.round(mocks.reduce((a,m)=>a+m.score,0)/mocks.length) : null;
-  const latest = sorted[0];
-  const best = mocks.length ? Math.max(...mocks.map(m=>m.score)) : null;
-  statsEl.innerHTML = `
-    <div class="stat-card">
+  const scoreColor=latest?(latest.score>=660?'var(--green)':latest.score>=600?'var(--cyan)':'var(--red)'):'var(--text3)';
+  document.getElementById('stats-row').innerHTML=`
+    <div class="stat-card cyan">
       <div class="stat-label">Mocks done</div>
-      <div class="stat-val">${mocks.length}</div>
+      <div class="stat-val" style="color:var(--cyan)">${mocks.length}</div>
       <div class="stat-sub">Decision Making</div>
     </div>
-    <div class="stat-card">
+    <div class="stat-card ${latest?scoreClass(latest.score):''}">
       <div class="stat-label">Latest score</div>
-      <div class="stat-val ${latest ? scoreClass(latest.score) : ''}" style="color:${latest ? (latest.score>=660?'var(--green)':latest.score>=600?'var(--blue)':'var(--red)') : 'var(--text3)'}">${latest ? latest.score : '—'}</div>
-      <div class="stat-sub">${latest ? latest.percentile+'th percentile' : 'No mocks yet'}</div>
+      <div class="stat-val stat-glow" style="color:${scoreColor}">${latest?latest.score:'—'}</div>
+      <div class="stat-sub">${latest?latest.percentile+'th percentile':'No mocks yet'}</div>
     </div>
-    <div class="stat-card">
+    <div class="stat-card purple">
       <div class="stat-label">Average</div>
-      <div class="stat-val">${avg || '—'}</div>
-      <div class="stat-sub">${mocks.length > 1 ? 'across '+mocks.length+' mocks' : ''}</div>
+      <div class="stat-val" style="color:var(--purple)">${avg||'—'}</div>
+      <div class="stat-sub">${mocks.length>1?'across '+mocks.length+' mocks':''}</div>
     </div>
-    <div class="stat-card">
-      <div class="stat-label">Best score</div>
-      <div class="stat-val" style="color:var(--green)">${best || '—'}</div>
-      <div class="stat-sub">${best ? 'personal best' : ''}</div>
-    </div>
-  `;
+    <div class="stat-card green">
+      <div class="stat-label">Personal best</div>
+      <div class="stat-val stat-glow" style="color:var(--green)">${best||'—'}</div>
+      <div class="stat-sub">${best?'keep pushing':''}</div>
+    </div>`;
 
-  // Chart
-  const chronological = [...mocks].sort((a,b) => a.savedAt - b.savedAt);
-  if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
-  if (chronological.length > 0) {
-    const ctx = document.getElementById('scoreChart').getContext('2d');
-    chartInstance = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: chronological.map(m => m.mockName || 'Mock'),
-        datasets: [{
-          label: 'Score',
-          data: chronological.map(m => m.score),
-          borderColor: '#4d9fff',
-          backgroundColor: 'rgba(77,159,255,0.08)',
-          pointBackgroundColor: '#4d9fff',
-          pointRadius: 5,
-          tension: 0.3,
-          fill: true
+  // Score chart
+  const chron=[...mocks].sort((a,b)=>a.savedAt-b.savedAt);
+  if(scoreChartInst){scoreChartInst.destroy();scoreChartInst=null;}
+  if(chron.length){
+    const ctx=document.getElementById('scoreChart').getContext('2d');
+    scoreChartInst=new Chart(ctx,{
+      type:'line',
+      data:{
+        labels:chron.map((m,i)=>m.mockName||'Mock '+(i+1)),
+        datasets:[{
+          label:'Score',data:chron.map(m=>m.score),
+          borderColor:'#00d4ff',
+          backgroundColor:'rgba(0,212,255,0.06)',
+          pointBackgroundColor:'#00d4ff',
+          pointBorderColor:'#03030d',
+          pointBorderWidth:2,
+          pointRadius:6,
+          pointHoverRadius:9,
+          tension:0.4,fill:true,borderWidth:2
         }]
       },
-      options: {
-        responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: {
-          x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8888a0', font: { family: 'IBM Plex Mono', size: 11 } } },
-          y: {
-            min: 300, max: 900, grid: { color: 'rgba(255,255,255,0.05)' },
-            ticks: { color: '#8888a0', font: { family: 'IBM Plex Mono', size: 11 }, stepSize: 100 }
-          }
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{
+          backgroundColor:'rgba(3,3,13,0.9)',
+          borderColor:'rgba(0,212,255,0.3)',borderWidth:1,
+          titleColor:'#00d4ff',bodyColor:'#e2e8f8',
+          padding:12,cornerRadius:10
+        }},
+        scales:{
+          x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#4a5280',font:{family:'DM Mono',size:11}}},
+          y:{min:300,max:900,grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#4a5280',font:{family:'DM Mono',size:11},stepSize:100}}
         }
       }
     });
   }
 
   // List
-  const listEl = document.getElementById('mock-list');
-  if (sorted.length === 0) {
-    listEl.innerHTML = `<div class="empty">
-      <div class="empty-icon">📋</div>
-      <div class="empty-text">No reviews yet. Complete your first mini-mock review.</div>
+  const listEl=document.getElementById('mock-list');
+  if(!sorted.length){
+    listEl.innerHTML=`<div class="empty">
+      <div class="empty-icon">◈</div>
+      <div class="empty-text">No reviews yet.<br>Complete your first mini-mock review to start tracking.</div>
       <button class="btn btn-primary" onclick="showView('new-mock')">Start first review</button>
     </div>`;
     return;
   }
-  listEl.innerHTML = sorted.map((m,i) => `
+  listEl.innerHTML=sorted.map(m=>`
     <div class="mock-item" onclick="showDetail('${m.id}')">
-      <div class="mock-item-left">
-        <div class="mock-item-name">${m.mockName || 'Mini-Mock ' + (mocks.length - i)}</div>
-        <div class="mock-item-date">${m.mockDate || '—'}</div>
+      <div>
+        <div class="mock-name">${m.mockName||'Mini-Mock'}</div>
+        <div class="mock-date">${m.mockDate||'—'}</div>
       </div>
-      <div class="mock-item-right">
+      <div class="mock-right">
         <div class="score-badge ${scoreClass(m.score)}">${m.score}</div>
-        <div class="percentile-tag">${m.percentile}th %ile</div>
-        <div class="arrow-icon">›</div>
+        <div class="pct-tag">${m.percentile}th %ile</div>
+        <div class="arrow-btn">›</div>
       </div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
-function showDetail(id) {
-  const m = mocks.find(x => x.id === id);
-  if (!m) return;
-  showView('detail');
+function renderPerformance(){
+  const chron=[...mocks].sort((a,b)=>a.savedAt-b.savedAt);
 
-  const sc = scoreClass(m.score);
-  const catHtml = CATS.map(c => {
-    const d = m.categories?.[c.id] || {};
-    const total = (d.correct||0) + (d.partial||0) + (d.wrong||0);
-    const pct = total ? Math.round(((d.correct||0)+(d.partial||0)*0.5)/total*100) : null;
-    const cls = pct >= 75 ? 'good' : pct >= 50 ? 'ok' : 'bad';
-    return `<div class="cat-pill">
-      <div class="cat-name">${c.label}</div>
-      <div class="cat-score ${cls}">${d.correct||0}✓ ${d.partial||0}½ ${d.wrong||0}✗</div>
+  if(!chron.length){
+    document.getElementById('perf-overview').innerHTML=`<div class="empty"><div class="empty-icon">◈</div><div class="empty-text">No data yet. Complete a mock review first.</div><button class="btn btn-primary" onclick="showView('new-mock')">Start first review</button></div>`;
+    document.getElementById('cat-perf-grid').innerHTML='';
+    return;
+  }
+
+  // Overall accuracy per category
+  const catData={};
+  CATS.forEach(c=>{catData[c.id]=[];});
+  chron.forEach(m=>{
+    CATS.forEach(c=>{
+      const d=m.categories?.[c.id];
+      if(d){
+        const acc=catAccuracy(d);
+        catData[c.id].push({mock:m.mockName||'Mock',acc,score:m.score});
+      }
+    });
+  });
+
+  // Overview strip
+  const latestAccs=CATS.map(c=>{
+    const arr=catData[c.id];
+    const latest=arr.length?arr[arr.length-1].acc:null;
+    const prev=arr.length>1?arr[arr.length-2].acc:null;
+    const trend=latest!==null&&prev!==null?latest-prev:null;
+    return {c,latest,trend,arr};
+  });
+
+  document.getElementById('perf-overview').innerHTML=`
+    <div class="stats-row" style="grid-template-columns:repeat(3,1fr)">
+      ${latestAccs.slice(0,6).map(({c,latest,trend})=>`
+        <div class="stat-card" style="--glow-color:${c.color}22">
+          <div class="stat-label">${c.label}</div>
+          <div class="stat-val" style="color:${c.color};text-shadow:0 0 16px ${c.color}44">${latest!==null?latest+'%':'—'}</div>
+          <div class="stat-sub" style="color:${trend===null?'var(--text3)':trend>=0?'var(--green)':'var(--red)'}">
+            ${trend===null?'no trend yet':trend>=0?'↑ +'+trend+'% from last':'↓ '+trend+'% from last'}
+          </div>
+        </div>`).join('')}
+    </div>`;
+
+  // Category cards with mini charts
+  document.getElementById('cat-perf-grid').innerHTML=CATS.map(c=>{
+    const arr=catData[c.id];
+    const latest=arr.length?arr[arr.length-1].acc:null;
+    const prev=arr.length>1?arr[arr.length-2].acc:null;
+    const trend=latest!==null&&prev!==null?latest-prev:null;
+    const trendClass=trend===null?'same':trend>0?'up':'down';
+    const trendText=trend===null?'no comparison yet':trend>0?'↑ +'+trend+'% vs last mock':'↓ '+trend+'% vs last mock';
+    const barW=latest||0;
+    return `<div class="cat-perf-card" style="--cat-color:${c.color}">
+      <div class="cat-perf-header">
+        <div>
+          <div class="cat-perf-name">${c.label}</div>
+          <div class="cat-trend ${trendClass}">${trendText}</div>
+        </div>
+        <div class="cat-perf-latest">${latest!==null?latest+'%':'—'}</div>
+      </div>
+      <div class="chart-wrap-sm">
+        <canvas id="cat-chart-${c.id}" role="img" aria-label="${c.label} accuracy over time">Accuracy data for ${c.label}.</canvas>
+      </div>
+      <div class="improvement-bar"><div class="improvement-fill" style="width:${barW}%"></div></div>
     </div>`;
   }).join('');
 
-  document.getElementById('detail-content').innerHTML = `
-    <div class="detail-header">
-      <h1>${m.mockName || 'Mini-Mock'}</h1>
-      <div style="display:flex;align-items:baseline;gap:16px;margin-top:8px">
-        <div class="detail-score ${sc}">${m.score}</div>
-        <div style="color:var(--text2);font-size:14px">${m.percentile}th percentile · ${m.mockDate || ''}</div>
+  // Render mini charts
+  CATS.forEach(c=>{
+    const arr=catData[c.id];
+    if(!arr.length)return;
+    const ctx=document.getElementById('cat-chart-'+c.id)?.getContext('2d');
+    if(!ctx)return;
+    new Chart(ctx,{
+      type:'line',
+      data:{
+        labels:arr.map(d=>d.mock),
+        datasets:[{
+          data:arr.map(d=>d.acc),
+          borderColor:c.color,
+          backgroundColor:c.color+'18',
+          pointBackgroundColor:c.color,
+          pointBorderColor:'#03030d',
+          pointBorderWidth:2,
+          pointRadius:4,
+          tension:0.4,fill:true,borderWidth:2
+        }]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{
+          backgroundColor:'rgba(3,3,13,0.9)',
+          borderColor:c.color+'44',borderWidth:1,
+          titleColor:c.color,bodyColor:'#e2e8f8',
+          padding:10,cornerRadius:8
+        }},
+        scales:{
+          x:{display:false},
+          y:{min:0,max:100,display:true,grid:{color:'rgba(255,255,255,0.03)'},ticks:{color:'#4a5280',font:{size:9,family:'DM Mono'},callback:v=>v+'%',maxTicksLimit:3}}
+        }
+      }
+    });
+  });
+
+  // Multi-category chart
+  if(multiChartInst){multiChartInst.destroy();multiChartInst=null;}
+  if(chron.length){
+    const labels=chron.map((m,i)=>m.mockName||'Mock '+(i+1));
+    const ctx2=document.getElementById('multiCatChart')?.getContext('2d');
+    if(ctx2){
+      multiChartInst=new Chart(ctx2,{
+        type:'line',
+        data:{
+          labels,
+          datasets:CATS.map(c=>({
+            label:c.label,
+            data:chron.map(m=>{
+              const d=m.categories?.[c.id];
+              return d?catAccuracy(d):null;
+            }),
+            borderColor:c.color,
+            backgroundColor:'transparent',
+            pointBackgroundColor:c.color,
+            pointBorderColor:'#03030d',
+            pointBorderWidth:2,
+            pointRadius:5,
+            tension:0.4,borderWidth:2,
+            spanGaps:true
+          }))
+        },
+        options:{
+          responsive:true,maintainAspectRatio:false,
+          plugins:{
+            legend:{
+              display:true,
+              labels:{color:'#8892b0',font:{family:'DM Sans',size:12},boxWidth:10,boxHeight:10,padding:20}
+            },
+            tooltip:{
+              backgroundColor:'rgba(3,3,13,0.9)',
+              borderColor:'rgba(255,255,255,0.1)',borderWidth:1,
+              titleColor:'#e2e8f8',bodyColor:'#8892b0',
+              padding:12,cornerRadius:10
+            }
+          },
+          scales:{
+            x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#4a5280',font:{family:'DM Mono',size:11}}},
+            y:{min:0,max:100,grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#4a5280',font:{family:'DM Mono',size:11},callback:v=>v+'%'}}
+          }
+        }
+      });
+    }
+  }
+}
+
+function showDetail(id){
+  const m=mocks.find(x=>x.id===id);
+  if(!m)return;
+  showView('detail');
+  const sc=scoreClass(m.score);
+
+  const catHtml=CATS.map(c=>{
+    const d=m.categories?.[c.id]||{};
+    const acc=catAccuracy(d);
+    const cls=acc>=75?'c-good':acc>=50?'c-ok':'c-bad';
+    return `<div class="cat-result">
+      <div class="cat-result-name">${c.label}</div>
+      <div class="cat-result-score ${cls}">${d.correct||0}✓ ${d.partial||0}½ ${d.wrong||0}✗${acc!==null?' · '+acc+'%':''}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('detail-content').innerHTML=`
+    <div style="margin-bottom:4px"><div class="page-title">${m.mockName||'Mini-Mock'}</div></div>
+    <div class="detail-score-block">
+      <div class="detail-score-num ${sc}">${m.score}</div>
+      <div class="detail-score-meta">
+        <div class="detail-pct">${m.percentile}th percentile</div>
+        <div class="detail-date">${m.mockDate||'—'}</div>
       </div>
     </div>
 
-    <div class="card" style="margin-bottom:20px">
-      <h3>Category results</h3>
-      <div class="cat-grid">${catHtml}</div>
-      <div class="divider" style="margin:12px 0"></div>
-      ${CATS.map(c => {
-        const d = m.categories?.[c.id]||{};
-        return d.timeNote ? `<div class="info-row"><div class="info-key">${c.label} — time notes</div><div class="info-val">${d.timeNote}</div></div>` : '';
-      }).join('')}
+    <div class="card">
+      <div class="phase-section-title">Category results</div>
+      <div class="cat-result-grid">${catHtml}</div>
+      <div class="glow-divider" style="margin:16px 0 12px"></div>
+      ${CATS.map(c=>{const d=m.categories?.[c.id]||{};return d.timeNote?`<div class="info-row"><div class="info-key">${c.label} time notes</div><div class="info-val">${d.timeNote}</div></div>`:''}).join('')}
     </div>
 
-    <div class="card" style="margin-bottom:20px">
-      <h3>Immediate reflection</h3>
-      <div class="info-row"><div class="info-key">Time hurt me at</div><div class="info-val">${m.p1?.timeHurt || '—'}</div></div>
-      <div class="info-row"><div class="info-key">Hardest category</div><div class="info-val">${m.p1?.hardest || '—'}</div></div>
-      <div class="info-row"><div class="info-key">Used 90s skip rule</div><div class="info-val">${m.p1?.skipUsed || '—'}</div></div>
-      <div class="info-row"><div class="info-key">Skip rule notes</div><div class="info-val">${m.p1?.skipNotes || '—'}</div></div>
+    <div class="card">
+      <div class="phase-section-title">Phase 1 — Immediate reflection</div>
+      <div class="info-row"><div class="info-key">Time hurt me at</div><div class="info-val">${m.p1?.timeHurt||'—'}</div></div>
+      <div class="info-row"><div class="info-key">Hardest category</div><div class="info-val">${m.p1?.hardest||'—'}</div></div>
+      <div class="info-row"><div class="info-key">Used 90s skip rule</div><div class="info-val">${m.p1?.skipUsed||'—'}</div></div>
+      <div class="info-row"><div class="info-key">Skip rule notes</div><div class="info-val">${m.p1?.skipNotes||'—'}</div></div>
     </div>
 
-    <div class="card" style="margin-bottom:20px">
-      <h3>Question analysis</h3>
-      <div class="type-section" style="margin-bottom:14px">
-        <div class="type-header" style="margin-bottom:6px"><span class="type-badge type-a">Type A</span><span class="type-label">Confident but wrong</span></div>
-        <div style="color:var(--text);font-size:14px;line-height:1.7">${m.p3?.typeA || '—'}</div>
+    <div class="card">
+      <div class="phase-section-title">Phase 3 — Question analysis</div>
+      <div class="type-section" style="margin-bottom:16px">
+        <div class="type-header" style="margin-bottom:8px"><span class="type-badge type-a">Type A</span><span class="type-label">Confident but wrong</span></div>
+        <div style="font-size:14px;line-height:1.75;color:var(--text)">${m.p3?.typeA||'—'}</div>
       </div>
-      <div class="type-section" style="margin-bottom:14px">
-        <div class="type-header" style="margin-bottom:6px"><span class="type-badge type-b">Type B</span><span class="type-label">Rushed / guessing</span></div>
-        <div style="color:var(--text);font-size:14px;line-height:1.7">${m.p3?.typeB || '—'}</div>
+      <div class="glow-divider" style="margin:12px 0"></div>
+      <div class="type-section" style="margin-bottom:16px">
+        <div class="type-header" style="margin-bottom:8px"><span class="type-badge type-b">Type B</span><span class="type-label">Rushed / guessing</span></div>
+        <div style="font-size:14px;line-height:1.75;color:var(--text)">${m.p3?.typeB||'—'}</div>
       </div>
+      <div class="glow-divider" style="margin:12px 0"></div>
       <div class="type-section">
-        <div class="type-header" style="margin-bottom:6px"><span class="type-badge type-c">Type C</span><span class="type-label">Right but unsure</span></div>
-        <div style="color:var(--text);font-size:14px;line-height:1.7">${m.p3?.typeC || '—'}</div>
+        <div class="type-header" style="margin-bottom:8px"><span class="type-badge type-c">Type C</span><span class="type-label">Right but unsure</span></div>
+        <div style="font-size:14px;line-height:1.75;color:var(--text)">${m.p3?.typeC||'—'}</div>
       </div>
     </div>
 
-    <div class="card" style="margin-bottom:20px">
-      <h3>Category patterns</h3>
-      ${CATS.map(c => {
-        const val = m.patterns?.[c.id];
-        return val ? `<div class="info-row"><div class="info-key">${c.label}</div><div class="info-val">${val}</div></div>` : '';
-      }).filter(Boolean).join('') || '<div style="color:var(--text3);font-size:14px">No patterns recorded.</div>'}
+    <div class="card">
+      <div class="phase-section-title">Phase 4 — Category patterns</div>
+      ${CATS.map(c=>{const v=m.patterns?.[c.id];return v?`<div class="info-row"><div class="info-key">${c.label}</div><div class="info-val">${v}</div></div>`:''}).filter(Boolean).join('')||'<div style="color:var(--text3);font-size:14px">No patterns recorded.</div>'}
     </div>
 
-    <div class="card" style="background:var(--blue-dim);border-color:rgba(77,159,255,0.2);margin-bottom:20px">
-      <h3 style="color:var(--blue)">Action notes — review before next session</h3>
-      <div class="action-item"><div class="action-num">1</div><div><div style="font-size:12px;color:var(--text3);margin-bottom:3px">Technique to drill</div><div>${m.p5?.drill || '—'}</div></div></div>
-      <div class="action-item"><div class="action-num">2</div><div><div style="font-size:12px;color:var(--text3);margin-bottom:3px">Time rule I broke</div><div>${m.p5?.rule || '—'}</div></div></div>
-      <div class="action-item"><div class="action-num">3</div><div><div style="font-size:12px;color:var(--text3);margin-bottom:3px">Priority category</div><div>${m.p5?.category || '—'}</div></div></div>
-      ${m.p5?.other ? `<div class="action-item"><div class="action-num" style="background:var(--bg4);color:var(--text2)">+</div><div><div style="font-size:12px;color:var(--text3);margin-bottom:3px">Other notes</div><div>${m.p5.other}</div></div></div>` : ''}
+    <div class="action-card">
+      <div class="phase-section-title" style="color:var(--cyan)">Phase 5 — Action notes · Read before every session</div>
+      <div class="action-item"><div class="action-num">1</div><div><div class="action-label">Technique to drill</div><div>${m.p5?.drill||'—'}</div></div></div>
+      <div class="action-item"><div class="action-num">2</div><div><div class="action-label">Time rule I broke</div><div>${m.p5?.rule||'—'}</div></div></div>
+      <div class="action-item"><div class="action-num">3</div><div><div class="action-label">Priority category</div><div>${m.p5?.category||'—'}</div></div></div>
+      ${m.p5?.other?`<div class="action-item"><div class="action-num" style="background:rgba(255,255,255,0.05);color:var(--text2)">+</div><div><div class="action-label">Other notes</div><div>${m.p5.other}</div></div></div>`:''}
     </div>
 
     <button class="btn btn-danger btn-sm" onclick="deleteMock('${m.id}')">Delete this review</button>
   `;
 }
 
-function deleteMock(id) {
-  if (!confirm('Delete this review? This cannot be undone.')) return;
-  mocks = mocks.filter(m => m.id !== id);
-  save();
-  showView('dashboard');
+function deleteMock(id){
+  if(!confirm('Delete this review? This cannot be undone.'))return;
+  mocks=mocks.filter(m=>m.id!==id);
+  save();showView('dashboard');
 }
 
-/* WIZARD */
-function resetWizard() {
-  currentPhase = 0;
-  skipToggle = null;
-  document.querySelectorAll('.wizard-phase').forEach(p => p.style.display = 'none');
-  document.getElementById('phase-0').style.display = 'block';
-  document.getElementById('mockName').value = '';
-  document.getElementById('mockDate').value = '';
-  document.getElementById('mockScore').value = '';
-  document.getElementById('mockPercentile').value = '';
-  buildCatInputs();
-  buildPatternInputs();
-  updateProgress();
+// Wizard
+function resetWizard(){
+  currentPhase=0;skipToggle=null;
+  document.querySelectorAll('.wizard-phase').forEach(p=>p.style.display='none');
+  document.getElementById('phase-0').style.display='block';
+  ['mockName','mockDate','mockScore','mockPercentile','p1-timeHurt','p1-hardest','p1-skipNotes','p3-typeA','p3-typeB','p3-typeC','p5-drill','p5-rule','p5-category','p5-other'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.value='';
+  });
+  ['skip-yes','skip-no','skip-partial'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.className='toggle-btn';
+  });
+  buildCatInputs();buildPatternInputs();updateProgress();
 }
 
-function buildCatInputs() {
-  document.getElementById('cat-inputs').innerHTML = CATS.map(c => `
+function buildCatInputs(){
+  document.getElementById('cat-inputs').innerHTML=CATS.map(c=>`
     <div class="cat-row">
-      <div class="cat-row-header">
-        <div class="cat-row-name">${c.label}</div>
-      </div>
+      <div class="cat-row-name" style="color:${c.color}">${c.label}</div>
       <div class="tally-row">
-        <div class="tally-input tally-correct">
-          <label>Correct ✓</label>
-          <input type="number" id="cat-${c.id}-correct" min="0" max="20" value="0" />
-        </div>
-        <div class="tally-input tally-partial">
-          <label>Partial ½</label>
-          <input type="number" id="cat-${c.id}-partial" min="0" max="20" value="0" />
-        </div>
-        <div class="tally-input tally-wrong">
-          <label>Wrong ✗</label>
-          <input type="number" id="cat-${c.id}-wrong" min="0" max="20" value="0" />
-        </div>
+        <div class="tally-input tally-correct"><label>Correct ✓</label><input type="number" id="cat-${c.id}-correct" min="0" max="20" value="0"/></div>
+        <div class="tally-input tally-partial"><label>Partial ½</label><input type="number" id="cat-${c.id}-partial" min="0" max="20" value="0"/></div>
+        <div class="tally-input tally-wrong"><label>Wrong ✗</label><input type="number" id="cat-${c.id}-wrong" min="0" max="20" value="0"/></div>
       </div>
-      <div class="field" style="margin-bottom:0">
-        <label>Time notes for this category</label>
-        <input type="text" id="cat-${c.id}-note" placeholder="e.g. Q6 took 2min+, Q33 panic click..." />
-      </div>
-    </div>
-  `).join('');
+      <div class="field" style="margin-bottom:0"><label>Time notes</label><input type="text" id="cat-${c.id}-note" placeholder="e.g. Q6 took 2min+, ran out of time on last 2..."/></div>
+    </div>`).join('');
 }
 
-function buildPatternInputs() {
-  document.getElementById('pattern-inputs').innerHTML = CATS.map(c => `
+function buildPatternInputs(){
+  document.getElementById('pattern-inputs').innerHTML=CATS.map(c=>`
     <div class="field">
-      <label>${c.label}</label>
-      <input type="text" id="pat-${c.id}" placeholder="My ${c.label} problem today was..." />
-    </div>
-  `).join('');
+      <label style="color:${c.color}55">${c.label}</label>
+      <input type="text" id="pat-${c.id}" placeholder="My ${c.label} problem today was..."/>
+    </div>`).join('');
 }
 
-function setToggle(group, val) {
-  skipToggle = val;
-  ['yes','no','partial'].forEach(v => {
-    const el = document.getElementById(`skip-${v}`);
-    el.className = 'toggle-btn';
-    if (v === val) {
-      el.classList.add(v === 'yes' ? 'sel-yes' : v === 'no' ? 'sel-no' : 'sel-yes');
-    }
+function setToggle(val){
+  skipToggle=val;
+  const map={yes:'sel-yes',no:'sel-no',partial:'sel-partial'};
+  ['yes','no','partial'].forEach(v=>{
+    const el=document.getElementById('skip-'+v);
+    el.className='toggle-btn'+(v===val?' '+map[v]:'');
   });
 }
 
-function updateProgress() {
-  const phases = ['Setup','Phase 1','Phase 2','Phase 3','Phase 4','Phase 5'];
-  document.getElementById('wizard-progress').innerHTML =
-    phases.map((p, i) => `<div class="prog-step ${i < currentPhase ? 'done' : i === currentPhase ? 'active' : ''}"></div>`).join('')
-    + `<span class="prog-label">${phases[currentPhase]}</span>`;
+function updateProgress(){
+  const phases=['Setup','Phase 1','Phase 2','Phase 3','Phase 4','Phase 5'];
+  document.getElementById('wizard-progress').innerHTML=
+    phases.map((p,i)=>`<div class="prog-step ${i<currentPhase?'done':i===currentPhase?'active':''}"></div>`).join('')
+    +`<span class="prog-label">${phases[currentPhase]}</span>`;
 }
 
-function nextPhase(n) {
-  document.querySelectorAll('.wizard-phase').forEach(p => p.style.display = 'none');
-  document.getElementById(`phase-${n}`).style.display = 'block';
-  currentPhase = n;
-  updateProgress();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+function nextPhase(n){
+  document.querySelectorAll('.wizard-phase').forEach(p=>p.style.display='none');
+  document.getElementById('phase-'+n).style.display='block';
+  currentPhase=n;updateProgress();
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
-function saveMock() {
-  const cats = {};
-  CATS.forEach(c => {
-    cats[c.id] = {
-      correct: parseInt(document.getElementById(`cat-${c.id}-correct`)?.value)||0,
-      partial: parseInt(document.getElementById(`cat-${c.id}-partial`)?.value)||0,
-      wrong: parseInt(document.getElementById(`cat-${c.id}-wrong`)?.value)||0,
-      timeNote: document.getElementById(`cat-${c.id}-note`)?.value||''
+function saveMock(){
+  const cats={};
+  CATS.forEach(c=>{
+    cats[c.id]={
+      correct:parseInt(document.getElementById('cat-'+c.id+'-correct')?.value)||0,
+      partial:parseInt(document.getElementById('cat-'+c.id+'-partial')?.value)||0,
+      wrong:parseInt(document.getElementById('cat-'+c.id+'-wrong')?.value)||0,
+      timeNote:document.getElementById('cat-'+c.id+'-note')?.value||''
     };
   });
+  const patterns={};
+  CATS.forEach(c=>{patterns[c.id]=document.getElementById('pat-'+c.id)?.value||'';});
 
-  const patterns = {};
-  CATS.forEach(c => {
-    patterns[c.id] = document.getElementById(`pat-${c.id}`)?.value||'';
-  });
-
-  const m = {
-    id: Date.now().toString(),
-    savedAt: Date.now(),
-    mockName: document.getElementById('mockName').value || 'Mini-Mock',
-    mockDate: document.getElementById('mockDate').value || new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'}),
-    score: parseInt(document.getElementById('mockScore').value)||0,
-    percentile: parseInt(document.getElementById('mockPercentile').value)||0,
-    categories: cats,
-    p1: {
-      timeHurt: document.getElementById('p1-timeHurt').value,
-      hardest: document.getElementById('p1-hardest').value,
-      skipUsed: skipToggle || 'not recorded',
-      skipNotes: document.getElementById('p1-skipNotes').value
+  const m={
+    id:Date.now().toString(),savedAt:Date.now(),
+    mockName:document.getElementById('mockName').value||'Mini-Mock',
+    mockDate:document.getElementById('mockDate').value||new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'}),
+    score:parseInt(document.getElementById('mockScore').value)||0,
+    percentile:parseInt(document.getElementById('mockPercentile').value)||0,
+    categories:cats,
+    p1:{
+      timeHurt:document.getElementById('p1-timeHurt').value,
+      hardest:document.getElementById('p1-hardest').value,
+      skipUsed:skipToggle||'not recorded',
+      skipNotes:document.getElementById('p1-skipNotes').value
     },
-    p3: {
-      typeA: document.getElementById('p3-typeA').value,
-      typeB: document.getElementById('p3-typeB').value,
-      typeC: document.getElementById('p3-typeC').value
+    p3:{
+      typeA:document.getElementById('p3-typeA').value,
+      typeB:document.getElementById('p3-typeB').value,
+      typeC:document.getElementById('p3-typeC').value
     },
     patterns,
-    p5: {
-      drill: document.getElementById('p5-drill').value,
-      rule: document.getElementById('p5-rule').value,
-      category: document.getElementById('p5-category').value,
-      other: document.getElementById('p5-other').value
+    p5:{
+      drill:document.getElementById('p5-drill').value,
+      rule:document.getElementById('p5-rule').value,
+      category:document.getElementById('p5-category').value,
+      other:document.getElementById('p5-other').value
     }
   };
-
-  mocks.push(m);
-  save();
-  showDetail(m.id);
+  mocks.push(m);save();showDetail(m.id);
 }
 
-// Init
 renderDashboard();
 </script>
 </body>
