@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UCAT Review Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #111118;
+    --bg3: #18181f;
+    --bg4: #202028;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.14);
+    --text: #e8e8f0;
+    --text2: #8888a0;
+    --text3: #555568;
+    --blue: #4d9fff;
+    --blue-dim: rgba(77,159,255,0.12);
+    --green: #3ecf8e;
+    --green-dim: rgba(62,207,142,0.12);
+    --red: #f87171;
+    --red-dim: rgba(248,113,113,0.12);
+    --amber: #fbbf24;
+    --amber-dim: rgba(251,191,36,0.12);
+    --purple: #a78bfa;
+    --purple-dim: rgba(167,139,250,0.12);
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+    --radius: 10px;
+    --radius-lg: 16px;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* Layout */
+  .app { display: flex; min-height: 100vh; }
+  .sidebar {
+    width: 220px; min-height: 100vh; background: var(--bg2);
+    border-right: 1px solid var(--border); padding: 24px 16px;
+    position: fixed; top: 0; left: 0; bottom: 0;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .main { margin-left: 220px; padding: 36px 40px; max-width: 960px; width: 100%; }
+
+  .logo {
+    font-family: var(--mono); font-size: 13px; color: var(--blue);
+    letter-spacing: 0.08em; padding: 0 8px 20px; border-bottom: 1px solid var(--border);
+    margin-bottom: 12px; font-weight: 500;
+  }
+  .logo span { color: var(--text3); }
+
+  .nav-btn {
+    display: flex; align-items: center; gap: 10px; padding: 9px 12px;
+    border-radius: var(--radius); border: none; background: none;
+    color: var(--text2); font-family: var(--sans); font-size: 14px;
+    cursor: pointer; width: 100%; text-align: left; transition: all 0.15s;
+  }
+  .nav-btn:hover { background: var(--bg3); color: var(--text); }
+  .nav-btn.active { background: var(--blue-dim); color: var(--blue); }
+  .nav-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; opacity: 0.6; flex-shrink: 0; }
+
+  .sidebar-footer { margin-top: auto; font-size: 12px; color: var(--text3); padding: 12px 8px 0; border-top: 1px solid var(--border); }
+
+  /* Views */
+  .view { display: none; animation: fadeIn 0.2s ease; }
+  .view.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* Typography */
+  h1 { font-size: 26px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 4px; }
+  h2 { font-size: 17px; font-weight: 500; margin-bottom: 16px; }
+  h3 { font-size: 14px; font-weight: 500; color: var(--text2); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px; }
+  .subtitle { color: var(--text2); font-size: 14px; margin-bottom: 32px; }
+
+  /* Cards */
+  .card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 20px 24px; margin-bottom: 16px;
+  }
+  .card-sm {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px 16px;
+  }
+
+  /* Stats row */
+  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 28px; }
+  .stat-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 18px 20px;
+  }
+  .stat-label { font-size: 12px; color: var(--text3); font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+  .stat-val { font-size: 28px; font-weight: 600; letter-spacing: -0.02em; line-height: 1; }
+  .stat-sub { font-size: 12px; color: var(--text2); margin-top: 4px; }
+
+  /* Mock list */
+  .mock-list { display: flex; flex-direction: column; gap: 10px; }
+  .mock-item {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 16px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .mock-item:hover { border-color: var(--border2); background: var(--bg3); }
+  .mock-item-left { display: flex; flex-direction: column; gap: 3px; }
+  .mock-item-name { font-weight: 500; font-size: 15px; }
+  .mock-item-date { font-size: 12px; color: var(--text3); font-family: var(--mono); }
+  .mock-item-right { display: flex; align-items: center; gap: 16px; }
+  .score-badge {
+    font-family: var(--mono); font-size: 18px; font-weight: 500;
+    padding: 4px 12px; border-radius: 8px;
+  }
+  .score-badge.high { background: var(--green-dim); color: var(--green); }
+  .score-badge.mid { background: var(--blue-dim); color: var(--blue); }
+  .score-badge.low { background: var(--red-dim); color: var(--red); }
+  .percentile-tag { font-size: 12px; color: var(--text2); }
+  .arrow-icon { color: var(--text3); font-size: 18px; }
+
+  /* Category pills */
+  .cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px; }
+  .cat-pill {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 10px 14px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .cat-name { font-size: 13px; font-weight: 500; }
+  .cat-score { font-family: var(--mono); font-size: 13px; }
+  .cat-score.good { color: var(--green); }
+  .cat-score.ok { color: var(--amber); }
+  .cat-score.bad { color: var(--red); }
+
+  /* Wizard */
+  .wizard-progress { display: flex; gap: 6px; margin-bottom: 32px; align-items: center; }
+  .prog-step {
+    height: 3px; border-radius: 2px; flex: 1; background: var(--bg4);
+    transition: background 0.3s;
+  }
+  .prog-step.done { background: var(--green); }
+  .prog-step.active { background: var(--blue); }
+  .prog-label { font-size: 12px; font-family: var(--mono); color: var(--text3); white-space: nowrap; }
+
+  .phase-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 28px 32px; margin-bottom: 20px;
+  }
+  .phase-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--blue-dim); color: var(--blue);
+    font-size: 11px; font-family: var(--mono); font-weight: 500;
+    letter-spacing: 0.08em; padding: 4px 10px; border-radius: 6px;
+    text-transform: uppercase; margin-bottom: 14px;
+  }
+  .phase-title { font-size: 20px; font-weight: 600; margin-bottom: 6px; }
+  .phase-desc { color: var(--text2); font-size: 13px; margin-bottom: 24px; line-height: 1.7; }
+
+  /* Form elements */
+  label { font-size: 13px; font-weight: 500; color: var(--text2); display: block; margin-bottom: 6px; }
+  input[type="text"], input[type="number"], textarea, select {
+    width: 100%; background: var(--bg3); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 10px 14px;
+    color: var(--text); font-family: var(--sans); font-size: 14px;
+    transition: border-color 0.15s; outline: none; resize: vertical;
+  }
+  input[type="text"]:focus, input[type="number"]:focus, textarea:focus, select:focus {
+    border-color: var(--blue);
+  }
+  select option { background: var(--bg3); }
+  .field { margin-bottom: 18px; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .field-hint { font-size: 12px; color: var(--text3); margin-top: 5px; }
+
+  /* Toggle group */
+  .toggle-group { display: flex; gap: 8px; }
+  .toggle-btn {
+    flex: 1; padding: 8px 14px; border-radius: var(--radius);
+    border: 1px solid var(--border); background: var(--bg3);
+    color: var(--text2); font-family: var(--sans); font-size: 13px;
+    cursor: pointer; transition: all 0.15s; font-weight: 500;
+  }
+  .toggle-btn:hover { border-color: var(--border2); color: var(--text); }
+  .toggle-btn.sel-yes { background: var(--green-dim); border-color: var(--green); color: var(--green); }
+  .toggle-btn.sel-no { background: var(--red-dim); border-color: var(--red); color: var(--red); }
+
+  /* Category row in phase 2 */
+  .cat-row {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px 16px; margin-bottom: 10px;
+  }
+  .cat-row-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .cat-row-name { font-weight: 500; font-size: 14px; }
+  .tally-row { display: flex; gap: 10px; margin-bottom: 10px; }
+  .tally-input { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
+  .tally-input label { font-size: 11px; text-align: center; }
+  .tally-input input { text-align: center; padding: 8px 6px; }
+  .tally-correct label { color: var(--green); }
+  .tally-partial label { color: var(--amber); }
+  .tally-wrong label { color: var(--red); }
+
+  /* Type sections in phase 3 */
+  .type-section { margin-bottom: 20px; }
+  .type-header {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+  }
+  .type-badge {
+    font-family: var(--mono); font-size: 11px; font-weight: 500;
+    padding: 3px 8px; border-radius: 5px; letter-spacing: 0.04em;
+  }
+  .type-a { background: var(--red-dim); color: var(--red); }
+  .type-b { background: var(--amber-dim); color: var(--amber); }
+  .type-c { background: var(--blue-dim); color: var(--blue); }
+  .type-label { font-size: 13px; color: var(--text2); }
+
+  /* Buttons */
+  .btn-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 8px; }
+  .btn {
+    padding: 10px 22px; border-radius: var(--radius);
+    font-family: var(--sans); font-size: 14px; font-weight: 500;
+    cursor: pointer; transition: all 0.15s; border: none;
+  }
+  .btn-primary { background: var(--blue); color: #fff; }
+  .btn-primary:hover { background: #6db3ff; }
+  .btn-secondary {
+    background: var(--bg3); color: var(--text2);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover { color: var(--text); border-color: var(--border2); }
+  .btn-danger { background: var(--red-dim); color: var(--red); border: 1px solid transparent; }
+  .btn-danger:hover { border-color: var(--red); }
+  .btn-full { width: 100%; text-align: center; justify-content: center; display: flex; }
+  .btn-sm { padding: 6px 14px; font-size: 13px; }
+
+  /* Detail view */
+  .detail-header { margin-bottom: 28px; }
+  .detail-score { font-family: var(--mono); font-size: 42px; font-weight: 500; letter-spacing: -0.02em; }
+  .detail-score.high { color: var(--green); }
+  .detail-score.mid { color: var(--blue); }
+  .detail-score.low { color: var(--red); }
+
+  .phase-review-section { margin-bottom: 24px; }
+  .phase-review-title {
+    font-size: 12px; font-family: var(--mono); font-weight: 500;
+    color: var(--blue); text-transform: uppercase; letter-spacing: 0.08em;
+    margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border);
+  }
+
+  .info-row { display: flex; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+  .info-row:last-child { border-bottom: none; }
+  .info-key { font-size: 12px; color: var(--text3); min-width: 160px; padding-top: 2px; }
+  .info-val { font-size: 14px; color: var(--text); flex: 1; }
+
+  .action-item {
+    display: flex; gap: 12px; padding: 12px 0;
+    border-bottom: 1px solid var(--border); align-items: flex-start;
+  }
+  .action-item:last-child { border-bottom: none; }
+  .action-num {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--blue-dim); color: var(--blue);
+    font-size: 11px; font-family: var(--mono); font-weight: 500;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+
+  /* Chart container */
+  .chart-wrap { position: relative; height: 180px; margin-top: 8px; }
+
+  /* Empty state */
+  .empty {
+    text-align: center; padding: 60px 24px; color: var(--text3);
+  }
+  .empty-icon { font-size: 40px; margin-bottom: 12px; }
+  .empty-text { font-size: 15px; margin-bottom: 20px; }
+
+  /* Tabs */
+  .tab-row { display: flex; gap: 4px; margin-bottom: 24px; background: var(--bg2); border-radius: var(--radius); padding: 4px; border: 1px solid var(--border); }
+  .tab {
+    flex: 1; padding: 7px 12px; border-radius: 7px;
+    border: none; background: none; color: var(--text2);
+    font-family: var(--sans); font-size: 13px; font-weight: 500;
+    cursor: pointer; transition: all 0.15s; text-align: center;
+  }
+  .tab.active { background: var(--bg3); color: var(--text); }
+
+  /* Responsive */
+  @media (max-width: 700px) {
+    .sidebar { width: 60px; }
+    .sidebar .nav-label, .logo span, .sidebar-footer { display: none; }
+    .main { margin-left: 60px; padding: 24px 20px; }
+    .stats-row { grid-template-columns: 1fr 1fr; }
+    .field-row { grid-template-columns: 1fr; }
+    .cat-grid { grid-template-columns: 1fr; }
+  }
+
+  .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+  .tag {
+    font-size: 12px; font-family: var(--mono); padding: 3px 10px;
+    border-radius: 6px; background: var(--bg4); color: var(--text2);
+    border: 1px solid var(--border);
+  }
+
+  .divider { height: 1px; background: var(--border); margin: 24px 0; }
+  .scroll-top { padding-top: 8px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <nav class="sidebar">
+    <div class="logo">UCAT<span>/review</span></div>
+    <button class="nav-btn active" id="nav-dash" onclick="showView('dashboard')">
+      <span class="nav-dot"></span>
+      <span class="nav-label">Dashboard</span>
+    </button>
+    <button class="nav-btn" id="nav-new" onclick="showView('new-mock')">
+      <span class="nav-dot" style="background:var(--blue)"></span>
+      <span class="nav-label">New Review</span>
+    </button>
+    <div class="sidebar-footer">Decision Making tracker</div>
+  </nav>
+
+  <main class="main">
+
+    <!-- DASHBOARD VIEW -->
+    <div class="view active" id="view-dashboard">
+      <h1>Your Reviews</h1>
+      <p class="subtitle">Decision Making mini-mock tracker</p>
+
+      <div class="stats-row" id="stats-row"></div>
+
+      <div style="margin-bottom: 28px;">
+        <h3>Score trend</h3>
+        <div class="card" style="padding: 16px 20px;">
+          <div class="chart-wrap">
+            <canvas id="scoreChart" role="img" aria-label="Score trend across mini-mocks">No data yet.</canvas>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+        <h3 style="margin:0">All reviews</h3>
+        <button class="btn btn-primary btn-sm" onclick="showView('new-mock')">+ New Review</button>
+      </div>
+      <div class="mock-list" id="mock-list"></div>
+    </div>
+
+    <!-- NEW MOCK WIZARD -->
+    <div class="view" id="view-new-mock">
+      <h1>New Mock Review</h1>
+      <p class="subtitle">Work through each phase carefully — it takes ~50 minutes</p>
+
+      <div class="wizard-progress" id="wizard-progress"></div>
+
+      <!-- Phase 0: Mock Info -->
+      <div id="phase-0" class="wizard-phase">
+        <div class="phase-card">
+          <div class="phase-tag">Setup</div>
+          <div class="phase-title">Mock details</div>
+          <div class="phase-desc">Enter the basics before you start the review process.</div>
+
+          <div class="field">
+            <label>Mock name</label>
+            <input type="text" id="mockName" placeholder="e.g. Decision Making Mini-Mock 3" />
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Date completed</label>
+              <input type="text" id="mockDate" placeholder="e.g. 14 May 2025" />
+            </div>
+            <div class="field">
+              <label>Score</label>
+              <input type="number" id="mockScore" placeholder="e.g. 640" min="300" max="900" />
+            </div>
+          </div>
+          <div class="field">
+            <label>Percentile</label>
+            <input type="number" id="mockPercentile" placeholder="e.g. 55" min="1" max="99" />
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="showView('dashboard')">Cancel</button>
+          <button class="btn btn-primary" onclick="nextPhase(1)">Next: Immediate reflection →</button>
+        </div>
+      </div>
+
+      <!-- Phase 1: Immediate Reflection -->
+      <div id="phase-1" class="wizard-phase" style="display:none">
+        <div class="phase-card">
+          <div class="phase-tag">Phase 1 · 5 min</div>
+          <div class="phase-title">Immediate reflection</div>
+          <div class="phase-desc">Before looking at results in detail — capture your raw feelings while they're fresh. Do this before you analyse anything.</div>
+
+          <div class="field">
+            <label>Where did time hurt you? Which specific questions felt rushed or panicked?</label>
+            <textarea id="p1-timeHurt" rows="3" placeholder="e.g. Q6 took way too long, Q33 was a panic click, ran out of time on all probability..."></textarea>
+          </div>
+          <div class="field">
+            <label>Which category felt hardest today?</label>
+            <input type="text" id="p1-hardest" placeholder="e.g. Syllogisms — kept second-guessing myself" />
+          </div>
+          <div class="field">
+            <label>Did you use the 90-second skip rule?</label>
+            <div class="toggle-group">
+              <button class="toggle-btn" id="skip-yes" onclick="setToggle('skip','yes')">Yes</button>
+              <button class="toggle-btn" id="skip-no" onclick="setToggle('skip','no')">No</button>
+              <button class="toggle-btn" id="skip-partial" onclick="setToggle('skip','partial')">Partially</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>Skip rule notes — where did you get stuck and not skip when you should have?</label>
+            <textarea id="p1-skipNotes" rows="2" placeholder="e.g. Q6 — spent 2+ minutes on a syllogism instead of moving on..."></textarea>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="nextPhase(0)">← Back</button>
+          <button class="btn btn-primary" onclick="nextPhase(2)">Next: Category tallies →</button>
+        </div>
+      </div>
+
+      <!-- Phase 2: Category Tallies -->
+      <div id="phase-2" class="wizard-phase" style="display:none">
+        <div class="phase-card">
+          <div class="phase-tag">Phase 2 · 10 min</div>
+          <div class="phase-title">Category results</div>
+          <div class="phase-desc">Tally each category from the results screen. Green = correct, yellow = partial (1/2 marks), red = wrong. Add a note on time patterns — where did you spend too long, or panic click?</div>
+
+          <div id="cat-inputs"></div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="nextPhase(1)">← Back</button>
+          <button class="btn btn-primary" onclick="nextPhase(3)">Next: Question review →</button>
+        </div>
+      </div>
+
+      <!-- Phase 3: Question Analysis -->
+      <div id="phase-3" class="wizard-phase" style="display:none">
+        <div class="phase-card">
+          <div class="phase-tag">Phase 3 · 20–30 min</div>
+          <div class="phase-title">Question analysis</div>
+          <div class="phase-desc">Go through each question and classify it. Write notes on the ones that matter — focus on Type A first (confident but wrong). Skip Type D (correct and confident) entirely.</div>
+
+          <div class="type-section">
+            <div class="type-header">
+              <span class="type-badge type-a">Type A</span>
+              <span class="type-label">Confident but wrong — your logic is broken somewhere</span>
+            </div>
+            <textarea id="p3-typeA" rows="4" placeholder="e.g. Q6 — I was certain 'all cats are mammals' implied 'all mammals are cats' but that's wrong. Q11 — misread the venn overlap..."></textarea>
+            <div class="field-hint">Most important to review. Find the exact step where your logic diverged.</div>
+          </div>
+
+          <div class="type-section">
+            <div class="type-header">
+              <span class="type-badge type-b">Type B</span>
+              <span class="type-label">Knew you were guessing or ran out of time</span>
+            </div>
+            <textarea id="p3-typeB" rows="3" placeholder="e.g. Q33 — 3 second answer, complete panic click. Q28 — ran out of time, picked randomly..."></textarea>
+            <div class="field-hint">Ask: what earlier question stole the time that should have gone here?</div>
+          </div>
+
+          <div class="type-section">
+            <div class="type-header">
+              <span class="type-badge type-c">Type C</span>
+              <span class="type-label">Got it right but felt unsure — was your reasoning actually correct?</span>
+            </div>
+            <textarea id="p3-typeC" rows="3" placeholder="e.g. Q14 — narrowed to two options and guessed correctly. Need to confirm my reasoning was right not just the answer..."></textarea>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="nextPhase(2)">← Back</button>
+          <button class="btn btn-primary" onclick="nextPhase(4)">Next: Pattern analysis →</button>
+        </div>
+      </div>
+
+      <!-- Phase 4: Pattern Analysis -->
+      <div id="phase-4" class="wizard-phase" style="display:none">
+        <div class="phase-card">
+          <div class="phase-tag">Phase 4 · 10 min</div>
+          <div class="phase-title">Category pattern analysis</div>
+          <div class="phase-desc">Write one sentence per category identifying your specific pattern today. This is what drives your next practice session.</div>
+
+          <div id="pattern-inputs"></div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="nextPhase(3)">← Back</button>
+          <button class="btn btn-primary" onclick="nextPhase(5)">Next: Action notes →</button>
+        </div>
+      </div>
+
+      <!-- Phase 5: Action Notes -->
+      <div id="phase-5" class="wizard-phase" style="display:none">
+        <div class="phase-card">
+          <div class="phase-tag">Phase 5 · 5 min</div>
+          <div class="phase-title">Action notes</div>
+          <div class="phase-desc">The three things that make this review actually change your next performance. Be specific. Look at these before every practice session until your next mock.</div>
+
+          <div class="field">
+            <label>1. One technique I will drill before my next mini-mock</label>
+            <textarea id="p5-drill" rows="2" placeholder="e.g. Do 5 syllogisms daily with 60-second timer — not 'practice syllogisms more'"></textarea>
+          </div>
+          <div class="field">
+            <label>2. One time management rule I broke today</label>
+            <textarea id="p5-rule" rows="2" placeholder="e.g. Spent more than 90 seconds on Q6 and didn't skip it"></textarea>
+          </div>
+          <div class="field">
+            <label>3. One category to prioritise in my next practice session</label>
+            <input type="text" id="p5-category" placeholder="e.g. Logic Puzzles — only got 3/6 and barely practised them" />
+          </div>
+          <div class="field">
+            <label>Any other notes or observations</label>
+            <textarea id="p5-other" rows="3" placeholder="Anything else you want to remember about this mock..."></textarea>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="nextPhase(4)">← Back</button>
+          <button class="btn btn-primary" onclick="saveMock()">Save review ✓</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- DETAIL VIEW -->
+    <div class="view" id="view-detail">
+      <button class="btn btn-secondary btn-sm" onclick="showView('dashboard')" style="margin-bottom:20px">← All reviews</button>
+      <div id="detail-content"></div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const CATS = [
+  { id: 'syllogisms', label: 'Syllogisms', color: 'var(--purple)' },
+  { id: 'logicPuzzles', label: 'Logic Puzzles', color: 'var(--blue)' },
+  { id: 'strongestArg', label: 'Strongest Argument', color: 'var(--green)' },
+  { id: 'inference', label: 'Inference', color: 'var(--amber)' },
+  { id: 'vennDiagrams', label: 'Venn Diagrams', color: 'var(--blue)' },
+  { id: 'probability', label: 'Probability', color: 'var(--red)' }
+];
+
+let mocks = JSON.parse(localStorage.getItem('ucat_mocks') || '[]');
+let currentPhase = 0;
+let skipToggle = null;
+let chartInstance = null;
+
+function save() {
+  localStorage.setItem('ucat_mocks', JSON.stringify(mocks));
+}
+
+function showView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+
+  if (name === 'dashboard') {
+    document.getElementById('view-dashboard').classList.add('active');
+    document.getElementById('nav-dash').classList.add('active');
+    renderDashboard();
+  } else if (name === 'new-mock') {
+    document.getElementById('view-new-mock').classList.add('active');
+    document.getElementById('nav-new').classList.add('active');
+    resetWizard();
+  } else if (name === 'detail') {
+    document.getElementById('view-detail').classList.add('active');
+  }
+}
+
+function scoreClass(s) {
+  if (s >= 660) return 'high';
+  if (s >= 600) return 'mid';
+  return 'low';
+}
+
+function renderDashboard() {
+  const sorted = [...mocks].sort((a,b) => b.savedAt - a.savedAt);
+
+  // Stats
+  const statsEl = document.getElementById('stats-row');
+  const avg = mocks.length ? Math.round(mocks.reduce((a,m)=>a+m.score,0)/mocks.length) : null;
+  const latest = sorted[0];
+  const best = mocks.length ? Math.max(...mocks.map(m=>m.score)) : null;
+  statsEl.innerHTML = `
+    <div class="stat-card">
+      <div class="stat-label">Mocks done</div>
+      <div class="stat-val">${mocks.length}</div>
+      <div class="stat-sub">Decision Making</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Latest score</div>
+      <div class="stat-val ${latest ? scoreClass(latest.score) : ''}" style="color:${latest ? (latest.score>=660?'var(--green)':latest.score>=600?'var(--blue)':'var(--red)') : 'var(--text3)'}">${latest ? latest.score : '—'}</div>
+      <div class="stat-sub">${latest ? latest.percentile+'th percentile' : 'No mocks yet'}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Average</div>
+      <div class="stat-val">${avg || '—'}</div>
+      <div class="stat-sub">${mocks.length > 1 ? 'across '+mocks.length+' mocks' : ''}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Best score</div>
+      <div class="stat-val" style="color:var(--green)">${best || '—'}</div>
+      <div class="stat-sub">${best ? 'personal best' : ''}</div>
+    </div>
+  `;
+
+  // Chart
+  const chronological = [...mocks].sort((a,b) => a.savedAt - b.savedAt);
+  if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
+  if (chronological.length > 0) {
+    const ctx = document.getElementById('scoreChart').getContext('2d');
+    chartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: chronological.map(m => m.mockName || 'Mock'),
+        datasets: [{
+          label: 'Score',
+          data: chronological.map(m => m.score),
+          borderColor: '#4d9fff',
+          backgroundColor: 'rgba(77,159,255,0.08)',
+          pointBackgroundColor: '#4d9fff',
+          pointRadius: 5,
+          tension: 0.3,
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8888a0', font: { family: 'IBM Plex Mono', size: 11 } } },
+          y: {
+            min: 300, max: 900, grid: { color: 'rgba(255,255,255,0.05)' },
+            ticks: { color: '#8888a0', font: { family: 'IBM Plex Mono', size: 11 }, stepSize: 100 }
+          }
+        }
+      }
+    });
+  }
+
+  // List
+  const listEl = document.getElementById('mock-list');
+  if (sorted.length === 0) {
+    listEl.innerHTML = `<div class="empty">
+      <div class="empty-icon">📋</div>
+      <div class="empty-text">No reviews yet. Complete your first mini-mock review.</div>
+      <button class="btn btn-primary" onclick="showView('new-mock')">Start first review</button>
+    </div>`;
+    return;
+  }
+  listEl.innerHTML = sorted.map((m,i) => `
+    <div class="mock-item" onclick="showDetail('${m.id}')">
+      <div class="mock-item-left">
+        <div class="mock-item-name">${m.mockName || 'Mini-Mock ' + (mocks.length - i)}</div>
+        <div class="mock-item-date">${m.mockDate || '—'}</div>
+      </div>
+      <div class="mock-item-right">
+        <div class="score-badge ${scoreClass(m.score)}">${m.score}</div>
+        <div class="percentile-tag">${m.percentile}th %ile</div>
+        <div class="arrow-icon">›</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function showDetail(id) {
+  const m = mocks.find(x => x.id === id);
+  if (!m) return;
+  showView('detail');
+
+  const sc = scoreClass(m.score);
+  const catHtml = CATS.map(c => {
+    const d = m.categories?.[c.id] || {};
+    const total = (d.correct||0) + (d.partial||0) + (d.wrong||0);
+    const pct = total ? Math.round(((d.correct||0)+(d.partial||0)*0.5)/total*100) : null;
+    const cls = pct >= 75 ? 'good' : pct >= 50 ? 'ok' : 'bad';
+    return `<div class="cat-pill">
+      <div class="cat-name">${c.label}</div>
+      <div class="cat-score ${cls}">${d.correct||0}✓ ${d.partial||0}½ ${d.wrong||0}✗</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('detail-content').innerHTML = `
+    <div class="detail-header">
+      <h1>${m.mockName || 'Mini-Mock'}</h1>
+      <div style="display:flex;align-items:baseline;gap:16px;margin-top:8px">
+        <div class="detail-score ${sc}">${m.score}</div>
+        <div style="color:var(--text2);font-size:14px">${m.percentile}th percentile · ${m.mockDate || ''}</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:20px">
+      <h3>Category results</h3>
+      <div class="cat-grid">${catHtml}</div>
+      <div class="divider" style="margin:12px 0"></div>
+      ${CATS.map(c => {
+        const d = m.categories?.[c.id]||{};
+        return d.timeNote ? `<div class="info-row"><div class="info-key">${c.label} — time notes</div><div class="info-val">${d.timeNote}</div></div>` : '';
+      }).join('')}
+    </div>
+
+    <div class="card" style="margin-bottom:20px">
+      <h3>Immediate reflection</h3>
+      <div class="info-row"><div class="info-key">Time hurt me at</div><div class="info-val">${m.p1?.timeHurt || '—'}</div></div>
+      <div class="info-row"><div class="info-key">Hardest category</div><div class="info-val">${m.p1?.hardest || '—'}</div></div>
+      <div class="info-row"><div class="info-key">Used 90s skip rule</div><div class="info-val">${m.p1?.skipUsed || '—'}</div></div>
+      <div class="info-row"><div class="info-key">Skip rule notes</div><div class="info-val">${m.p1?.skipNotes || '—'}</div></div>
+    </div>
+
+    <div class="card" style="margin-bottom:20px">
+      <h3>Question analysis</h3>
+      <div class="type-section" style="margin-bottom:14px">
+        <div class="type-header" style="margin-bottom:6px"><span class="type-badge type-a">Type A</span><span class="type-label">Confident but wrong</span></div>
+        <div style="color:var(--text);font-size:14px;line-height:1.7">${m.p3?.typeA || '—'}</div>
+      </div>
+      <div class="type-section" style="margin-bottom:14px">
+        <div class="type-header" style="margin-bottom:6px"><span class="type-badge type-b">Type B</span><span class="type-label">Rushed / guessing</span></div>
+        <div style="color:var(--text);font-size:14px;line-height:1.7">${m.p3?.typeB || '—'}</div>
+      </div>
+      <div class="type-section">
+        <div class="type-header" style="margin-bottom:6px"><span class="type-badge type-c">Type C</span><span class="type-label">Right but unsure</span></div>
+        <div style="color:var(--text);font-size:14px;line-height:1.7">${m.p3?.typeC || '—'}</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:20px">
+      <h3>Category patterns</h3>
+      ${CATS.map(c => {
+        const val = m.patterns?.[c.id];
+        return val ? `<div class="info-row"><div class="info-key">${c.label}</div><div class="info-val">${val}</div></div>` : '';
+      }).filter(Boolean).join('') || '<div style="color:var(--text3);font-size:14px">No patterns recorded.</div>'}
+    </div>
+
+    <div class="card" style="background:var(--blue-dim);border-color:rgba(77,159,255,0.2);margin-bottom:20px">
+      <h3 style="color:var(--blue)">Action notes — review before next session</h3>
+      <div class="action-item"><div class="action-num">1</div><div><div style="font-size:12px;color:var(--text3);margin-bottom:3px">Technique to drill</div><div>${m.p5?.drill || '—'}</div></div></div>
+      <div class="action-item"><div class="action-num">2</div><div><div style="font-size:12px;color:var(--text3);margin-bottom:3px">Time rule I broke</div><div>${m.p5?.rule || '—'}</div></div></div>
+      <div class="action-item"><div class="action-num">3</div><div><div style="font-size:12px;color:var(--text3);margin-bottom:3px">Priority category</div><div>${m.p5?.category || '—'}</div></div></div>
+      ${m.p5?.other ? `<div class="action-item"><div class="action-num" style="background:var(--bg4);color:var(--text2)">+</div><div><div style="font-size:12px;color:var(--text3);margin-bottom:3px">Other notes</div><div>${m.p5.other}</div></div></div>` : ''}
+    </div>
+
+    <button class="btn btn-danger btn-sm" onclick="deleteMock('${m.id}')">Delete this review</button>
+  `;
+}
+
+function deleteMock(id) {
+  if (!confirm('Delete this review? This cannot be undone.')) return;
+  mocks = mocks.filter(m => m.id !== id);
+  save();
+  showView('dashboard');
+}
+
+/* WIZARD */
+function resetWizard() {
+  currentPhase = 0;
+  skipToggle = null;
+  document.querySelectorAll('.wizard-phase').forEach(p => p.style.display = 'none');
+  document.getElementById('phase-0').style.display = 'block';
+  document.getElementById('mockName').value = '';
+  document.getElementById('mockDate').value = '';
+  document.getElementById('mockScore').value = '';
+  document.getElementById('mockPercentile').value = '';
+  buildCatInputs();
+  buildPatternInputs();
+  updateProgress();
+}
+
+function buildCatInputs() {
+  document.getElementById('cat-inputs').innerHTML = CATS.map(c => `
+    <div class="cat-row">
+      <div class="cat-row-header">
+        <div class="cat-row-name">${c.label}</div>
+      </div>
+      <div class="tally-row">
+        <div class="tally-input tally-correct">
+          <label>Correct ✓</label>
+          <input type="number" id="cat-${c.id}-correct" min="0" max="20" value="0" />
+        </div>
+        <div class="tally-input tally-partial">
+          <label>Partial ½</label>
+          <input type="number" id="cat-${c.id}-partial" min="0" max="20" value="0" />
+        </div>
+        <div class="tally-input tally-wrong">
+          <label>Wrong ✗</label>
+          <input type="number" id="cat-${c.id}-wrong" min="0" max="20" value="0" />
+        </div>
+      </div>
+      <div class="field" style="margin-bottom:0">
+        <label>Time notes for this category</label>
+        <input type="text" id="cat-${c.id}-note" placeholder="e.g. Q6 took 2min+, Q33 panic click..." />
+      </div>
+    </div>
+  `).join('');
+}
+
+function buildPatternInputs() {
+  document.getElementById('pattern-inputs').innerHTML = CATS.map(c => `
+    <div class="field">
+      <label>${c.label}</label>
+      <input type="text" id="pat-${c.id}" placeholder="My ${c.label} problem today was..." />
+    </div>
+  `).join('');
+}
+
+function setToggle(group, val) {
+  skipToggle = val;
+  ['yes','no','partial'].forEach(v => {
+    const el = document.getElementById(`skip-${v}`);
+    el.className = 'toggle-btn';
+    if (v === val) {
+      el.classList.add(v === 'yes' ? 'sel-yes' : v === 'no' ? 'sel-no' : 'sel-yes');
+    }
+  });
+}
+
+function updateProgress() {
+  const phases = ['Setup','Phase 1','Phase 2','Phase 3','Phase 4','Phase 5'];
+  document.getElementById('wizard-progress').innerHTML =
+    phases.map((p, i) => `<div class="prog-step ${i < currentPhase ? 'done' : i === currentPhase ? 'active' : ''}"></div>`).join('')
+    + `<span class="prog-label">${phases[currentPhase]}</span>`;
+}
+
+function nextPhase(n) {
+  document.querySelectorAll('.wizard-phase').forEach(p => p.style.display = 'none');
+  document.getElementById(`phase-${n}`).style.display = 'block';
+  currentPhase = n;
+  updateProgress();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function saveMock() {
+  const cats = {};
+  CATS.forEach(c => {
+    cats[c.id] = {
+      correct: parseInt(document.getElementById(`cat-${c.id}-correct`)?.value)||0,
+      partial: parseInt(document.getElementById(`cat-${c.id}-partial`)?.value)||0,
+      wrong: parseInt(document.getElementById(`cat-${c.id}-wrong`)?.value)||0,
+      timeNote: document.getElementById(`cat-${c.id}-note`)?.value||''
+    };
+  });
+
+  const patterns = {};
+  CATS.forEach(c => {
+    patterns[c.id] = document.getElementById(`pat-${c.id}`)?.value||'';
+  });
+
+  const m = {
+    id: Date.now().toString(),
+    savedAt: Date.now(),
+    mockName: document.getElementById('mockName').value || 'Mini-Mock',
+    mockDate: document.getElementById('mockDate').value || new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'}),
+    score: parseInt(document.getElementById('mockScore').value)||0,
+    percentile: parseInt(document.getElementById('mockPercentile').value)||0,
+    categories: cats,
+    p1: {
+      timeHurt: document.getElementById('p1-timeHurt').value,
+      hardest: document.getElementById('p1-hardest').value,
+      skipUsed: skipToggle || 'not recorded',
+      skipNotes: document.getElementById('p1-skipNotes').value
+    },
+    p3: {
+      typeA: document.getElementById('p3-typeA').value,
+      typeB: document.getElementById('p3-typeB').value,
+      typeC: document.getElementById('p3-typeC').value
+    },
+    patterns,
+    p5: {
+      drill: document.getElementById('p5-drill').value,
+      rule: document.getElementById('p5-rule').value,
+      category: document.getElementById('p5-category').value,
+      other: document.getElementById('p5-other').value
+    }
+  };
+
+  mocks.push(m);
+  save();
+  showDetail(m.id);
+}
+
+// Init
+renderDashboard();
+</script>
+</body>
+</html>
