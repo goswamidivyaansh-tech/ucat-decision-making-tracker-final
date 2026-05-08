@@ -4,1406 +4,450 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>UCAT Review Tracker</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-
-<!-- ============================================================
-     FIREBASE CONFIG — REPLACE WITH YOUR OWN VALUES
-     Get these from: console.firebase.google.com
-     → Your project → Project settings → Your apps → Web app
-============================================================ -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, collection, doc, setDoc, getDocs, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey:            "AIzaSyAScpq6RdSG1OONk9Q1gcw1E8i7_kose0o",
-  authDomain:        "ucat-tracker.firebaseapp.com",
-  projectId:         "ucat-tracker",
-  storageBucket:     "ucat-tracker.firebasestorage.app",
-  messagingSenderId: "242021359226",
-  appId:             "1:242021359226:web:e22eb46dfb655b083c65c3"
-};
-
-const app  = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db   = getFirestore(app);
-const provider = new GoogleAuthProvider();
-
-let currentUser = null;
-
-/* ── Auth ── */
-window.signInWithGoogle = async () => {
-  try {
-    await signInWithPopup(auth, provider);
-  } catch(e) { console.error(e); showToast("Sign-in failed — check your Firebase config", "error"); }
-};
-window.signOutUser = async () => {
-  await signOut(auth);
-  mocks = [];
-  renderDashboard();
-  showAuthScreen();
-};
-
-onAuthStateChanged(auth, async user => {
-  currentUser = user;
-  if (user) {
-    hideAuthScreen();
-    await loadMocks();
-    showView('dashboard');
-  } else {
-    showAuthScreen();
-  }
-});
-
-/* ── Firestore helpers ── */
-function userCol() {
-  return collection(db, "users", currentUser.uid, "mocks");
-}
-
-window.loadMocks = async () => {
-  if (!currentUser) return;
-  showLoading(true);
-  try {
-    const q = query(userCol(), orderBy("savedAt", "asc"));
-    const snap = await getDocs(q);
-    mocks = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-  } catch(e) {
-    console.error(e);
-    showToast("Couldn't load your data — check Firestore rules", "error");
-  }
-  showLoading(false);
-};
-
-window.saveMockToCloud = async (mockObj) => {
-  if (!currentUser) return;
-  try {
-    await setDoc(doc(userCol(), mockObj.id), mockObj);
-    showToast("Review saved ✓", "success");
-  } catch(e) {
-    console.error(e);
-    showToast("Save failed — check your connection", "error");
-  }
-};
-
-window.deleteMockFromCloud = async (id) => {
-  if (!currentUser) return;
-  try {
-    await deleteDoc(doc(userCol(), id));
-  } catch(e) { console.error(e); }
-};
-
-</script>
-
 <style>
-*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-/* ═══════════════════════════════════
-   TOKENS — dark / light
-═══════════════════════════════════ */
-:root {
-  --cyan:   #00c8f0;
-  --purple: #a855f7;
-  --green:  #10d98a;
-  --red:    #f4607a;
-  --amber:  #f5a623;
-  --blue:   #4d9fff;
-  --sans:   'DM Sans', sans-serif;
-  --display:'Syne', sans-serif;
-  --mono:   'DM Mono', monospace;
-  --radius: 12px;
-  --radius-lg: 18px;
-  --radius-xl: 22px;
-  --shadow-sm: 0 2px 8px rgba(0,0,0,0.12);
-  --shadow-md: 0 8px 32px rgba(0,0,0,0.18);
-  --shadow-lg: 0 16px 48px rgba(0,0,0,0.24);
-}
-
-[data-theme="dark"] {
-  --bg:       #040410;
-  --bg2:      rgba(255,255,255,0.025);
-  --bg3:      rgba(255,255,255,0.045);
-  --bg4:      rgba(255,255,255,0.07);
-  --surface:  rgba(8,8,24,0.85);
-  --border:   rgba(255,255,255,0.07);
-  --border2:  rgba(255,255,255,0.13);
-  --border3:  rgba(255,255,255,0.22);
-  --text:     #e2e8f8;
-  --text2:    #8892b0;
-  --text3:    #454d6e;
-  --input-bg: rgba(255,255,255,0.05);
-  --orb1: rgba(0,200,240,0.14);
-  --orb2: rgba(168,85,247,0.10);
-  --orb3: rgba(16,217,138,0.07);
-  --orb4: rgba(0,200,240,0.05);
-  --orb5: rgba(245,166,35,0.06);
-  --grid-line: rgba(255,255,255,0.018);
-  --sidebar-bg: rgba(4,4,16,0.88);
-}
-
-[data-theme="light"] {
-  --bg:       #f0f2f8;
-  --bg2:      rgba(255,255,255,0.7);
-  --bg3:      rgba(255,255,255,0.9);
-  --bg4:      rgba(255,255,255,0.6);
-  --surface:  rgba(248,249,254,0.92);
-  --border:   rgba(0,0,0,0.07);
-  --border2:  rgba(0,0,0,0.11);
-  --border3:  rgba(0,0,0,0.18);
-  --text:     #12142a;
-  --text2:    #5a6080;
-  --text3:    #9098b8;
-  --input-bg: rgba(255,255,255,0.8);
-  --orb1: rgba(0,180,220,0.12);
-  --orb2: rgba(148,65,227,0.08);
-  --orb3: rgba(10,197,120,0.08);
-  --orb4: rgba(0,180,220,0.06);
-  --orb5: rgba(225,146,15,0.07);
-  --grid-line: rgba(0,0,0,0.028);
-  --sidebar-bg: rgba(240,242,250,0.92);
-}
-
-/* ═══════════════════════════════════
-   BACKGROUND
-═══════════════════════════════════ */
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--sans);
-  font-size: 15px;
-  line-height: 1.65;
-  min-height: 100vh;
-  overflow-x: hidden;
-  transition: background 0.4s, color 0.4s;
-}
-
-.bg-canvas {
-  position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
-}
-
-/* Fluctuating orbs — each has unique animation */
-.orb {
-  position: absolute; border-radius: 50%;
-  filter: blur(72px);
-  will-change: transform, opacity;
-}
-.orb1 {
-  width: 700px; height: 700px;
-  background: radial-gradient(circle, var(--orb1), transparent 68%);
-  top: -220px; left: -160px;
-  animation: fluctuate1 19s ease-in-out infinite;
-}
-.orb2 {
-  width: 550px; height: 550px;
-  background: radial-gradient(circle, var(--orb2), transparent 68%);
-  bottom: -140px; right: -120px;
-  animation: fluctuate2 26s ease-in-out infinite;
-}
-.orb3 {
-  width: 450px; height: 450px;
-  background: radial-gradient(circle, var(--orb3), transparent 68%);
-  top: 45%; left: 38%;
-  animation: fluctuate3 33s ease-in-out infinite;
-}
-.orb4 {
-  width: 320px; height: 320px;
-  background: radial-gradient(circle, var(--orb4), transparent 68%);
-  bottom: 25%; left: 8%;
-  animation: fluctuate4 22s ease-in-out infinite;
-}
-.orb5 {
-  width: 380px; height: 380px;
-  background: radial-gradient(circle, var(--orb5), transparent 68%);
-  top: 20%; right: 12%;
-  animation: fluctuate5 29s ease-in-out infinite;
-}
-
-@keyframes fluctuate1 {
-  0%,100% { transform:translate(0,0) scale(1);     opacity:1;   }
-  20%     { transform:translate(60px,-40px) scale(1.12); opacity:0.7; }
-  45%     { transform:translate(20px,70px) scale(0.9);   opacity:1;   }
-  70%     { transform:translate(-40px,30px) scale(1.06); opacity:0.8; }
-}
-@keyframes fluctuate2 {
-  0%,100% { transform:translate(0,0) scale(1);      opacity:0.9; }
-  25%     { transform:translate(-50px,30px) scale(1.1);  opacity:0.6; }
-  55%     { transform:translate(30px,-60px) scale(0.88); opacity:1;   }
-  80%     { transform:translate(-20px,-20px) scale(1.04);opacity:0.75;}
-}
-@keyframes fluctuate3 {
-  0%,100% { transform:translate(0,0) scale(1);     opacity:0.8; }
-  30%     { transform:translate(70px,40px) scale(1.15); opacity:0.5; }
-  60%     { transform:translate(-30px,80px) scale(0.85);opacity:0.9; }
-}
-@keyframes fluctuate4 {
-  0%,100% { transform:translate(0,0) scale(1);      opacity:0.9; }
-  35%     { transform:translate(40px,-50px) scale(1.08); opacity:0.6; }
-  70%     { transform:translate(-20px,40px) scale(0.92); opacity:1;   }
-}
-@keyframes fluctuate5 {
-  0%,100% { transform:translate(0,0) scale(1);      opacity:0.7; }
-  40%     { transform:translate(-60px,50px) scale(1.12); opacity:0.4; }
-  75%     { transform:translate(50px,-30px) scale(0.9);  opacity:0.85;}
-}
-
-.bg-grid {
-  position: fixed; inset: 0; pointer-events: none; z-index: 0;
-  background-image:
-    linear-gradient(var(--grid-line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
-  background-size: 56px 56px;
-  transition: opacity 0.4s;
-}
-
-/* ═══════════════════════════════════
-   LAYOUT
-═══════════════════════════════════ */
-.app { display: flex; min-height: 100vh; position: relative; z-index: 1; }
-
-.sidebar {
-  width: 236px; min-height: 100vh;
-  background: var(--sidebar-bg);
-  backdrop-filter: blur(28px);
-  -webkit-backdrop-filter: blur(28px);
-  border-right: 1px solid var(--border2);
-  padding: 28px 14px;
-  position: fixed; top:0; left:0; bottom:0;
-  display: flex; flex-direction: column; gap: 3px;
-  z-index: 100;
-  transition: background 0.4s, border-color 0.4s;
-}
-
-.logo { padding: 0 10px 22px; margin-bottom: 10px; border-bottom: 1px solid var(--border); }
-.logo-text {
-  font-family: var(--display); font-size: 21px; font-weight: 800;
-  letter-spacing: -0.02em;
-  background: linear-gradient(130deg, var(--cyan), var(--purple));
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-}
-.logo-sub { font-size: 11px; color: var(--text3); font-family: var(--mono); letter-spacing: 0.05em; margin-top: 2px; }
-
-.nav-btn {
-  display: flex; align-items: center; gap: 11px; padding: 10px 13px;
-  border-radius: var(--radius); border: 1px solid transparent;
-  background: none; color: var(--text2);
-  font-family: var(--sans); font-size: 14px; font-weight: 500;
-  cursor: pointer; width: 100%; text-align: left;
-  transition: all 0.2s;
-}
-.nav-btn:hover { background: var(--bg3); color: var(--text); border-color: var(--border); }
-.nav-btn.active {
-  background: rgba(0,200,240,0.08); color: var(--cyan);
-  border-color: rgba(0,200,240,0.18);
-  box-shadow: 0 0 0 1px rgba(0,200,240,0.08) inset;
-}
-.nav-icon {
-  width: 30px; height: 30px; border-radius: 9px; flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 15px; background: var(--bg4);
-  transition: all 0.2s;
-}
-.nav-btn.active .nav-icon { background: rgba(0,200,240,0.14); box-shadow: 0 0 10px rgba(0,200,240,0.25); }
-
-.sidebar-sep { height: 1px; background: var(--border); margin: 8px 10px; }
-.sidebar-label {
-  font-size: 10px; font-family: var(--mono); color: var(--text3);
-  letter-spacing: 0.1em; text-transform: uppercase; padding: 8px 13px 3px;
-}
-
-.sidebar-footer { margin-top: auto; padding: 14px 10px 0; border-top: 1px solid var(--border); }
-.user-block { display: flex; align-items: center; gap: 9px; margin-bottom: 10px; }
-.user-avatar {
-  width: 28px; height: 28px; border-radius: 50%;
-  background: linear-gradient(135deg, var(--cyan), var(--purple));
-  display: flex; align-items: center; justify-content: center;
-  font-size: 12px; font-weight: 700; color: white; flex-shrink: 0;
-  overflow: hidden;
-}
-.user-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-.user-name { font-size: 12px; font-weight: 500; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.user-email { font-size: 10px; color: var(--text3); font-family: var(--mono); }
-.sign-out-btn {
-  width: 100%; padding: 7px 12px; border-radius: 9px;
-  background: var(--bg3); border: 1px solid var(--border);
-  color: var(--text2); font-size: 12px; font-family: var(--sans);
-  cursor: pointer; transition: all 0.2s; text-align: left;
-}
-.sign-out-btn:hover { color: var(--red); border-color: rgba(244,96,122,0.3); background: rgba(244,96,122,0.05); }
-
-/* Theme toggle */
-.theme-toggle {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 7px 10px; margin-bottom: 8px;
-}
-.theme-toggle-label { font-size: 11px; color: var(--text3); font-family: var(--mono); }
-.toggle-switch {
-  width: 38px; height: 20px; background: var(--bg4);
-  border: 1px solid var(--border2); border-radius: 10px;
-  position: relative; cursor: pointer; transition: all 0.3s; flex-shrink: 0;
-}
-.toggle-switch.on { background: rgba(0,200,240,0.2); border-color: rgba(0,200,240,0.35); }
-.toggle-knob {
-  width: 14px; height: 14px; border-radius: 50%;
-  background: var(--text3); position: absolute; top: 2px; left: 2px;
-  transition: all 0.3s; box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-}
-.toggle-switch.on .toggle-knob { left: 20px; background: var(--cyan); }
-
-/* ═══════════════════════════════════
-   MAIN
-═══════════════════════════════════ */
-.main { margin-left: 236px; padding: 40px 44px; max-width: 1060px; width: 100%; }
-
-/* Views */
-.view { display: none; animation: fadeUp 0.28s ease; }
-.view.active { display: block; }
-@keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
-
-/* Page header */
-.page-header { margin-bottom: 30px; }
-.page-title { font-family: var(--display); font-size: 28px; font-weight: 700; letter-spacing: -0.025em; line-height: 1.1; }
-.page-subtitle { color: var(--text2); font-size: 14px; margin-top: 5px; }
-
-/* ═══════════════════════════════════
-   CARDS
-═══════════════════════════════════ */
-.card {
-  background: var(--bg2);
-  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  padding: 22px 26px; margin-bottom: 16px;
-  transition: border-color 0.25s, box-shadow 0.25s, background 0.4s;
-}
-.card:hover { border-color: var(--border2); box-shadow: var(--shadow-md); }
-
-.card-inner {
-  background: var(--bg3); border: 1px solid var(--border);
-  border-radius: var(--radius-lg); padding: 14px 18px; margin-bottom: 12px;
-}
-
-/* Stats */
-.stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 13px; margin-bottom: 24px; }
-.stat-card {
-  background: var(--bg2); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-  border: 1px solid var(--border); border-radius: var(--radius-xl);
-  padding: 18px 20px; position: relative; overflow: hidden;
-  transition: all 0.25s; cursor: default;
-}
-.stat-card::after {
-  content: ''; position: absolute; inset: 0;
-  background: radial-gradient(circle at 50% 0%, var(--glow), transparent 70%);
-  opacity: 0; transition: opacity 0.3s;
-}
-.stat-card:hover { border-color: var(--border2); transform: translateY(-2px); box-shadow: var(--shadow-md); }
-.stat-card:hover::after { opacity: 1; }
-.stat-label { font-size: 11px; color: var(--text3); font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 9px; }
-.stat-val { font-family: var(--display); font-size: 30px; font-weight: 700; letter-spacing: -0.03em; line-height: 1; }
-.stat-sub { font-size: 12px; color: var(--text2); margin-top: 5px; }
-
-/* Mock list */
-.mock-item {
-  background: var(--bg2); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--border); border-radius: var(--radius-lg);
-  padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;
-  cursor: pointer; transition: all 0.22s; margin-bottom: 9px;
-  position: relative; overflow: hidden;
-}
-.mock-item::before {
-  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
-  background: linear-gradient(180deg, var(--cyan), var(--purple));
-  opacity: 0; transition: opacity 0.22s; border-radius: 3px 0 0 3px;
-}
-.mock-item:hover { border-color: var(--border2); transform: translateX(5px); box-shadow: var(--shadow-sm); }
-.mock-item:hover::before { opacity: 1; }
-.mock-name { font-family: var(--display); font-size: 15px; font-weight: 600; margin-bottom: 3px; }
-.mock-date { font-size: 12px; color: var(--text3); font-family: var(--mono); }
-.mock-right { display: flex; align-items: center; gap: 18px; }
-.score-badge {
-  font-family: var(--display); font-size: 21px; font-weight: 700;
-  padding: 5px 15px; border-radius: 10px; letter-spacing: -0.02em;
-}
-.score-badge.high { background: rgba(16,217,138,0.1); color: var(--green); }
-.score-badge.mid  { background: rgba(0,200,240,0.08); color: var(--cyan); }
-.score-badge.low  { background: rgba(244,96,122,0.08); color: var(--red); }
-.pct-tag { font-size: 12px; color: var(--text2); font-family: var(--mono); }
-.arrow-btn {
-  width: 30px; height: 30px; border-radius: 8px; background: var(--bg4);
-  display: flex; align-items: center; justify-content: center;
-  color: var(--text3); font-size: 16px; transition: all 0.2s;
-}
-.mock-item:hover .arrow-btn { background: rgba(0,200,240,0.1); color: var(--cyan); }
-
-/* Section header */
-.sec-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-.sec-title { font-family: var(--display); font-size: 13px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.06em; }
-
-/* Charts */
-.chart-wrap { position: relative; height: 210px; margin-top: 6px; }
-.chart-wrap-sm { position: relative; height: 130px; }
-
-/* Tabs */
-.tab-row {
-  display: flex; gap: 4px; margin-bottom: 26px;
-  background: var(--bg3); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 4px;
-}
-.tab {
-  flex: 1; padding: 9px 14px; border-radius: 9px; border: none;
-  background: none; color: var(--text2);
-  font-family: var(--sans); font-size: 13px; font-weight: 500;
-  cursor: pointer; transition: all 0.2s; text-align: center;
-}
-.tab.active {
-  background: rgba(0,200,240,0.08); color: var(--cyan);
-  border: 1px solid rgba(0,200,240,0.14);
-}
-
-/* Performance grid */
-.cat-perf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 18px; }
-.cat-perf-card {
-  background: var(--bg2); border: 1px solid var(--border);
-  border-radius: var(--radius-lg); padding: 18px 20px;
-  position: relative; overflow: hidden; transition: all 0.25s; cursor: default;
-}
-.cat-perf-card::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-  background: var(--cat-color, var(--cyan)); opacity: 0.7;
-}
-.cat-perf-card:hover { border-color: var(--border2); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
-.cpf-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
-.cpf-name { font-family: var(--display); font-size: 13px; font-weight: 600; }
-.cpf-pct { font-family: var(--display); font-size: 22px; font-weight: 700; color: var(--cat-color, var(--cyan)); }
-.cpf-trend { font-size: 11px; font-family: var(--mono); margin-top: 2px; }
-.cpf-trend.up   { color: var(--green); }
-.cpf-trend.down { color: var(--red); }
-.cpf-trend.flat { color: var(--text3); }
-.improve-bar { height: 3px; background: var(--bg4); border-radius: 2px; margin-top: 10px; overflow: hidden; }
-.improve-fill { height: 100%; border-radius: 2px; background: var(--cat-color, var(--cyan)); transition: width 1.2s cubic-bezier(0.34,1.56,0.64,1); }
-
-/* ═══════════════════════════════════
-   WIZARD
-═══════════════════════════════════ */
-.wiz-progress { display: flex; gap: 7px; margin-bottom: 30px; align-items: center; }
-.wiz-step { height: 3px; border-radius: 2px; flex: 1; background: var(--bg4); transition: all 0.35s; }
-.wiz-step.done   { background: var(--green); }
-.wiz-step.active { background: var(--cyan); }
-.wiz-label { font-size: 11px; font-family: var(--mono); color: var(--text3); white-space: nowrap; }
-
-.phase-card {
-  background: var(--bg2); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border); border-radius: var(--radius-xl);
-  padding: 30px 34px; margin-bottom: 20px; position: relative; overflow: hidden;
-}
-.phase-card::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(0,200,240,0.35), transparent);
-}
-.phase-tag {
-  display: inline-flex; align-items: center; gap: 6px;
-  background: rgba(0,200,240,0.08); color: var(--cyan);
-  font-size: 11px; font-family: var(--mono); font-weight: 500;
-  letter-spacing: 0.07em; padding: 5px 12px; border-radius: 20px;
-  border: 1px solid rgba(0,200,240,0.18); text-transform: uppercase; margin-bottom: 14px;
-}
-.phase-title { font-family: var(--display); font-size: 22px; font-weight: 700; margin-bottom: 7px; letter-spacing: -0.015em; }
-.phase-desc  { color: var(--text2); font-size: 13px; margin-bottom: 26px; line-height: 1.75; max-width: 540px; }
-
-/* Form */
-label {
-  font-size: 11px; font-weight: 500; color: var(--text3); display: block;
-  margin-bottom: 6px; font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.04em;
-}
-input[type="text"], input[type="number"], textarea, select {
-  width: 100%; background: var(--input-bg);
-  border: 1px solid var(--border2); border-radius: var(--radius);
-  padding: 11px 15px; color: var(--text);
-  font-family: var(--sans); font-size: 14px;
-  transition: all 0.2s; outline: none; resize: vertical;
-}
-input:focus, textarea:focus, select:focus {
-  border-color: rgba(0,200,240,0.45);
-  background: rgba(0,200,240,0.04);
-  box-shadow: 0 0 0 3px rgba(0,200,240,0.07);
-}
-input::placeholder, textarea::placeholder { color: var(--text3); }
-select option { background: var(--bg); }
-.field { margin-bottom: 18px; }
-.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.field-hint { font-size: 11px; color: var(--text3); margin-top: 5px; font-family: var(--mono); }
-
-/* Toggles */
-.toggle-group { display: flex; gap: 8px; }
-.tog {
-  flex: 1; padding: 10px 14px; border-radius: var(--radius);
-  border: 1px solid var(--border2); background: var(--bg3);
-  color: var(--text2); font-family: var(--sans); font-size: 13px; font-weight: 500;
-  cursor: pointer; transition: all 0.18s;
-}
-.tog:hover { border-color: var(--border3); color: var(--text); }
-.tog.yes  { background: rgba(16,217,138,0.08); border-color: rgba(16,217,138,0.3); color: var(--green); }
-.tog.no   { background: rgba(244,96,122,0.08); border-color: rgba(244,96,122,0.3); color: var(--red); }
-.tog.part { background: rgba(245,166,35,0.08); border-color: rgba(245,166,35,0.3); color: var(--amber); }
-
-/* Category rows */
-.cat-row {
-  background: var(--bg3); border: 1px solid var(--border);
-  border-radius: var(--radius-lg); padding: 16px 18px; margin-bottom: 11px;
-  transition: border-color 0.2s;
-}
-.cat-row:hover { border-color: var(--border2); }
-.cat-row-name { font-family: var(--display); font-weight: 600; font-size: 14px; margin-bottom: 13px; }
-.tally-row { display: flex; gap: 12px; margin-bottom: 13px; }
-.tally-input { display: flex; flex-direction: column; align-items: center; gap: 5px; flex: 1; }
-.tally-input label { font-size: 10px; text-align: center; margin-bottom: 0; }
-.tally-input input { text-align: center; padding: 10px 6px; }
-.tc label { color: var(--green); }
-.tp label { color: var(--amber); }
-.tw label { color: var(--red); }
-
-/* Type badges */
-.type-section { margin-bottom: 22px; }
-.type-header { display: flex; align-items: center; gap: 10px; margin-bottom: 9px; }
-.type-badge {
-  font-family: var(--mono); font-size: 11px; font-weight: 500;
-  padding: 3px 10px; border-radius: 20px; letter-spacing: 0.04em; border: 1px solid;
-}
-.ta { background: rgba(244,96,122,0.1); color: var(--red);   border-color: rgba(244,96,122,0.3); }
-.tb { background: rgba(245,166,35,0.1); color: var(--amber); border-color: rgba(245,166,35,0.3); }
-.tc2{ background: rgba(0,200,240,0.08); color: var(--cyan);  border-color: rgba(0,200,240,0.25); }
-.type-label { font-size: 13px; color: var(--text2); }
-
-/* Buttons */
-.btn-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 8px; }
-.btn {
-  padding: 11px 22px; border-radius: var(--radius);
-  font-family: var(--sans); font-size: 14px; font-weight: 500;
-  cursor: pointer; transition: all 0.18s; border: none;
-}
-.btn-primary {
-  background: linear-gradient(130deg, var(--cyan), #0090c0);
-  color: #fff; font-weight: 600;
-  box-shadow: 0 0 22px rgba(0,200,240,0.2);
-}
-.btn-primary:hover { box-shadow: 0 0 34px rgba(0,200,240,0.38); transform: translateY(-1px); }
-.btn-secondary {
-  background: var(--bg3); color: var(--text2); border: 1px solid var(--border2);
-}
-.btn-secondary:hover { background: var(--bg4); color: var(--text); border-color: var(--border3); }
-.btn-danger { background: rgba(244,96,122,0.08); color: var(--red); border: 1px solid rgba(244,96,122,0.2); }
-.btn-danger:hover { border-color: rgba(244,96,122,0.4); }
-.btn-sm { padding: 7px 15px; font-size: 13px; }
-
-/* Detail */
-.detail-score-block {
-  display: flex; align-items: baseline; gap: 18px;
-  padding: 22px 26px; margin: 8px 0 26px;
-  background: var(--bg2); border: 1px solid var(--border);
-  border-radius: var(--radius-xl); position: relative; overflow: hidden;
-}
-.detail-score-block::before {
-  content: ''; position: absolute; inset: 0;
-  background: radial-gradient(ellipse at 0% 0%, rgba(0,200,240,0.05), transparent 55%);
-}
-.d-score { font-family: var(--display); font-size: 54px; font-weight: 800; letter-spacing: -0.04em; line-height: 1; }
-.d-score.high { color: var(--green); }
-.d-score.mid  { color: var(--cyan); }
-.d-score.low  { color: var(--red); }
-.d-meta { display: flex; flex-direction: column; gap: 4px; }
-.d-pct  { font-size: 16px; color: var(--text2); }
-.d-date { font-size: 13px; color: var(--text3); font-family: var(--mono); }
-
-.cat-result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 18px; }
-.cat-result {
-  background: var(--bg3); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 11px 15px;
-  display: flex; justify-content: space-between; align-items: center;
-}
-.cr-name { font-size: 13px; font-weight: 500; }
-.cr-score { font-family: var(--mono); font-size: 12px; }
-.cg { color: var(--green); } .co { color: var(--amber); } .cb { color: var(--red); }
-
-.ps-title {
-  font-size: 11px; font-family: var(--mono); color: var(--cyan);
-  text-transform: uppercase; letter-spacing: 0.1em;
-  margin-bottom: 13px; padding-bottom: 9px;
-  border-bottom: 1px solid rgba(0,200,240,0.1);
-}
-.info-row {
-  display: flex; gap: 14px; padding: 9px 0;
-  border-bottom: 1px solid var(--border); align-items: flex-start;
-}
-.info-row:last-child { border-bottom: none; }
-.info-key { font-size: 12px; color: var(--text3); font-family: var(--mono); min-width: 165px; padding-top: 2px; }
-.info-val { font-size: 14px; color: var(--text); flex: 1; line-height: 1.65; }
-
-.action-card {
-  background: rgba(0,200,240,0.04); border: 1px solid rgba(0,200,240,0.14);
-  border-radius: var(--radius-xl); padding: 24px 28px; margin-bottom: 16px;
-}
-.action-item { display: flex; gap: 13px; padding: 11px 0; border-bottom: 1px solid rgba(0,200,240,0.07); align-items: flex-start; }
-.action-item:last-child { border-bottom: none; }
-.action-num {
-  width: 25px; height: 25px; border-radius: 50%;
-  background: rgba(0,200,240,0.12); color: var(--cyan);
-  font-size: 11px; font-family: var(--mono); font-weight: 500;
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-}
-.action-lbl { font-size: 10px; color: var(--text3); font-family: var(--mono); margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.04em; }
-
-/* Glow divider */
-.glow-div {
-  height: 1px; margin: 20px 0;
-  background: linear-gradient(90deg, transparent, rgba(0,200,240,0.18), rgba(168,85,247,0.14), transparent);
-}
-
-/* Auth screen */
-#auth-screen {
-  position: fixed; inset: 0; z-index: 200;
-  background: var(--bg); display: flex; align-items: center; justify-content: center;
-}
-.auth-card {
-  background: var(--bg2); backdrop-filter: blur(20px);
-  border: 1px solid var(--border2); border-radius: var(--radius-xl);
-  padding: 48px 52px; text-align: center; max-width: 400px; width: 90%;
-  position: relative; overflow: hidden;
-}
-.auth-card::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--cyan), var(--purple), transparent);
-}
-.auth-logo { font-family: var(--display); font-size: 28px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 4px;
-  background: linear-gradient(130deg, var(--cyan), var(--purple));
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-}
-.auth-sub { font-size: 14px; color: var(--text2); margin-bottom: 32px; }
-.google-btn {
-  display: flex; align-items: center; justify-content: center; gap: 12px;
-  width: 100%; padding: 14px 20px; border-radius: var(--radius);
-  background: white; color: #333; border: none;
-  font-family: var(--sans); font-size: 15px; font-weight: 500;
-  cursor: pointer; transition: all 0.2s;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
-}
-.google-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
-.google-icon { width: 20px; height: 20px; }
-.auth-note { font-size: 12px; color: var(--text3); margin-top: 16px; line-height: 1.6; }
-
-/* Loading */
-#loading-bar {
-  position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 300;
-  background: linear-gradient(90deg, var(--cyan), var(--purple), var(--cyan));
-  background-size: 200% 100%;
-  animation: loadingAnim 1.2s linear infinite;
-  display: none;
-}
-@keyframes loadingAnim { 0% { background-position: 0% 0%; } 100% { background-position: 200% 0%; } }
-
-/* Toast */
-#toast {
-  position: fixed; bottom: 28px; right: 28px; z-index: 400;
-  background: var(--bg2); backdrop-filter: blur(16px);
-  border: 1px solid var(--border2); border-radius: var(--radius);
-  padding: 13px 20px; font-size: 14px; font-weight: 500;
-  box-shadow: var(--shadow-lg);
-  transform: translateY(80px); opacity: 0;
-  transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
-  pointer-events: none;
-}
-#toast.show { transform: translateY(0); opacity: 1; }
-#toast.success { border-color: rgba(16,217,138,0.3); color: var(--green); }
-#toast.error   { border-color: rgba(244,96,122,0.3); color: var(--red); }
-
-/* Empty */
-.empty { text-align: center; padding: 64px 24px; color: var(--text3); }
-.empty-icon { font-size: 44px; margin-bottom: 14px; opacity: 0.35; }
-.empty-txt  { font-size: 15px; margin-bottom: 22px; line-height: 1.65; }
-
-/* Scrollbar */
-::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(0,200,240,0.3); }
-
-/* Responsive */
-@media (max-width: 720px) {
-  .sidebar { width: 58px; }
-  .sidebar .nav-label, .logo-sub, .sidebar-label, .sidebar-footer { display: none; }
-  .main { margin-left: 58px; padding: 24px 18px; }
-  .stats-row { grid-template-columns: 1fr 1fr; }
-  .field-row, .cat-result-grid, .cat-perf-grid { grid-template-columns: 1fr; }
-}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--cyan:#00c8f0;--purple:#a855f7;--green:#10d98a;--red:#f4607a;--amber:#f5a623;--sans:'DM Sans',sans-serif;--display:'Syne',sans-serif;--mono:'DM Mono',monospace;--radius:12px;--radius-lg:18px;--radius-xl:22px}
+[data-theme="dark"]{--bg:#040410;--bg2:rgba(255,255,255,0.025);--bg3:rgba(255,255,255,0.045);--bg4:rgba(255,255,255,0.07);--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--border3:rgba(255,255,255,0.22);--text:#e2e8f8;--text2:#8892b0;--text3:#454d6e;--input-bg:rgba(255,255,255,0.05);--o1:rgba(0,200,240,0.14);--o2:rgba(168,85,247,0.10);--o3:rgba(16,217,138,0.07);--o4:rgba(0,200,240,0.05);--o5:rgba(245,166,35,0.06);--grid:rgba(255,255,255,0.018);--sb:rgba(4,4,16,0.88)}
+[data-theme="light"]{--bg:#f0f2f8;--bg2:rgba(255,255,255,0.7);--bg3:rgba(255,255,255,0.9);--bg4:rgba(255,255,255,0.6);--border:rgba(0,0,0,0.07);--border2:rgba(0,0,0,0.11);--border3:rgba(0,0,0,0.18);--text:#12142a;--text2:#5a6080;--text3:#9098b8;--input-bg:rgba(255,255,255,0.8);--o1:rgba(0,180,220,0.12);--o2:rgba(148,65,227,0.08);--o3:rgba(10,197,120,0.08);--o4:rgba(0,180,220,0.06);--o5:rgba(225,146,15,0.07);--grid:rgba(0,0,0,0.028);--sb:rgba(240,242,250,0.92)}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.65;min-height:100vh;overflow-x:hidden;transition:background .4s,color .4s}
+.bg-canvas{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(72px)}
+.o1{width:700px;height:700px;background:radial-gradient(circle,var(--o1),transparent 68%);top:-220px;left:-160px;animation:f1 19s ease-in-out infinite}
+.o2{width:550px;height:550px;background:radial-gradient(circle,var(--o2),transparent 68%);bottom:-140px;right:-120px;animation:f2 26s ease-in-out infinite}
+.o3{width:450px;height:450px;background:radial-gradient(circle,var(--o3),transparent 68%);top:45%;left:38%;animation:f3 33s ease-in-out infinite}
+.o4{width:320px;height:320px;background:radial-gradient(circle,var(--o4),transparent 68%);bottom:25%;left:8%;animation:f4 22s ease-in-out infinite}
+.o5{width:380px;height:380px;background:radial-gradient(circle,var(--o5),transparent 68%);top:20%;right:12%;animation:f5 29s ease-in-out infinite}
+@keyframes f1{0%,100%{transform:translate(0,0) scale(1);opacity:1}20%{transform:translate(60px,-40px) scale(1.12);opacity:.7}45%{transform:translate(20px,70px) scale(.9);opacity:1}70%{transform:translate(-40px,30px) scale(1.06);opacity:.8}}
+@keyframes f2{0%,100%{transform:translate(0,0) scale(1);opacity:.9}25%{transform:translate(-50px,30px) scale(1.1);opacity:.6}55%{transform:translate(30px,-60px) scale(.88);opacity:1}80%{transform:translate(-20px,-20px) scale(1.04);opacity:.75}}
+@keyframes f3{0%,100%{transform:translate(0,0) scale(1);opacity:.8}30%{transform:translate(70px,40px) scale(1.15);opacity:.5}60%{transform:translate(-30px,80px) scale(.85);opacity:.9}}
+@keyframes f4{0%,100%{transform:translate(0,0) scale(1);opacity:.9}35%{transform:translate(40px,-50px) scale(1.08);opacity:.6}70%{transform:translate(-20px,40px) scale(.92);opacity:1}}
+@keyframes f5{0%,100%{transform:translate(0,0) scale(1);opacity:.7}40%{transform:translate(-60px,50px) scale(1.12);opacity:.4}75%{transform:translate(50px,-30px) scale(.9);opacity:.85}}
+.bg-grid{position:fixed;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:56px 56px}
+.app{display:flex;min-height:100vh;position:relative;z-index:1}
+.sidebar{width:236px;min-height:100vh;background:var(--sb);backdrop-filter:blur(28px);border-right:1px solid var(--border2);padding:28px 14px;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;gap:3px;z-index:100;transition:background .4s}
+.logo{padding:0 10px 22px;margin-bottom:10px;border-bottom:1px solid var(--border)}
+.logo-text{font-family:var(--display);font-size:21px;font-weight:800;letter-spacing:-.02em;background:linear-gradient(130deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.logo-sub{font-size:11px;color:var(--text3);font-family:var(--mono);letter-spacing:.05em;margin-top:2px}
+.nav-btn{display:flex;align-items:center;gap:11px;padding:10px 13px;border-radius:var(--radius);border:1px solid transparent;background:none;color:var(--text2);font-family:var(--sans);font-size:14px;font-weight:500;cursor:pointer;width:100%;text-align:left;transition:all .2s}
+.nav-btn:hover{background:var(--bg3);color:var(--text);border-color:var(--border)}
+.nav-btn.active{background:rgba(0,200,240,.08);color:var(--cyan);border-color:rgba(0,200,240,.18)}
+.nav-icon{width:30px;height:30px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:15px;background:var(--bg4);transition:all .2s}
+.nav-btn.active .nav-icon{background:rgba(0,200,240,.14);box-shadow:0 0 10px rgba(0,200,240,.25)}
+.sb-sep{height:1px;background:var(--border);margin:8px 10px}
+.sb-lbl{font-size:10px;font-family:var(--mono);color:var(--text3);letter-spacing:.1em;text-transform:uppercase;padding:8px 13px 3px}
+.sb-footer{margin-top:auto;padding:14px 10px 0;border-top:1px solid var(--border)}
+.user-block{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.uavatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--purple));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;overflow:hidden}
+.uavatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.uname{font-size:12px;font-weight:500;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.uemail{font-size:10px;color:var(--text3);font-family:var(--mono)}
+.signout-btn{width:100%;padding:7px 12px;border-radius:9px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-size:12px;font-family:var(--sans);cursor:pointer;transition:all .2s;text-align:left}
+.signout-btn:hover{color:var(--red);border-color:rgba(244,96,122,.3)}
+.th-row{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;margin-bottom:8px}
+.th-lbl{font-size:11px;color:var(--text3);font-family:var(--mono)}
+.th-sw{width:38px;height:20px;background:var(--bg4);border:1px solid var(--border2);border-radius:10px;position:relative;cursor:pointer;transition:all .3s;flex-shrink:0}
+.th-sw.on{background:rgba(0,200,240,.2);border-color:rgba(0,200,240,.35)}
+.th-knob{width:14px;height:14px;border-radius:50%;background:var(--text3);position:absolute;top:2px;left:2px;transition:all .3s}
+.th-sw.on .th-knob{left:20px;background:var(--cyan)}
+.main{margin-left:236px;padding:40px 44px;max-width:1060px;width:100%}
+.view{display:none;animation:fu .28s ease}.view.active{display:block}
+@keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.pg-title{font-family:var(--display);font-size:28px;font-weight:700;letter-spacing:-.025em;line-height:1.1}
+.pg-sub{color:var(--text2);font-size:14px;margin-top:5px;margin-bottom:30px}
+.card{background:var(--bg2);backdrop-filter:blur(16px);border:1px solid var(--border);border-radius:var(--radius-xl);padding:22px 26px;margin-bottom:16px;transition:border-color .25s,box-shadow .25s}
+.card:hover{border-color:var(--border2);box-shadow:0 8px 32px rgba(0,0,0,.18)}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:24px}
+.stat-card{background:var(--bg2);backdrop-filter:blur(14px);border:1px solid var(--border);border-radius:var(--radius-xl);padding:18px 20px;position:relative;overflow:hidden;transition:all .25s}
+.stat-card::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,var(--g),transparent 70%);opacity:0;transition:opacity .3s}
+.stat-card:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.18)}
+.stat-card:hover::after{opacity:1}
+.s-lbl{font-size:11px;color:var(--text3);font-family:var(--mono);text-transform:uppercase;letter-spacing:.08em;margin-bottom:9px}
+.s-val{font-family:var(--display);font-size:30px;font-weight:700;letter-spacing:-.03em;line-height:1}
+.s-sub{font-size:12px;color:var(--text2);margin-top:5px}
+.mock-item{background:var(--bg2);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:all .22s;margin-bottom:9px;position:relative;overflow:hidden}
+.mock-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--cyan),var(--purple));opacity:0;transition:opacity .22s;border-radius:3px 0 0 3px}
+.mock-item:hover{border-color:var(--border2);transform:translateX(5px);box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.mock-item:hover::before{opacity:1}
+.m-name{font-family:var(--display);font-size:15px;font-weight:600;margin-bottom:3px}
+.m-date{font-size:12px;color:var(--text3);font-family:var(--mono)}
+.m-right{display:flex;align-items:center;gap:18px}
+.sc-badge{font-family:var(--display);font-size:21px;font-weight:700;padding:5px 15px;border-radius:10px;letter-spacing:-.02em}
+.sc-badge.high{background:rgba(16,217,138,.1);color:var(--green)}
+.sc-badge.mid{background:rgba(0,200,240,.08);color:var(--cyan)}
+.sc-badge.low{background:rgba(244,96,122,.08);color:var(--red)}
+.pct{font-size:12px;color:var(--text2);font-family:var(--mono)}
+.arr{width:30px;height:30px;border-radius:8px;background:var(--bg4);display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:16px;transition:all .2s}
+.mock-item:hover .arr{background:rgba(0,200,240,.1);color:var(--cyan)}
+.sec-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.sec-t{font-family:var(--display);font-size:13px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.06em}
+.ch-wrap{position:relative;height:210px;margin-top:6px}
+.ch-sm{position:relative;height:130px}
+.cpg{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
+.cpc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;position:relative;overflow:hidden;transition:all .25s}
+.cpc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--cc,var(--cyan));opacity:.7}
+.cpc:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.18)}
+.cph{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.cpn{font-family:var(--display);font-size:13px;font-weight:600}
+.cpp{font-family:var(--display);font-size:22px;font-weight:700;color:var(--cc,var(--cyan))}
+.cptr{font-size:11px;font-family:var(--mono);margin-top:2px}
+.cptr.up{color:var(--green)}.cptr.down{color:var(--red)}.cptr.flat{color:var(--text3)}
+.ib{height:3px;background:var(--bg4);border-radius:2px;margin-top:10px;overflow:hidden}
+.if{height:100%;border-radius:2px;background:var(--cc,var(--cyan));transition:width 1.2s cubic-bezier(.34,1.56,.64,1)}
+.wp{display:flex;gap:7px;margin-bottom:30px;align-items:center}
+.ws{height:3px;border-radius:2px;flex:1;background:var(--bg4);transition:all .35s}
+.ws.done{background:var(--green)}.ws.active{background:var(--cyan)}
+.wl{font-size:11px;font-family:var(--mono);color:var(--text3);white-space:nowrap}
+.pc{background:var(--bg2);backdrop-filter:blur(16px);border:1px solid var(--border);border-radius:var(--radius-xl);padding:30px 34px;margin-bottom:20px;position:relative;overflow:hidden}
+.pc::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,200,240,.35),transparent)}
+.ptag{display:inline-flex;align-items:center;gap:6px;background:rgba(0,200,240,.08);color:var(--cyan);font-size:11px;font-family:var(--mono);font-weight:500;letter-spacing:.07em;padding:5px 12px;border-radius:20px;border:1px solid rgba(0,200,240,.18);text-transform:uppercase;margin-bottom:14px}
+.pt{font-family:var(--display);font-size:22px;font-weight:700;margin-bottom:7px;letter-spacing:-.015em}
+.pd{color:var(--text2);font-size:13px;margin-bottom:26px;line-height:1.75;max-width:540px}
+label{font-size:11px;font-weight:500;color:var(--text3);display:block;margin-bottom:6px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.04em}
+input[type="text"],input[type="number"],textarea,select{width:100%;background:var(--input-bg);border:1px solid var(--border2);border-radius:var(--radius);padding:11px 15px;color:var(--text);font-family:var(--sans);font-size:14px;transition:all .2s;outline:none;resize:vertical}
+input:focus,textarea:focus{border-color:rgba(0,200,240,.45);background:rgba(0,200,240,.04);box-shadow:0 0 0 3px rgba(0,200,240,.07)}
+input::placeholder,textarea::placeholder{color:var(--text3)}
+.field{margin-bottom:18px}.fr{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fh{font-size:11px;color:var(--text3);margin-top:5px;font-family:var(--mono)}
+.tg-row{display:flex;gap:8px}
+.tg{flex:1;padding:10px 14px;border-radius:var(--radius);border:1px solid var(--border2);background:var(--bg3);color:var(--text2);font-family:var(--sans);font-size:13px;font-weight:500;cursor:pointer;transition:all .18s}
+.tg:hover{border-color:var(--border3);color:var(--text)}
+.tg.yes{background:rgba(16,217,138,.08);border-color:rgba(16,217,138,.3);color:var(--green)}
+.tg.no{background:rgba(244,96,122,.08);border-color:rgba(244,96,122,.3);color:var(--red)}
+.tg.part{background:rgba(245,166,35,.08);border-color:rgba(245,166,35,.3);color:var(--amber)}
+.cr{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 18px;margin-bottom:11px;transition:border-color .2s}
+.cr:hover{border-color:var(--border2)}
+.crn{font-family:var(--display);font-weight:600;font-size:14px;margin-bottom:13px}
+.tr{display:flex;gap:12px;margin-bottom:13px}
+.ti{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1}
+.ti label{font-size:10px;text-align:center;margin-bottom:0}
+.ti input{text-align:center;padding:10px 6px}
+.tc label{color:var(--green)}.tp label{color:var(--amber)}.tw label{color:var(--red)}
+.ts{margin-bottom:22px}.th2{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.tb2{font-family:var(--mono);font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;letter-spacing:.04em;border:1px solid}
+.ta{background:rgba(244,96,122,.1);color:var(--red);border-color:rgba(244,96,122,.3)}
+.tb{background:rgba(245,166,35,.1);color:var(--amber);border-color:rgba(245,166,35,.3)}
+.tc3{background:rgba(0,200,240,.08);color:var(--cyan);border-color:rgba(0,200,240,.25)}
+.tl{font-size:13px;color:var(--text2)}
+.br{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:8px}
+.btn{padding:11px 22px;border-radius:var(--radius);font-family:var(--sans);font-size:14px;font-weight:500;cursor:pointer;transition:all .18s;border:none}
+.btn-p{background:linear-gradient(130deg,var(--cyan),#0090c0);color:#fff;font-weight:600;box-shadow:0 0 22px rgba(0,200,240,.2)}
+.btn-p:hover{box-shadow:0 0 34px rgba(0,200,240,.38);transform:translateY(-1px)}
+.btn-s{background:var(--bg3);color:var(--text2);border:1px solid var(--border2)}
+.btn-s:hover{background:var(--bg4);color:var(--text);border-color:var(--border3)}
+.btn-d{background:rgba(244,96,122,.08);color:var(--red);border:1px solid rgba(244,96,122,.2)}
+.btn-d:hover{border-color:rgba(244,96,122,.4)}
+.btn-sm{padding:7px 15px;font-size:13px}
+.dsb{display:flex;align-items:baseline;gap:18px;padding:22px 26px;margin:8px 0 26px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-xl);position:relative;overflow:hidden}
+.dsb::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 0% 0%,rgba(0,200,240,.05),transparent 55%)}
+.dsc{font-family:var(--display);font-size:54px;font-weight:800;letter-spacing:-.04em;line-height:1}
+.dsc.high{color:var(--green)}.dsc.mid{color:var(--cyan)}.dsc.low{color:var(--red)}
+.dp{font-size:16px;color:var(--text2)}.dd{font-size:13px;color:var(--text3);font-family:var(--mono)}
+.crg{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:18px}
+.cri{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:11px 15px;display:flex;justify-content:space-between;align-items:center}
+.cin{font-size:13px;font-weight:500}.cis{font-family:var(--mono);font-size:12px}
+.cg{color:var(--green)}.co{color:var(--amber)}.cb{color:var(--red)}
+.pst{font-size:11px;font-family:var(--mono);color:var(--cyan);text-transform:uppercase;letter-spacing:.1em;margin-bottom:13px;padding-bottom:9px;border-bottom:1px solid rgba(0,200,240,.1)}
+.ir{display:flex;gap:14px;padding:9px 0;border-bottom:1px solid var(--border);align-items:flex-start}
+.ir:last-child{border-bottom:none}
+.ik{font-size:12px;color:var(--text3);font-family:var(--mono);min-width:165px;padding-top:2px}
+.iv{font-size:14px;color:var(--text);flex:1;line-height:1.65}
+.ac{background:rgba(0,200,240,.04);border:1px solid rgba(0,200,240,.14);border-radius:var(--radius-xl);padding:24px 28px;margin-bottom:16px}
+.ai{display:flex;gap:13px;padding:11px 0;border-bottom:1px solid rgba(0,200,240,.07);align-items:flex-start}
+.ai:last-child{border-bottom:none}
+.an{width:25px;height:25px;border-radius:50%;background:rgba(0,200,240,.12);color:var(--cyan);font-size:11px;font-family:var(--mono);font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.al{font-size:10px;color:var(--text3);font-family:var(--mono);margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em}
+.gd{height:1px;margin:20px 0;background:linear-gradient(90deg,transparent,rgba(0,200,240,.18),rgba(168,85,247,.14),transparent)}
+#auth-screen{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;align-items:center;justify-content:center}
+.auth-card{background:var(--bg2);backdrop-filter:blur(20px);border:1px solid var(--border2);border-radius:var(--radius-xl);padding:48px 52px;text-align:center;max-width:400px;width:90%;position:relative;overflow:hidden;z-index:1}
+.auth-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),var(--purple),transparent)}
+.al2{font-family:var(--display);font-size:28px;font-weight:800;letter-spacing:-.02em;margin-bottom:4px;background:linear-gradient(130deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.as{font-size:14px;color:var(--text2);margin-bottom:32px}
+.gb{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;padding:14px 20px;border-radius:var(--radius);background:#fff;color:#333;border:none;font-family:var(--sans);font-size:15px;font-weight:500;cursor:pointer;transition:all .2s;box-shadow:0 2px 12px rgba(0,0,0,.15)}
+.gb:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.2)}
+.an2{font-size:12px;color:var(--text3);margin-top:16px;line-height:1.6}
+#lb{position:fixed;top:0;left:0;right:0;height:2px;z-index:300;background:linear-gradient(90deg,var(--cyan),var(--purple),var(--cyan));background-size:200% 100%;animation:la 1.2s linear infinite;display:none}
+@keyframes la{0%{background-position:0%}100%{background-position:200%}}
+#toast{position:fixed;bottom:28px;right:28px;z-index:400;background:var(--bg2);backdrop-filter:blur(16px);border:1px solid var(--border2);border-radius:var(--radius);padding:13px 20px;font-size:14px;font-weight:500;box-shadow:0 16px 48px rgba(0,0,0,.24);transform:translateY(80px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none}
+#toast.show{transform:translateY(0);opacity:1}
+#toast.ok{border-color:rgba(16,217,138,.3);color:var(--green)}
+#toast.err{border-color:rgba(244,96,122,.3);color:var(--red)}
+.empty{text-align:center;padding:64px 24px;color:var(--text3)}
+.ei{font-size:44px;margin-bottom:14px;opacity:.35}.et{font-size:15px;margin-bottom:22px;line-height:1.65}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
+@media(max-width:720px){.sidebar{width:58px}.nav-label,.logo-sub,.sb-lbl,.sb-footer{display:none}.main{margin-left:58px;padding:24px 18px}.stats-row{grid-template-columns:1fr 1fr}.fr,.crg,.cpg{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-
-<!-- Loading bar -->
-<div id="loading-bar"></div>
-
-<!-- Toast -->
+<div id="lb"></div>
 <div id="toast"></div>
 
-<!-- Auth screen -->
 <div id="auth-screen">
-  <div class="bg-canvas" style="position:absolute">
-    <div class="orb orb1"></div><div class="orb orb2"></div>
-    <div class="orb orb3"></div><div class="orb orb5"></div>
-  </div>
+  <div class="bg-canvas" style="position:absolute"><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div></div>
   <div class="auth-card">
-    <div class="auth-logo">UCAT Track</div>
-    <div class="auth-sub">Sign in to sync your reviews across all devices</div>
-    <button class="google-btn" onclick="signInWithGoogle()">
-      <svg class="google-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+    <div class="al2">UCAT Track</div>
+    <div class="as">Sign in to sync your reviews across all devices</div>
+    <button class="gb" id="gBtn">
+      <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
       Continue with Google
     </button>
-    <div class="auth-note">Your data is stored in Firebase Firestore and syncs to every device you sign in on. We never see your data.</div>
+    <div class="an2">Your data is stored in Firebase and syncs to every device you sign in on.</div>
   </div>
 </div>
 
-<!-- Background -->
-<div class="bg-canvas">
-  <div class="orb orb1"></div><div class="orb orb2"></div>
-  <div class="orb orb3"></div><div class="orb orb4"></div><div class="orb orb5"></div>
-</div>
+<div class="bg-canvas"><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div><div class="orb o4"></div><div class="orb o5"></div></div>
 <div class="bg-grid"></div>
 
 <div class="app">
-  <!-- Sidebar -->
   <nav class="sidebar">
-    <div class="logo">
-      <div class="logo-text">UCAT Track</div>
-      <div class="logo-sub">Decision Making</div>
-    </div>
-
-    <button class="nav-btn active" id="nav-dash"  onclick="showView('dashboard')">
-      <span class="nav-icon">⬡</span><span class="nav-label">Dashboard</span>
-    </button>
-    <button class="nav-btn"        id="nav-perf"  onclick="showView('performance')">
-      <span class="nav-icon">◈</span><span class="nav-label">Performance</span>
-    </button>
-    <div class="sidebar-sep"></div>
-    <div class="sidebar-label">Actions</div>
-    <button class="nav-btn"        id="nav-new"   onclick="showView('new-mock')">
-      <span class="nav-icon">＋</span><span class="nav-label">New Review</span>
-    </button>
-
-    <div class="sidebar-footer">
-      <div class="theme-toggle">
-        <span class="theme-toggle-label">Light mode</span>
-        <div class="toggle-switch" id="themeSwitch" onclick="toggleTheme()">
-          <div class="toggle-knob"></div>
-        </div>
-      </div>
-      <div class="user-block" id="user-block"></div>
-      <button class="sign-out-btn" onclick="signOutUser()">← Sign out</button>
+    <div class="logo"><div class="logo-text">UCAT Track</div><div class="logo-sub">Decision Making</div></div>
+    <button class="nav-btn active" id="nd"><span class="nav-icon">⬡</span><span class="nav-label">Dashboard</span></button>
+    <button class="nav-btn" id="np"><span class="nav-icon">◈</span><span class="nav-label">Performance</span></button>
+    <div class="sb-sep"></div>
+    <div class="sb-lbl">Actions</div>
+    <button class="nav-btn" id="nn"><span class="nav-icon">＋</span><span class="nav-label">New Review</span></button>
+    <div class="sb-footer">
+      <div class="th-row"><span class="th-lbl">Light mode</span><div class="th-sw" id="tsw"><div class="th-knob"></div></div></div>
+      <div class="user-block" id="ub"></div>
+      <button class="signout-btn" id="soBtn">← Sign out</button>
     </div>
   </nav>
 
   <main class="main">
-    <!-- DASHBOARD -->
-    <div class="view active" id="view-dashboard">
-      <div class="page-header">
-        <div class="page-title">Dashboard</div>
-        <div class="page-subtitle">Decision Making mini-mock tracker</div>
-      </div>
-      <div class="stats-row" id="stats-row"></div>
-      <div class="card">
-        <div class="sec-header"><div class="sec-title">Score trend</div></div>
-        <div class="chart-wrap"><canvas id="scoreChart" aria-label="Score trend">No data yet.</canvas></div>
-      </div>
-      <div class="sec-header" style="margin-top:6px">
-        <div class="sec-title">All reviews</div>
-        <button class="btn btn-primary btn-sm" onclick="showView('new-mock')">+ New Review</button>
-      </div>
-      <div id="mock-list"></div>
+    <div class="view active" id="vd">
+      <div class="pg-title">Dashboard</div><div class="pg-sub">Decision Making mini-mock tracker</div>
+      <div class="stats-row" id="sr"></div>
+      <div class="card"><div class="sec-hdr"><div class="sec-t">Score trend</div></div><div class="ch-wrap"><canvas id="sc"></canvas></div></div>
+      <div class="sec-hdr" style="margin-top:6px"><div class="sec-t">All reviews</div><button class="btn btn-p btn-sm" id="nrBtn">+ New Review</button></div>
+      <div id="ml"></div>
     </div>
 
-    <!-- PERFORMANCE -->
-    <div class="view" id="view-performance">
-      <div class="page-header">
-        <div class="page-title">Performance</div>
-        <div class="page-subtitle">Accuracy per category across every mock</div>
-      </div>
-      <div id="perf-overview"></div>
-      <div class="glow-div"></div>
-      <div class="sec-header"><div class="sec-title">Category breakdown</div></div>
-      <div class="cat-perf-grid" id="cat-perf-grid"></div>
-      <div class="card">
-        <div class="sec-header"><div class="sec-title">All categories — improvement over time</div></div>
-        <div class="chart-wrap" style="height:255px"><canvas id="multiCatChart" aria-label="All categories">No data yet.</canvas></div>
-      </div>
+    <div class="view" id="vp">
+      <div class="pg-title">Performance</div><div class="pg-sub">Accuracy per category across every mock</div>
+      <div id="po"></div><div class="gd"></div>
+      <div class="sec-hdr"><div class="sec-t">Category breakdown</div></div>
+      <div class="cpg" id="cpg"></div>
+      <div class="card"><div class="sec-hdr"><div class="sec-t">All categories — improvement over time</div></div><div class="ch-wrap" style="height:255px"><canvas id="mc"></canvas></div></div>
     </div>
 
-    <!-- NEW MOCK -->
-    <div class="view" id="view-new-mock">
-      <div class="page-header">
-        <div class="page-title">New Mock Review</div>
-        <div class="page-subtitle">Complete all 5 phases — ~50 minutes total</div>
-      </div>
-      <div class="wiz-progress" id="wiz-progress"></div>
+    <div class="view" id="vn">
+      <div class="pg-title">New Mock Review</div><div class="pg-sub">Complete all 5 phases — ~50 minutes total</div>
+      <div class="wp" id="wp"></div>
 
-      <!-- Phase 0 -->
-      <div id="phase-0" class="wiz-phase">
-        <div class="phase-card">
-          <div class="phase-tag">◈ Setup</div>
-          <div class="phase-title">Mock details</div>
-          <div class="phase-desc">Enter the basics before starting the review process.</div>
-          <div class="field"><label>Mock name</label><input type="text" id="mockName" placeholder="e.g. Decision Making Mini-Mock 3 – Revised 2025"/></div>
-          <div class="field-row">
-            <div class="field"><label>Date completed</label><input type="text" id="mockDate" placeholder="e.g. 14 May 2025"/></div>
-            <div class="field"><label>Score</label><input type="number" id="mockScore" placeholder="e.g. 640" min="300" max="900"/></div>
-          </div>
-          <div class="field"><label>Percentile</label><input type="number" id="mockPercentile" placeholder="e.g. 55" min="1" max="99"/></div>
-        </div>
-        <div class="btn-row">
-          <button class="btn btn-secondary" onclick="showView('dashboard')">Cancel</button>
-          <button class="btn btn-primary" onclick="nextPhase(1)">Phase 1: Immediate reflection →</button>
-        </div>
+      <div id="ph0" class="wph">
+        <div class="pc"><div class="ptag">◈ Setup</div><div class="pt">Mock details</div><div class="pd">Enter the basics before starting the review process.</div>
+        <div class="field"><label>Mock name</label><input type="text" id="mN" placeholder="e.g. Decision Making Mini-Mock 3 – Revised 2025"/></div>
+        <div class="fr"><div class="field"><label>Date completed</label><input type="text" id="mD" placeholder="e.g. 14 May 2025"/></div><div class="field"><label>Score</label><input type="number" id="mS" placeholder="e.g. 640" min="300" max="900"/></div></div>
+        <div class="field"><label>Percentile</label><input type="number" id="mP" placeholder="e.g. 55" min="1" max="99"/></div></div>
+        <div class="br"><button class="btn btn-s" id="canBtn">Cancel</button><button class="btn btn-p" id="p0n">Phase 1: Immediate reflection →</button></div>
       </div>
 
-      <!-- Phase 1 -->
-      <div id="phase-1" class="wiz-phase" style="display:none">
-        <div class="phase-card">
-          <div class="phase-tag">◈ Phase 1 · 5 min</div>
-          <div class="phase-title">Immediate reflection</div>
-          <div class="phase-desc">Do this before looking at results in detail. Capture your raw feeling while it's still fresh — you'll lose this data if you wait.</div>
-          <div class="field"><label>Where did time hurt you? Which questions felt rushed or panicked?</label><textarea id="p1-time" rows="3" placeholder="e.g. Q6 took over 2 minutes, Q33 was a 3-second panic click, ran out of time on all probability..."></textarea></div>
-          <div class="field"><label>Which category felt hardest today?</label><input type="text" id="p1-hard" placeholder="e.g. Syllogisms — kept second-guessing myself under pressure"/></div>
-          <div class="field">
-            <label>Did you use the 90-second skip rule?</label>
-            <div class="toggle-group">
-              <button class="tog" id="tog-yes"  onclick="setTog('yes')">Yes</button>
-              <button class="tog" id="tog-no"   onclick="setTog('no')">No</button>
-              <button class="tog" id="tog-part" onclick="setTog('part')">Partially</button>
-            </div>
-          </div>
-          <div class="field"><label>Where did you get stuck and not skip?</label><textarea id="p1-skip" rows="2" placeholder="e.g. Q6 — spent 2+ minutes on one syllogism instead of skipping at 90 seconds..."></textarea></div>
-        </div>
-        <div class="btn-row">
-          <button class="btn btn-secondary" onclick="nextPhase(0)">← Back</button>
-          <button class="btn btn-primary"   onclick="nextPhase(2)">Phase 2: Category tallies →</button>
-        </div>
+      <div id="ph1" class="wph" style="display:none">
+        <div class="pc"><div class="ptag">◈ Phase 1 · 5 min</div><div class="pt">Immediate reflection</div><div class="pd">Do this before looking at results. Capture your raw feeling while it's fresh.</div>
+        <div class="field"><label>Where did time hurt you? Which questions felt rushed or panicked?</label><textarea id="p1t" rows="3" placeholder="e.g. Q6 took over 2 minutes, Q33 was a 3-second panic click..."></textarea></div>
+        <div class="field"><label>Which category felt hardest today?</label><input type="text" id="p1h" placeholder="e.g. Syllogisms — kept second-guessing myself"/></div>
+        <div class="field"><label>Did you use the 90-second skip rule?</label><div class="tg-row"><button class="tg" id="ty">Yes</button><button class="tg" id="tn">No</button><button class="tg" id="tpt">Partially</button></div></div>
+        <div class="field"><label>Where did you get stuck and not skip?</label><textarea id="p1s" rows="2" placeholder="e.g. Q6 — spent 2+ minutes on one syllogism instead of skipping at 90 seconds..."></textarea></div></div>
+        <div class="br"><button class="btn btn-s" id="p1b">← Back</button><button class="btn btn-p" id="p1n">Phase 2: Category tallies →</button></div>
       </div>
 
-      <!-- Phase 2 -->
-      <div id="phase-2" class="wiz-phase" style="display:none">
-        <div class="phase-card">
-          <div class="phase-tag">◈ Phase 2 · 10 min</div>
-          <div class="phase-title">Category results</div>
-          <div class="phase-desc">Tally from the results screen. Correct = full marks, Partial = yellow (half marks), Wrong = zero. Add time notes for each category.</div>
-          <div id="cat-inputs"></div>
-        </div>
-        <div class="btn-row">
-          <button class="btn btn-secondary" onclick="nextPhase(1)">← Back</button>
-          <button class="btn btn-primary"   onclick="nextPhase(3)">Phase 3: Question review →</button>
-        </div>
+      <div id="ph2" class="wph" style="display:none">
+        <div class="pc"><div class="ptag">◈ Phase 2 · 10 min</div><div class="pt">Category results</div><div class="pd">Tally from results screen. Correct = full marks, Partial = yellow, Wrong = zero.</div><div id="ci"></div></div>
+        <div class="br"><button class="btn btn-s" id="p2b">← Back</button><button class="btn btn-p" id="p2n">Phase 3: Question review →</button></div>
       </div>
 
-      <!-- Phase 3 -->
-      <div id="phase-3" class="wiz-phase" style="display:none">
-        <div class="phase-card">
-          <div class="phase-tag">◈ Phase 3 · 20–30 min</div>
-          <div class="phase-title">Question analysis</div>
-          <div class="phase-desc">Classify every wrong question. Type A first — that's where your logic is broken. Skip Type D (confident and right) entirely.</div>
-          <div class="type-section">
-            <div class="type-header"><span class="type-badge ta">Type A</span><span class="type-label">Confident but wrong — find exactly where logic broke</span></div>
-            <textarea id="p3-a" rows="4" placeholder="e.g. Q6 — was certain the conclusion followed but missed that 'some' ≠ 'all'. Q11 — misread the venn overlap..."></textarea>
-            <div class="field-hint">// Most important. Find the precise step where your reasoning diverged.</div>
-          </div>
-          <div class="type-section">
-            <div class="type-header"><span class="type-badge tb">Type B</span><span class="type-label">Rushed or guessing</span></div>
-            <textarea id="p3-b" rows="3" placeholder="e.g. Q33 — 3-second panic click. Ask: what earlier question stole this time?"></textarea>
-            <div class="field-hint">// Time management casualty. What earlier question caused this?</div>
-          </div>
-          <div class="type-section">
-            <div class="type-header"><span class="type-badge tc2">Type C</span><span class="type-label">Right but unsure — was your reasoning actually correct?</span></div>
-            <textarea id="p3-c" rows="3" placeholder="e.g. Q14 — guessed correctly between two options. Need to verify logic was right, not just answer..."></textarea>
-          </div>
-        </div>
-        <div class="btn-row">
-          <button class="btn btn-secondary" onclick="nextPhase(2)">← Back</button>
-          <button class="btn btn-primary"   onclick="nextPhase(4)">Phase 4: Pattern analysis →</button>
-        </div>
+      <div id="ph3" class="wph" style="display:none">
+        <div class="pc"><div class="ptag">◈ Phase 3 · 20–30 min</div><div class="pt">Question analysis</div><div class="pd">Classify every wrong question. Type A first — that's where logic is broken.</div>
+        <div class="ts"><div class="th2"><span class="tb2 ta">Type A</span><span class="tl">Confident but wrong — find exactly where logic broke</span></div><textarea id="p3a" rows="4" placeholder="e.g. Q6 — was certain conclusion followed but missed that 'some' ≠ 'all'..."></textarea><div class="fh">// Most important. Find the precise step where your reasoning diverged.</div></div>
+        <div class="ts"><div class="th2"><span class="tb2 tb">Type B</span><span class="tl">Rushed or guessing</span></div><textarea id="p3b" rows="3" placeholder="e.g. Q33 — 3-second panic click. What earlier question stole this time?"></textarea></div>
+        <div class="ts"><div class="th2"><span class="tb2 tc3">Type C</span><span class="tl">Right but unsure — was your reasoning actually correct?</span></div><textarea id="p3c" rows="3" placeholder="e.g. Q14 — guessed correctly. Need to verify logic was right, not just the answer..."></textarea></div></div>
+        <div class="br"><button class="btn btn-s" id="p3b2">← Back</button><button class="btn btn-p" id="p3n">Phase 4: Pattern analysis →</button></div>
       </div>
 
-      <!-- Phase 4 -->
-      <div id="phase-4" class="wiz-phase" style="display:none">
-        <div class="phase-card">
-          <div class="phase-tag">◈ Phase 4 · 10 min</div>
-          <div class="phase-title">Category pattern analysis</div>
-          <div class="phase-desc">One specific sentence per category. This drives your next practice session — be precise about what the actual problem was today.</div>
-          <div id="pat-inputs"></div>
-        </div>
-        <div class="btn-row">
-          <button class="btn btn-secondary" onclick="nextPhase(3)">← Back</button>
-          <button class="btn btn-primary"   onclick="nextPhase(5)">Phase 5: Action notes →</button>
-        </div>
+      <div id="ph4" class="wph" style="display:none">
+        <div class="pc"><div class="ptag">◈ Phase 4 · 10 min</div><div class="pt">Category pattern analysis</div><div class="pd">One specific sentence per category. This drives your next practice session.</div><div id="pi"></div></div>
+        <div class="br"><button class="btn btn-s" id="p4b">← Back</button><button class="btn btn-p" id="p4n">Phase 5: Action notes →</button></div>
       </div>
 
-      <!-- Phase 5 -->
-      <div id="phase-5" class="wiz-phase" style="display:none">
-        <div class="phase-card">
-          <div class="phase-tag">◈ Phase 5 · 5 min</div>
-          <div class="phase-title">Action notes</div>
-          <div class="phase-desc">The three specific things that make this review actually change your next performance. Read these before every session until your next mock.</div>
-          <div class="field"><label>1. Technique to drill before next mini-mock</label><textarea id="p5-drill" rows="2" placeholder="e.g. 5 syllogisms daily with strict 60-second per-question timer — stop mid-thought when timer goes, pick best answer, move on"></textarea></div>
-          <div class="field"><label>2. Time management rule I broke today</label><textarea id="p5-rule" rows="2" placeholder="e.g. Spent 2 minutes 22 seconds on Q6 without using the 90-second skip rule"></textarea></div>
-          <div class="field"><label>3. Priority category next session</label><input type="text" id="p5-cat" placeholder="e.g. Syllogisms — collapsed from 5/7 to 0/6, must be timed from now on"/></div>
-          <div class="field"><label>Other notes</label><textarea id="p5-other" rows="3" placeholder="Anything else worth remembering about this mock..."></textarea></div>
-        </div>
-        <div class="btn-row">
-          <button class="btn btn-secondary" onclick="nextPhase(4)">← Back</button>
-          <button class="btn btn-primary" id="save-btn" onclick="saveMockFull()">Save review ✓</button>
-        </div>
+      <div id="ph5" class="wph" style="display:none">
+        <div class="pc"><div class="ptag">◈ Phase 5 · 5 min</div><div class="pt">Action notes</div><div class="pd">The three specific things that change your next performance. Read before every session.</div>
+        <div class="field"><label>1. Technique to drill before next mini-mock</label><textarea id="p5d" rows="2" placeholder="e.g. 5 syllogisms daily with strict 60-second timer — stop when it goes off"></textarea></div>
+        <div class="field"><label>2. Time management rule I broke today</label><textarea id="p5r" rows="2" placeholder="e.g. Spent 2 minutes 22 seconds on Q6 without using the 90-second skip rule"></textarea></div>
+        <div class="field"><label>3. Priority category next session</label><input type="text" id="p5c" placeholder="e.g. Syllogisms — collapsed from 5/7 to 0/6, must be timed from now on"/></div>
+        <div class="field"><label>Other notes</label><textarea id="p5o" rows="3" placeholder="Anything else worth remembering..."></textarea></div></div>
+        <div class="br"><button class="btn btn-s" id="p5b">← Back</button><button class="btn btn-p" id="svBtn">Save review ✓</button></div>
       </div>
     </div>
 
-    <!-- DETAIL -->
-    <div class="view" id="view-detail">
-      <button class="btn btn-secondary btn-sm" onclick="showView('dashboard')" style="margin-bottom:22px">← All reviews</button>
-      <div id="detail-content"></div>
+    <div class="view" id="vdet">
+      <button class="btn btn-s btn-sm" id="btd" style="margin-bottom:22px">← All reviews</button>
+      <div id="dc"></div>
     </div>
   </main>
 </div>
 
-<script>
-/* ══════════════════════════════════
-   APP STATE
-══════════════════════════════════ */
-const CATS = [
-  { id:'syllogisms',  label:'Syllogisms',          color:'#a855f7' },
-  { id:'logicPuzzles',label:'Logic Puzzles',        color:'#00c8f0' },
-  { id:'strongestArg',label:'Strongest Argument',   color:'#10d98a' },
-  { id:'inference',   label:'Inference',             color:'#f5a623' },
-  { id:'vennDiagrams',label:'Venn Diagrams',         color:'#4d9fff' },
-  { id:'probability', label:'Probability',           color:'#f4607a' }
-];
-
-let mocks        = [];
-let currentPhase = 0;
-let skipToggle   = null;
-let scoreChartI  = null;
-let multiChartI  = null;
-
-/* ══════════════════════════════════
-   UI HELPERS
-══════════════════════════════════ */
-function showLoading(on) {
-  document.getElementById('loading-bar').style.display = on ? 'block' : 'none';
-}
-
-function showToast(msg, type = 'success') {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.className = 'show ' + type;
-  setTimeout(() => el.className = '', 2800);
-}
-
-function showAuthScreen()  {
-  document.getElementById('auth-screen').style.display = 'flex';
-  document.getElementById('save-btn') && null;
-}
-function hideAuthScreen()  {
-  document.getElementById('auth-screen').style.display = 'none';
-  // Update user block
-  const u = window._authUser || null;
-}
-
-/* ══════════════════════════════════
-   THEME
-══════════════════════════════════ */
-let isDark = localStorage.getItem('ucat_theme') !== 'light';
-function applyTheme() {
-  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
-  const sw = document.getElementById('themeSwitch');
-  if (sw) sw.classList.toggle('on', !isDark);
-  localStorage.setItem('ucat_theme', isDark ? 'dark' : 'light');
-  if (scoreChartI || multiChartI) setTimeout(() => { renderDashboard(); if(document.getElementById('view-performance').classList.contains('active')) renderPerformance(); }, 50);
-}
-function toggleTheme() { isDark = !isDark; applyTheme(); }
-applyTheme();
-
-/* ══════════════════════════════════
-   VIEWS
-══════════════════════════════════ */
-function showView(name) {
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  const map = { dashboard:'view-dashboard', performance:'view-performance', 'new-mock':'view-new-mock', detail:'view-detail' };
-  const navMap = { dashboard:'nav-dash', performance:'nav-perf', 'new-mock':'nav-new' };
-  document.getElementById(map[name])?.classList.add('active');
-  if (navMap[name]) document.getElementById(navMap[name])?.classList.add('active');
-  if (name === 'dashboard')   renderDashboard();
-  if (name === 'performance') renderPerformance();
-  if (name === 'new-mock')    resetWizard();
-  window.scrollTo({ top:0, behavior:'smooth' });
-}
-
-/* ══════════════════════════════════
-   SCORE HELPERS
-══════════════════════════════════ */
-function scoreCls(s) { return s >= 660 ? 'high' : s >= 600 ? 'mid' : 'low'; }
-function catAcc(d) {
-  const t = (d?.correct||0) + (d?.partial||0) + (d?.wrong||0);
-  if (!t) return null;
-  return Math.round(((d.correct||0) + (d.partial||0)*0.5) / t * 100);
-}
-
-/* ══════════════════════════════════
-   DASHBOARD
-══════════════════════════════════ */
-function renderDashboard() {
-  const sorted = [...mocks].sort((a,b) => b.savedAt - a.savedAt);
-  const latest = sorted[0];
-  const avg    = mocks.length ? Math.round(mocks.reduce((a,m)=>a+m.score,0)/mocks.length) : null;
-  const best   = mocks.length ? Math.max(...mocks.map(m=>m.score)) : null;
-  const sColor = latest ? (latest.score>=660?'var(--green)':latest.score>=600?'var(--cyan)':'var(--red)') : 'var(--text3)';
-
-  document.getElementById('stats-row').innerHTML = `
-    <div class="stat-card" style="--glow:rgba(0,200,240,0.07)">
-      <div class="stat-label">Mocks done</div>
-      <div class="stat-val" style="color:var(--cyan)">${mocks.length}</div>
-      <div class="stat-sub">Decision Making</div>
-    </div>
-    <div class="stat-card" style="--glow:rgba(0,200,240,0.06)">
-      <div class="stat-label">Latest score</div>
-      <div class="stat-val" style="color:${sColor}">${latest?.score||'—'}</div>
-      <div class="stat-sub">${latest ? latest.percentile+'th percentile' : 'no mocks yet'}</div>
-    </div>
-    <div class="stat-card" style="--glow:rgba(168,85,247,0.07)">
-      <div class="stat-label">Average</div>
-      <div class="stat-val" style="color:var(--purple)">${avg||'—'}</div>
-      <div class="stat-sub">${mocks.length>1?'across '+mocks.length+' mocks':''}</div>
-    </div>
-    <div class="stat-card" style="--glow:rgba(16,217,138,0.07)">
-      <div class="stat-label">Personal best</div>
-      <div class="stat-val" style="color:var(--green)">${best||'—'}</div>
-      <div class="stat-sub">${best?'keep pushing':''}</div>
-    </div>`;
-
-  // Score chart
-  const chron = [...mocks].sort((a,b)=>a.savedAt-b.savedAt);
-  if (scoreChartI) { scoreChartI.destroy(); scoreChartI=null; }
-  if (chron.length) {
-    const textColor  = isDark ? '#8892b0' : '#8090b8';
-    const gridColor  = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.05)';
-    const ctx = document.getElementById('scoreChart').getContext('2d');
-    const grad = ctx.createLinearGradient(0,0,0,200);
-    grad.addColorStop(0,'rgba(0,200,240,0.14)');
-    grad.addColorStop(1,'rgba(0,200,240,0)');
-    scoreChartI = new Chart(ctx, {
-      type:'line',
-      data:{
-        labels: chron.map((m,i)=>m.mockName||'Mock '+(i+1)),
-        datasets:[{
-          label:'Score', data:chron.map(m=>m.score),
-          borderColor:'#00c8f0', backgroundColor:grad,
-          pointBackgroundColor:'#00c8f0', pointBorderColor:isDark?'#040410':'#f0f2f8',
-          pointBorderWidth:2, pointRadius:6, pointHoverRadius:9,
-          tension:0.4, fill:true, borderWidth:2
-        }]
-      },
-      options:{
-        responsive:true, maintainAspectRatio:false,
-        plugins:{ legend:{display:false}, tooltip:{ backgroundColor:isDark?'rgba(4,4,16,0.92)':'rgba(240,242,248,0.95)', borderColor:'rgba(0,200,240,0.3)', borderWidth:1, titleColor:'#00c8f0', bodyColor:isDark?'#e2e8f8':'#12142a', padding:12, cornerRadius:10 } },
-        scales:{
-          x:{ grid:{color:gridColor}, ticks:{color:textColor,font:{family:'DM Mono',size:11}} },
-          y:{ min:300, max:900, grid:{color:gridColor}, ticks:{color:textColor,font:{family:'DM Mono',size:11},stepSize:100} }
-        }
-      }
-    });
-  }
-
-  // List
-  const listEl = document.getElementById('mock-list');
-  if (!sorted.length) {
-    listEl.innerHTML = `<div class="empty"><div class="empty-icon">◈</div><div class="empty-txt">No reviews yet.<br>Complete your first mini-mock review to start tracking.</div><button class="btn btn-primary" onclick="showView('new-mock')">Start first review</button></div>`;
-    return;
-  }
-  listEl.innerHTML = sorted.map(m=>`
-    <div class="mock-item" onclick="showDetail('${m.id}')">
-      <div>
-        <div class="mock-name">${m.mockName||'Mini-Mock'}</div>
-        <div class="mock-date">${m.mockDate||'—'}</div>
-      </div>
-      <div class="mock-right">
-        <div class="score-badge ${scoreCls(m.score)}">${m.score}</div>
-        <div class="pct-tag">${m.percentile}th %ile</div>
-        <div class="arrow-btn">›</div>
-      </div>
-    </div>`).join('');
-}
-
-/* ══════════════════════════════════
-   PERFORMANCE
-══════════════════════════════════ */
-function renderPerformance() {
-  const chron = [...mocks].sort((a,b)=>a.savedAt-b.savedAt);
-  if (!chron.length) {
-    document.getElementById('perf-overview').innerHTML = `<div class="empty"><div class="empty-icon">◈</div><div class="empty-txt">No data yet. Complete a mock review first.</div><button class="btn btn-primary" onclick="showView('new-mock')">Start first review</button></div>`;
-    document.getElementById('cat-perf-grid').innerHTML=''; return;
-  }
-  const catData={};
-  CATS.forEach(c=>{ catData[c.id]=[]; });
-  chron.forEach(m=>CATS.forEach(c=>{
-    const d=m.categories?.[c.id];
-    if(d){ const acc=catAcc(d); catData[c.id].push({mock:m.mockName||'Mock',acc,date:m.mockDate}); }
-  }));
-
-  // Overview strip
-  document.getElementById('perf-overview').innerHTML=`
-    <div class="stats-row" style="grid-template-columns:repeat(3,1fr)">
-      ${CATS.map(c=>{
-        const arr=catData[c.id];
-        const latest=arr.length?arr[arr.length-1].acc:null;
-        const prev=arr.length>1?arr[arr.length-2].acc:null;
-        const trend=latest!==null&&prev!==null?latest-prev:null;
-        return `<div class="stat-card" style="--glow:${c.color}18">
-          <div class="stat-label">${c.label}</div>
-          <div class="stat-val" style="color:${c.color}">${latest!==null?latest+'%':'—'}</div>
-          <div class="stat-sub" style="color:${trend===null?'var(--text3)':trend>=0?'var(--green)':'var(--red)'}">
-            ${trend===null?'no comparison yet':trend>=0?'↑ +'+trend+'% from last':'↓ '+trend+'% from last'}
-          </div>
-        </div>`;
-      }).join('')}
-    </div>`;
-
-  // Cards
-  document.getElementById('cat-perf-grid').innerHTML=CATS.map(c=>{
-    const arr=catData[c.id];
-    const latest=arr.length?arr[arr.length-1].acc:null;
-    const prev=arr.length>1?arr[arr.length-2].acc:null;
-    const trend=latest!==null&&prev!==null?latest-prev:null;
-    const tc=trend===null?'flat':trend>0?'up':'down';
-    const tt=trend===null?'no comparison yet':trend>0?'↑ +'+trend+'% vs last mock':'↓ '+trend+'% vs last mock';
-    return `<div class="cat-perf-card" style="--cat-color:${c.color}">
-      <div class="cpf-header">
-        <div><div class="cpf-name">${c.label}</div><div class="cpf-trend ${tc}">${tt}</div></div>
-        <div class="cpf-pct">${latest!==null?latest+'%':'—'}</div>
-      </div>
-      <div class="chart-wrap-sm"><canvas id="cc-${c.id}" aria-label="${c.label} accuracy">No data.</canvas></div>
-      <div class="improve-bar"><div class="improve-fill" style="width:${latest||0}%"></div></div>
-    </div>`;
-  }).join('');
-
-  const textColor = isDark?'#4a5280':'#9098b8';
-  const gridColor = isDark?'rgba(255,255,255,0.03)':'rgba(0,0,0,0.04)';
-
-  CATS.forEach(c=>{
-    const arr=catData[c.id];
-    if(!arr.length) return;
-    const ctx=document.getElementById('cc-'+c.id)?.getContext('2d');
-    if(!ctx) return;
-    new Chart(ctx,{
-      type:'line',
-      data:{ labels:arr.map(d=>d.mock), datasets:[{ data:arr.map(d=>d.acc), borderColor:c.color, backgroundColor:c.color+'18', pointBackgroundColor:c.color, pointBorderColor:isDark?'#040410':'#f0f2f8', pointBorderWidth:2, pointRadius:4, tension:0.4, fill:true, borderWidth:2 }] },
-      options:{ responsive:true, maintainAspectRatio:false,
-        plugins:{ legend:{display:false}, tooltip:{ backgroundColor:isDark?'rgba(4,4,16,0.92)':'rgba(240,242,248,0.95)', borderColor:c.color+'44', borderWidth:1, titleColor:c.color, bodyColor:isDark?'#e2e8f8':'#12142a', padding:10, cornerRadius:8 } },
-        scales:{ x:{display:false}, y:{min:0,max:100,display:true,grid:{color:gridColor},ticks:{color:textColor,font:{size:9,family:'DM Mono'},callback:v=>v+'%',maxTicksLimit:3}} }
-      }
-    });
-  });
-
-  if(multiChartI){ multiChartI.destroy(); multiChartI=null; }
-  const labels=chron.map((m,i)=>m.mockName||'Mock '+(i+1));
-  const ctx2=document.getElementById('multiCatChart')?.getContext('2d');
-  if(ctx2&&chron.length){
-    multiChartI=new Chart(ctx2,{
-      type:'line',
-      data:{ labels, datasets:CATS.map(c=>({
-        label:c.label, data:chron.map(m=>{ const d=m.categories?.[c.id]; return d?catAcc(d):null; }),
-        borderColor:c.color, backgroundColor:'transparent',
-        pointBackgroundColor:c.color, pointBorderColor:isDark?'#040410':'#f0f2f8',
-        pointBorderWidth:2, pointRadius:5, tension:0.4, borderWidth:2, spanGaps:true
-      })) },
-      options:{ responsive:true, maintainAspectRatio:false,
-        plugins:{ legend:{ display:true, labels:{color:isDark?'#8892b0':'#5a6080',font:{family:'DM Sans',size:12},boxWidth:10,boxHeight:10,padding:18} },
-          tooltip:{ backgroundColor:isDark?'rgba(4,4,16,0.92)':'rgba(240,242,248,0.95)', borderColor:'rgba(255,255,255,0.1)', borderWidth:1, titleColor:isDark?'#e2e8f8':'#12142a', bodyColor:isDark?'#8892b0':'#5a6080', padding:12, cornerRadius:10 } },
-        scales:{ x:{grid:{color:gridColor},ticks:{color:textColor,font:{family:'DM Mono',size:11}}}, y:{min:0,max:100,grid:{color:gridColor},ticks:{color:textColor,font:{family:'DM Mono',size:11},callback:v=>v+'%'}} }
-      }
-    });
-  }
-}
-
-/* ══════════════════════════════════
-   DETAIL
-══════════════════════════════════ */
-function showDetail(id) {
-  const m = mocks.find(x=>x.id===id); if(!m) return;
-  showView('detail');
-  const sc = scoreCls(m.score);
-
-  document.getElementById('detail-content').innerHTML=`
-    <div class="page-title">${m.mockName||'Mini-Mock'}</div>
-    <div class="detail-score-block">
-      <div class="d-score ${sc}">${m.score}</div>
-      <div class="d-meta">
-        <div class="d-pct">${m.percentile}th percentile</div>
-        <div class="d-date">${m.mockDate||'—'}</div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="ps-title">Category results</div>
-      <div class="cat-result-grid">
-        ${CATS.map(c=>{ const d=m.categories?.[c.id]||{}; const acc=catAcc(d); const cl=acc>=75?'cg':acc>=50?'co':'cb'; return `<div class="cat-result"><div class="cr-name">${c.label}</div><div class="cr-score ${cl}">${d.correct||0}✓ ${d.partial||0}½ ${d.wrong||0}✗${acc!==null?' · '+acc+'%':''}</div></div>`; }).join('')}
-      </div>
-      <div class="glow-div" style="margin:14px 0 12px"></div>
-      ${CATS.map(c=>{ const d=m.categories?.[c.id]||{}; return d.timeNote?`<div class="info-row"><div class="info-key">${c.label} time notes</div><div class="info-val">${d.timeNote}</div></div>`:''; }).join('')}
-    </div>
-
-    <div class="card">
-      <div class="ps-title">Phase 1 — Immediate reflection</div>
-      <div class="info-row"><div class="info-key">Time hurt me at</div><div class="info-val">${m.p1?.timeHurt||'—'}</div></div>
-      <div class="info-row"><div class="info-key">Hardest category</div><div class="info-val">${m.p1?.hardest||'—'}</div></div>
-      <div class="info-row"><div class="info-key">Used 90s skip rule</div><div class="info-val">${m.p1?.skipUsed||'—'}</div></div>
-      <div class="info-row"><div class="info-key">Skip rule notes</div><div class="info-val">${m.p1?.skipNotes||'—'}</div></div>
-    </div>
-
-    <div class="card">
-      <div class="ps-title">Phase 3 — Question analysis</div>
-      <div class="type-section" style="margin-bottom:14px">
-        <div class="type-header" style="margin-bottom:7px"><span class="type-badge ta">Type A</span><span class="type-label">Confident but wrong</span></div>
-        <div style="font-size:14px;line-height:1.75">${m.p3?.typeA||'—'}</div>
-      </div>
-      <div class="glow-div" style="margin:10px 0"></div>
-      <div class="type-section" style="margin-bottom:14px">
-        <div class="type-header" style="margin-bottom:7px"><span class="type-badge tb">Type B</span><span class="type-label">Rushed / guessing</span></div>
-        <div style="font-size:14px;line-height:1.75">${m.p3?.typeB||'—'}</div>
-      </div>
-      <div class="glow-div" style="margin:10px 0"></div>
-      <div class="type-section">
-        <div class="type-header" style="margin-bottom:7px"><span class="type-badge tc2">Type C</span><span class="type-label">Right but unsure</span></div>
-        <div style="font-size:14px;line-height:1.75">${m.p3?.typeC||'—'}</div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="ps-title">Phase 4 — Category patterns</div>
-      ${CATS.map(c=>{ const v=m.patterns?.[c.id]; return v?`<div class="info-row"><div class="info-key">${c.label}</div><div class="info-val">${v}</div></div>`:''; }).filter(Boolean).join('')||'<div style="color:var(--text3);font-size:14px">No patterns recorded.</div>'}
-    </div>
-
-    <div class="action-card">
-      <div class="ps-title" style="color:var(--cyan)">Phase 5 — Action notes · Read before every session</div>
-      <div class="action-item"><div class="action-num">1</div><div><div class="action-lbl">Technique to drill</div><div>${m.p5?.drill||'—'}</div></div></div>
-      <div class="action-item"><div class="action-num">2</div><div><div class="action-lbl">Time rule I broke</div><div>${m.p5?.rule||'—'}</div></div></div>
-      <div class="action-item"><div class="action-num">3</div><div><div class="action-lbl">Priority category</div><div>${m.p5?.category||'—'}</div></div></div>
-      ${m.p5?.other?`<div class="action-item"><div class="action-num" style="background:var(--bg4);color:var(--text2)">+</div><div><div class="action-lbl">Other notes</div><div>${m.p5.other}</div></div></div>`:''}
-    </div>
-    <button class="btn btn-danger btn-sm" onclick="deleteMockUI('${m.id}')">Delete this review</button>
-  `;
-}
-
-async function deleteMockUI(id) {
-  if (!confirm('Delete this review? This cannot be undone.')) return;
-  await deleteMockFromCloud(id);
-  mocks = mocks.filter(m=>m.id!==id);
-  showToast('Review deleted');
-  showView('dashboard');
-}
-
-/* ══════════════════════════════════
-   WIZARD
-══════════════════════════════════ */
-function resetWizard() {
-  currentPhase=0; skipToggle=null;
-  document.querySelectorAll('.wiz-phase').forEach(p=>p.style.display='none');
-  document.getElementById('phase-0').style.display='block';
-  ['mockName','mockDate','mockScore','mockPercentile','p1-time','p1-hard','p1-skip','p3-a','p3-b','p3-c','p5-drill','p5-rule','p5-cat','p5-other']
-    .forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
-  ['tog-yes','tog-no','tog-part'].forEach(id=>{ const el=document.getElementById(id); if(el) el.className='tog'; });
-  buildCatInputs(); buildPatInputs(); updateProgress();
-}
-
-function buildCatInputs() {
-  document.getElementById('cat-inputs').innerHTML = CATS.map(c=>`
-    <div class="cat-row">
-      <div class="cat-row-name" style="color:${c.color}">${c.label}</div>
-      <div class="tally-row">
-        <div class="tally-input tc"><label>Correct ✓</label><input type="number" id="cat-${c.id}-c" min="0" max="20" value="0"/></div>
-        <div class="tally-input tp"><label>Partial ½</label><input type="number" id="cat-${c.id}-p" min="0" max="20" value="0"/></div>
-        <div class="tally-input tw"><label>Wrong ✗</label><input type="number" id="cat-${c.id}-w" min="0" max="20" value="0"/></div>
-      </div>
-      <div class="field" style="margin-bottom:0"><label>Time notes</label><input type="text" id="cat-${c.id}-n" placeholder="e.g. Q6 took 2min+, last 2 were panic clicks..."/></div>
-    </div>`).join('');
-}
-
-function buildPatInputs() {
-  document.getElementById('pat-inputs').innerHTML = CATS.map(c=>`
-    <div class="field">
-      <label style="color:${c.color}88">${c.label}</label>
-      <input type="text" id="pat-${c.id}" placeholder="My ${c.label} problem today was..."/>
-    </div>`).join('');
-}
-
-function setTog(val) {
-  skipToggle = val;
-  const map = { yes:'yes', no:'no', part:'part' };
-  ['yes','no','part'].forEach(v => {
-    const el = document.getElementById('tog-'+v);
-    el.className = 'tog' + (v===val ? ' '+map[v] : '');
-  });
-}
-
-function updateProgress() {
-  const labels = ['Setup','Phase 1','Phase 2','Phase 3','Phase 4','Phase 5'];
-  document.getElementById('wiz-progress').innerHTML =
-    labels.map((_,i) => `<div class="wiz-step ${i<currentPhase?'done':i===currentPhase?'active':''}"></div>`).join('')
-    + `<span class="wiz-label">${labels[currentPhase]}</span>`;
-}
-
-function nextPhase(n) {
-  document.querySelectorAll('.wiz-phase').forEach(p=>p.style.display='none');
-  document.getElementById('phase-'+n).style.display='block';
-  currentPhase=n; updateProgress();
-  window.scrollTo({ top:0, behavior:'smooth' });
-}
-
-async function saveMockFull() {
-  const btn = document.getElementById('save-btn');
-  btn.textContent = 'Saving…'; btn.disabled=true;
-
-  const cats={};
-  CATS.forEach(c=>{ cats[c.id]={ correct:parseInt(document.getElementById('cat-'+c.id+'-c')?.value)||0, partial:parseInt(document.getElementById('cat-'+c.id+'-p')?.value)||0, wrong:parseInt(document.getElementById('cat-'+c.id+'-w')?.value)||0, timeNote:document.getElementById('cat-'+c.id+'-n')?.value||'' }; });
-  const patterns={};
-  CATS.forEach(c=>{ patterns[c.id]=document.getElementById('pat-'+c.id)?.value||''; });
-
-  const m = {
-    id: Date.now().toString(), savedAt: Date.now(),
-    mockName: document.getElementById('mockName').value || 'Mini-Mock',
-    mockDate: document.getElementById('mockDate').value || new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'}),
-    score: parseInt(document.getElementById('mockScore').value)||0,
-    percentile: parseInt(document.getElementById('mockPercentile').value)||0,
-    categories: cats, patterns,
-    p1:{ timeHurt:document.getElementById('p1-time').value, hardest:document.getElementById('p1-hard').value, skipUsed:skipToggle||'not recorded', skipNotes:document.getElementById('p1-skip').value },
-    p3:{ typeA:document.getElementById('p3-a').value, typeB:document.getElementById('p3-b').value, typeC:document.getElementById('p3-c').value },
-    p5:{ drill:document.getElementById('p5-drill').value, rule:document.getElementById('p5-rule').value, category:document.getElementById('p5-cat').value, other:document.getElementById('p5-other').value }
-  };
-
-  await saveMockToCloud(m);
-  mocks.push(m);
-  btn.textContent='Save review ✓'; btn.disabled=false;
-  showDetail(m.id);
-}
-
-// Update user block when auth changes
-document.addEventListener('DOMContentLoaded', () => {});
-</script>
-
 <script type="module">
-// Update user block after auth
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-const auth2 = getAuth();
-onAuthStateChanged(auth2, user => {
-  const el = document.getElementById('user-block');
-  if (!el || !user) return;
-  const initials = (user.displayName||'U').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-  el.innerHTML = `
-    <div class="user-avatar">${user.photoURL?`<img src="${user.photoURL}" alt=""/>`:initials}</div>
-    <div><div class="user-name">${user.displayName||'Signed in'}</div><div class="user-email">${user.email||''}</div></div>`;
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import{getAuth,GoogleAuthProvider,signInWithPopup,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import{getFirestore,collection,doc,setDoc,getDocs,deleteDoc,query,orderBy}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const app=initializeApp({apiKey:"AIzaSyAScpq6RdSG1OONk9Q1gcw1E8i7_kose0o",authDomain:"ucat-tracker.firebaseapp.com",projectId:"ucat-tracker",storageBucket:"ucat-tracker.firebasestorage.app",messagingSenderId:"242021359226",appId:"1:242021359226:web:e22eb46dfb655b083c65c3"});
+const auth=getAuth(app),db=getFirestore(app),prov=new GoogleAuthProvider();
+let user=null,mocks=[],phase=0,skip=null,sci=null,mci=null,dark=true;
+const $=id=>document.getElementById(id);
+const CATS=[{id:'syllogisms',label:'Syllogisms',color:'#a855f7'},{id:'logicPuzzles',label:'Logic Puzzles',color:'#00c8f0'},{id:'strongestArg',label:'Strongest Argument',color:'#10d98a'},{id:'inference',label:'Inference',color:'#f5a623'},{id:'vennDiagrams',label:'Venn Diagrams',color:'#4d9fff'},{id:'probability',label:'Probability',color:'#f4607a'}];
+const scls=s=>s>=660?'high':s>=600?'mid':'low';
+const acc=d=>{const t=(d?.correct||0)+(d?.partial||0)+(d?.wrong||0);return t?Math.round(((d.correct||0)+(d.partial||0)*.5)/t*100):null};
+const toast=(m,t='ok')=>{const e=$('toast');e.textContent=m;e.className='show '+t;setTimeout(()=>e.className='',2800)};
+const load=on=>{$('lb').style.display=on?'block':'none'};
+
+// Theme
+dark=localStorage.getItem('ucat_th')!=='light';
+const applyTh=()=>{document.documentElement.setAttribute('data-theme',dark?'dark':'light');$('tsw')?.classList.toggle('on',!dark);localStorage.setItem('ucat_th',dark?'dark':'light')};
+applyTh();
+$('tsw').addEventListener('click',()=>{dark=!dark;applyTh()});
+
+// Auth
+$('gBtn').addEventListener('click',async()=>{
+  try{await signInWithPopup(auth,prov)}
+  catch(e){console.error(e);toast('Sign-in failed: '+e.code,'err')}
+});
+$('soBtn').addEventListener('click',async()=>{await signOut(auth);mocks=[];$('auth-screen').style.display='flex'});
+
+onAuthStateChanged(auth,async u=>{
+  user=u;
+  if(u){
+    $('auth-screen').style.display='none';
+    const ini=(u.displayName||'U').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    $('ub').innerHTML=`<div class="uavatar">${u.photoURL?`<img src="${u.photoURL}" alt=""/>`:ini}</div><div><div class="uname">${u.displayName||'Signed in'}</div><div class="uemail">${u.email||''}</div></div>`;
+    load(true);
+    try{const s=await getDocs(query(collection(db,'users',u.uid,'mocks'),orderBy('savedAt','asc')));mocks=s.docs.map(d=>({id:d.id,...d.data()}))}
+    catch(e){toast("Couldn't load — check Firestore rules",'err')}
+    load(false);
+    sv('d');
+  }else{$('auth-screen').style.display='flex'}
+});
+
+// Nav
+const sv=n=>{
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  const vm={d:'vd',p:'vp',n:'vn',det:'vdet'};
+  const nm={d:'nd',p:'np',n:'nn'};
+  $(vm[n])?.classList.add('active');
+  if(nm[n])$(nm[n])?.classList.add('active');
+  if(n==='d')rDash();
+  if(n==='p')rPerf();
+  if(n==='n')resetWiz();
+  window.scrollTo({top:0,behavior:'smooth'});
+};
+$('nd').addEventListener('click',()=>sv('d'));
+$('np').addEventListener('click',()=>sv('p'));
+$('nn').addEventListener('click',()=>sv('n'));
+$('nrBtn').addEventListener('click',()=>sv('n'));
+$('btd').addEventListener('click',()=>sv('d'));
+
+// Dashboard
+function rDash(){
+  const sorted=[...mocks].sort((a,b)=>b.savedAt-a.savedAt);
+  const lat=sorted[0],avg=mocks.length?Math.round(mocks.reduce((a,m)=>a+m.score,0)/mocks.length):null,best=mocks.length?Math.max(...mocks.map(m=>m.score)):null;
+  const sc2=lat?(lat.score>=660?'var(--green)':lat.score>=600?'var(--cyan)':'var(--red)'):'var(--text3)';
+  $('sr').innerHTML=`<div class="stat-card" style="--g:rgba(0,200,240,.07)"><div class="s-lbl">Mocks done</div><div class="s-val" style="color:var(--cyan)">${mocks.length}</div><div class="s-sub">Decision Making</div></div><div class="stat-card" style="--g:rgba(0,200,240,.06)"><div class="s-lbl">Latest score</div><div class="s-val" style="color:${sc2}">${lat?.score||'—'}</div><div class="s-sub">${lat?lat.percentile+'th percentile':'no mocks yet'}</div></div><div class="stat-card" style="--g:rgba(168,85,247,.07)"><div class="s-lbl">Average</div><div class="s-val" style="color:var(--purple)">${avg||'—'}</div><div class="s-sub">${mocks.length>1?'across '+mocks.length+' mocks':''}</div></div><div class="stat-card" style="--g:rgba(16,217,138,.07)"><div class="s-lbl">Personal best</div><div class="s-val" style="color:var(--green)">${best||'—'}</div><div class="s-sub">${best?'keep pushing':''}</div></div>`;
+  const ch=[...mocks].sort((a,b)=>a.savedAt-b.savedAt);
+  if(sci){sci.destroy();sci=null}
+  if(ch.length){
+    const ctx=$('sc').getContext('2d'),g=ctx.createLinearGradient(0,0,0,200);
+    g.addColorStop(0,'rgba(0,200,240,.14)');g.addColorStop(1,'rgba(0,200,240,0)');
+    const tc=dark?'#8892b0':'#8090b8',gc=dark?'rgba(255,255,255,.04)':'rgba(0,0,0,.05)';
+    sci=new Chart(ctx,{type:'line',data:{labels:ch.map((m,i)=>m.mockName||'Mock '+(i+1)),datasets:[{data:ch.map(m=>m.score),borderColor:'#00c8f0',backgroundColor:g,pointBackgroundColor:'#00c8f0',pointBorderColor:dark?'#040410':'#f0f2f8',pointBorderWidth:2,pointRadius:6,pointHoverRadius:9,tension:.4,fill:true,borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:dark?'rgba(4,4,16,.92)':'rgba(240,242,248,.95)',borderColor:'rgba(0,200,240,.3)',borderWidth:1,titleColor:'#00c8f0',bodyColor:dark?'#e2e8f8':'#12142a',padding:12,cornerRadius:10}},scales:{x:{grid:{color:gc},ticks:{color:tc,font:{family:'DM Mono',size:11}}},y:{min:300,max:900,grid:{color:gc},ticks:{color:tc,font:{family:'DM Mono',size:11},stepSize:100}}}}});
+  }
+  const ml=$('ml');
+  if(!sorted.length){ml.innerHTML='<div class="empty"><div class="ei">◈</div><div class="et">No reviews yet.<br>Complete your first mini-mock review.</div></div>';return}
+  ml.innerHTML=sorted.map(m=>`<div class="mock-item" data-id="${m.id}"><div><div class="m-name">${m.mockName||'Mini-Mock'}</div><div class="m-date">${m.mockDate||'—'}</div></div><div class="m-right"><div class="sc-badge ${scls(m.score)}">${m.score}</div><div class="pct">${m.percentile}th %ile</div><div class="arr">›</div></div></div>`).join('');
+  ml.querySelectorAll('.mock-item').forEach(el=>el.addEventListener('click',()=>showDet(el.dataset.id)));
+}
+
+// Performance
+function rPerf(){
+  const ch=[...mocks].sort((a,b)=>a.savedAt-b.savedAt);
+  if(!ch.length){$('po').innerHTML='<div class="empty"><div class="ei">◈</div><div class="et">No data yet. Complete a mock review first.</div></div>';$('cpg').innerHTML='';return}
+  const cd={};CATS.forEach(c=>{cd[c.id]=[]});
+  ch.forEach(m=>CATS.forEach(c=>{const d=m.categories?.[c.id];if(d){const a=acc(d);cd[c.id].push({mock:m.mockName||'Mock',acc:a})}}));
+  $('po').innerHTML=`<div class="stats-row" style="grid-template-columns:repeat(3,1fr)">${CATS.map(c=>{const a=cd[c.id],l=a.length?a[a.length-1].acc:null,p=a.length>1?a[a.length-2].acc:null,tr=l!==null&&p!==null?l-p:null;return`<div class="stat-card" style="--g:${c.color}18"><div class="s-lbl">${c.label}</div><div class="s-val" style="color:${c.color}">${l!==null?l+'%':'—'}</div><div class="s-sub" style="color:${tr===null?'var(--text3)':tr>=0?'var(--green)':'var(--red)'}">${tr===null?'no comparison yet':tr>=0?'↑ +'+tr+'% from last':'↓ '+tr+'% from last'}</div></div>`}).join('')}</div>`;
+  $('cpg').innerHTML=CATS.map(c=>{const a=cd[c.id],l=a.length?a[a.length-1].acc:null,p=a.length>1?a[a.length-2].acc:null,tr=l!==null&&p!==null?l-p:null,tc2=tr===null?'flat':tr>0?'up':'down',tt=tr===null?'no comparison yet':tr>0?'↑ +'+tr+'% vs last':'↓ '+tr+'% vs last';return`<div class="cpc" style="--cc:${c.color}"><div class="cph"><div><div class="cpn">${c.label}</div><div class="cptr ${tc2}">${tt}</div></div><div class="cpp">${l!==null?l+'%':'—'}</div></div><div class="ch-sm"><canvas id="cc-${c.id}"></canvas></div><div class="ib"><div class="if" style="width:${l||0}%"></div></div></div>`}).join('');
+  const tc3=dark?'#4a5280':'#9098b8',gc=dark?'rgba(255,255,255,.03)':'rgba(0,0,0,.04)';
+  CATS.forEach(c=>{const a=cd[c.id];if(!a.length)return;const ctx=document.getElementById('cc-'+c.id)?.getContext('2d');if(!ctx)return;new Chart(ctx,{type:'line',data:{labels:a.map(d=>d.mock),datasets:[{data:a.map(d=>d.acc),borderColor:c.color,backgroundColor:c.color+'18',pointBackgroundColor:c.color,pointBorderColor:dark?'#040410':'#f0f2f8',pointBorderWidth:2,pointRadius:4,tension:.4,fill:true,borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{display:false},y:{min:0,max:100,grid:{color:gc},ticks:{color:tc3,font:{size:9,family:'DM Mono'},callback:v=>v+'%',maxTicksLimit:3}}}}})});
+  if(mci){mci.destroy();mci=null}
+  const ctx2=$('mc')?.getContext('2d');
+  if(ctx2&&ch.length)mci=new Chart(ctx2,{type:'line',data:{labels:ch.map((m,i)=>m.mockName||'Mock '+(i+1)),datasets:CATS.map(c=>({label:c.label,data:ch.map(m=>{const d=m.categories?.[c.id];return d?acc(d):null}),borderColor:c.color,backgroundColor:'transparent',pointBackgroundColor:c.color,pointBorderColor:dark?'#040410':'#f0f2f8',pointBorderWidth:2,pointRadius:5,tension:.4,borderWidth:2,spanGaps:true}))},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:dark?'#8892b0':'#5a6080',font:{family:'DM Sans',size:12},boxWidth:10,boxHeight:10,padding:18}}},scales:{x:{grid:{color:gc},ticks:{color:tc3,font:{family:'DM Mono',size:11}}},y:{min:0,max:100,grid:{color:gc},ticks:{color:tc3,font:{family:'DM Mono',size:11},callback:v=>v+'%'}}}}});
+}
+
+// Detail
+function showDet(id){
+  const m=mocks.find(x=>x.id===id);if(!m)return;sv('det');
+  $('dc').innerHTML=`<div class="pg-title">${m.mockName||'Mini-Mock'}</div>
+    <div class="dsb"><div class="dsc ${scls(m.score)}">${m.score}</div><div><div class="dp">${m.percentile}th percentile</div><div class="dd">${m.mockDate||'—'}</div></div></div>
+    <div class="card"><div class="pst">Category results</div><div class="crg">${CATS.map(c=>{const d=m.categories?.[c.id]||{};const a=acc(d);const cl=a>=75?'cg':a>=50?'co':'cb';return`<div class="cri"><div class="cin">${c.label}</div><div class="cis ${cl}">${d.correct||0}✓ ${d.partial||0}½ ${d.wrong||0}✗${a!==null?' · '+a+'%':''}</div></div>`}).join('')}</div><div class="gd" style="margin:14px 0 12px"></div>${CATS.map(c=>{const d=m.categories?.[c.id]||{};return d.timeNote?`<div class="ir"><div class="ik">${c.label} time notes</div><div class="iv">${d.timeNote}</div></div>`:''}).join('')}</div>
+    <div class="card"><div class="pst">Phase 1 — Immediate reflection</div><div class="ir"><div class="ik">Time hurt me at</div><div class="iv">${m.p1?.timeHurt||'—'}</div></div><div class="ir"><div class="ik">Hardest category</div><div class="iv">${m.p1?.hardest||'—'}</div></div><div class="ir"><div class="ik">Used 90s skip rule</div><div class="iv">${m.p1?.skipUsed||'—'}</div></div><div class="ir"><div class="ik">Skip rule notes</div><div class="iv">${m.p1?.skipNotes||'—'}</div></div></div>
+    <div class="card"><div class="pst">Phase 3 — Question analysis</div><div class="ts" style="margin-bottom:14px"><div class="th2" style="margin-bottom:7px"><span class="tb2 ta">Type A</span><span class="tl">Confident but wrong</span></div><div style="font-size:14px;line-height:1.75">${m.p3?.typeA||'—'}</div></div><div class="gd" style="margin:10px 0"></div><div class="ts" style="margin-bottom:14px"><div class="th2" style="margin-bottom:7px"><span class="tb2 tb">Type B</span><span class="tl">Rushed / guessing</span></div><div style="font-size:14px;line-height:1.75">${m.p3?.typeB||'—'}</div></div><div class="gd" style="margin:10px 0"></div><div class="ts"><div class="th2" style="margin-bottom:7px"><span class="tb2 tc3">Type C</span><span class="tl">Right but unsure</span></div><div style="font-size:14px;line-height:1.75">${m.p3?.typeC||'—'}</div></div></div>
+    <div class="card"><div class="pst">Phase 4 — Category patterns</div>${CATS.map(c=>{const v=m.patterns?.[c.id];return v?`<div class="ir"><div class="ik">${c.label}</div><div class="iv">${v}</div></div>`:''}).filter(Boolean).join('')||'<div style="color:var(--text3);font-size:14px">No patterns recorded.</div>'}</div>
+    <div class="ac"><div class="pst" style="color:var(--cyan)">Phase 5 — Action notes · Read before every session</div><div class="ai"><div class="an">1</div><div><div class="al">Technique to drill</div><div>${m.p5?.drill||'—'}</div></div></div><div class="ai"><div class="an">2</div><div><div class="al">Time rule I broke</div><div>${m.p5?.rule||'—'}</div></div></div><div class="ai"><div class="an">3</div><div><div class="al">Priority category</div><div>${m.p5?.category||'—'}</div></div></div>${m.p5?.other?`<div class="ai"><div class="an" style="background:var(--bg4);color:var(--text2)">+</div><div><div class="al">Other notes</div><div>${m.p5.other}</div></div></div>`:''}</div>
+    <button class="btn btn-d btn-sm" id="delBtn">Delete this review</button>`;
+  $('delBtn').addEventListener('click',async()=>{
+    if(!confirm('Delete this review? Cannot be undone.'))return;
+    try{await deleteDoc(doc(db,'users',user.uid,'mocks',id));mocks=mocks.filter(m=>m.id!==id);toast('Review deleted');sv('d')}
+    catch(e){toast('Delete failed','err')}
+  });
+}
+
+// Wizard
+function resetWiz(){
+  phase=0;skip=null;
+  document.querySelectorAll('.wph').forEach(p=>p.style.display='none');
+  $('ph0').style.display='block';
+  ['mN','mD','mS','mP','p1t','p1h','p1s','p3a','p3b','p3c','p5d','p5r','p5c','p5o'].forEach(id=>{const e=$(id);if(e)e.value=''});
+  ['ty','tn','tpt'].forEach(id=>{const e=$(id);if(e)e.className='tg'});
+  buildCI();buildPI();updProg();
+}
+function buildCI(){
+  $('ci').innerHTML=CATS.map(c=>`<div class="cr"><div class="crn" style="color:${c.color}">${c.label}</div><div class="tr"><div class="ti tc"><label>Correct ✓</label><input type="number" id="c${c.id}c" min="0" max="20" value="0"/></div><div class="ti tp"><label>Partial ½</label><input type="number" id="c${c.id}p" min="0" max="20" value="0"/></div><div class="ti tw"><label>Wrong ✗</label><input type="number" id="c${c.id}w" min="0" max="20" value="0"/></div></div><div class="field" style="margin-bottom:0"><label>Time notes</label><input type="text" id="c${c.id}n" placeholder="e.g. Q6 took 2min+..."/></div></div>`).join('');
+}
+function buildPI(){
+  $('pi').innerHTML=CATS.map(c=>`<div class="field"><label style="color:${c.color}88">${c.label}</label><input type="text" id="pt${c.id}" placeholder="My ${c.label} problem today was..."/></div>`).join('');
+}
+function updProg(){
+  const ls=['Setup','Phase 1','Phase 2','Phase 3','Phase 4','Phase 5'];
+  $('wp').innerHTML=ls.map((_,i)=>`<div class="ws ${i<phase?'done':i===phase?'active':''}"></div>`).join('')+`<span class="wl">${ls[phase]}</span>`;
+}
+function goP(n){document.querySelectorAll('.wph').forEach(p=>p.style.display='none');$('ph'+n).style.display='block';phase=n;updProg();window.scrollTo({top:0,behavior:'smooth'})}
+
+// Toggle buttons
+['ty','tn','tpt'].forEach(id=>{
+  $(id)?.addEventListener('click',()=>{
+    skip=id==='ty'?'yes':id==='tn'?'no':'partial';
+    [['ty','yes'],['tn','no'],['tpt','part']].forEach(([eid,cls])=>{$(eid).className='tg'+(eid===id?' '+cls:'')});
+  });
+});
+
+// Wizard nav
+$('canBtn').addEventListener('click',()=>sv('d'));
+$('p0n').addEventListener('click',()=>goP(1));
+$('p1b').addEventListener('click',()=>goP(0));$('p1n').addEventListener('click',()=>goP(2));
+$('p2b').addEventListener('click',()=>goP(1));$('p2n').addEventListener('click',()=>goP(3));
+$('p3b2').addEventListener('click',()=>goP(2));$('p3n').addEventListener('click',()=>goP(4));
+$('p4b').addEventListener('click',()=>goP(3));$('p4n').addEventListener('click',()=>goP(5));
+$('p5b').addEventListener('click',()=>goP(4));
+
+$('svBtn').addEventListener('click',async()=>{
+  const btn=$('svBtn');btn.textContent='Saving…';btn.disabled=true;
+  const cats={};CATS.forEach(c=>{cats[c.id]={correct:parseInt($('c'+c.id+'c')?.value)||0,partial:parseInt($('c'+c.id+'p')?.value)||0,wrong:parseInt($('c'+c.id+'w')?.value)||0,timeNote:$('c'+c.id+'n')?.value||''}});
+  const pats={};CATS.forEach(c=>{pats[c.id]=$('pt'+c.id)?.value||''});
+  const m={id:Date.now().toString(),savedAt:Date.now(),mockName:$('mN').value||'Mini-Mock',mockDate:$('mD').value||new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'}),score:parseInt($('mS').value)||0,percentile:parseInt($('mP').value)||0,categories:cats,patterns:pats,p1:{timeHurt:$('p1t').value,hardest:$('p1h').value,skipUsed:skip||'not recorded',skipNotes:$('p1s').value},p3:{typeA:$('p3a').value,typeB:$('p3b').value,typeC:$('p3c').value},p5:{drill:$('p5d').value,rule:$('p5r').value,category:$('p5c').value,other:$('p5o').value}};
+  try{await setDoc(doc(db,'users',user.uid,'mocks',m.id),m);mocks.push(m);toast('Review saved ✓');showDet(m.id)}
+  catch(e){toast('Save failed — check connection','err');console.error(e)}
+  btn.textContent='Save review ✓';btn.disabled=false;
 });
 </script>
-
 </body>
 </html>
