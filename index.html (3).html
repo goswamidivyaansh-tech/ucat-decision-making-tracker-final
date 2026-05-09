@@ -95,6 +95,51 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15
 .cptr.up{color:var(--green)}.cptr.down{color:var(--red)}.cptr.flat{color:var(--text3)}
 .ib{height:3px;background:var(--bg4);border-radius:2px;margin-top:10px;overflow:hidden}
 .if{height:100%;border-radius:2px;background:var(--cc,var(--cyan));transition:width 1.2s cubic-bezier(.34,1.56,.64,1)}
+/* Practice log */
+.pl-item{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 22px;margin-bottom:10px;cursor:pointer;transition:all .22s;position:relative;overflow:hidden}
+.pl-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--green),var(--cyan));opacity:0;transition:opacity .22s;border-radius:3px 0 0 3px}
+.pl-item:hover{border-color:var(--border2);transform:translateX(4px)}
+.pl-item:hover::before{opacity:1}
+.pl-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.pl-date{font-size:12px;color:var(--text3);font-family:var(--mono)}
+.pl-qs{font-family:var(--display);font-size:18px;font-weight:700;color:var(--cyan)}
+.pl-qs span{font-size:12px;font-weight:400;color:var(--text3);font-family:var(--mono)}
+.pl-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.pl-tag{font-size:11px;font-family:var(--mono);padding:3px 10px;border-radius:20px;border:1px solid;font-weight:500}
+.pl-tag.syllogisms{background:rgba(168,85,247,.1);color:#a855f7;border-color:rgba(168,85,247,.3)}
+.pl-tag.logicPuzzles{background:rgba(0,200,240,.08);color:var(--cyan);border-color:rgba(0,200,240,.25)}
+.pl-tag.strongestArg{background:rgba(16,217,138,.08);color:var(--green);border-color:rgba(16,217,138,.25)}
+.pl-tag.inference{background:rgba(245,166,35,.08);color:var(--amber);border-color:rgba(245,166,35,.25)}
+.pl-tag.vennDiagrams{background:rgba(77,159,255,.08);color:#4d9fff;border-color:rgba(77,159,255,.25)}
+.pl-tag.probability{background:rgba(244,96,122,.08);color:var(--red);border-color:rgba(244,96,122,.25)}
+.pl-tag.allDM{background:rgba(0,200,240,.08);color:var(--cyan);border-color:rgba(0,200,240,.2)}
+.pl-rating{display:flex;align-items:center;gap:8px}
+.pl-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.pl-dot.great{background:var(--green);box-shadow:0 0 6px var(--green)}
+.pl-dot.good{background:var(--cyan);box-shadow:0 0 6px var(--cyan)}
+.pl-dot.ok{background:var(--amber)}
+.pl-dot.tough{background:var(--red)}
+.pl-rating-txt{font-size:12px;color:var(--text2)}
+.pl-improve{font-size:13px;color:var(--text2);line-height:1.6;border-top:1px solid var(--border);padding-top:10px;margin-top:10px}
+.pl-improve-lbl{font-size:10px;font-family:var(--mono);color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+/* subtest checkboxes */
+.sub-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.sub-cb{display:flex;align-items:center;gap:9px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:9px 13px;cursor:pointer;transition:all .18s;user-select:none}
+.sub-cb:hover{border-color:var(--border2)}
+.sub-cb.checked{border-color:var(--cb-color,var(--cyan));background:var(--cb-bg,rgba(0,200,240,.07))}
+.sub-cb input{display:none}
+.cb-box{width:16px;height:16px;border-radius:4px;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .18s;font-size:10px}
+.sub-cb.checked .cb-box{background:var(--cb-color,var(--cyan));border-color:var(--cb-color,var(--cyan));color:#fff}
+.cb-lbl{font-size:13px;font-weight:500}
+/* rating buttons */
+.rating-row{display:flex;gap:8px;margin-top:6px}
+.r-btn{flex:1;padding:9px 8px;border-radius:var(--radius);border:1px solid var(--border2);background:var(--bg3);color:var(--text2);font-family:var(--sans);font-size:12px;font-weight:500;cursor:pointer;transition:all .18s;text-align:center}
+.r-btn:hover{border-color:var(--border3);color:var(--text)}
+.r-btn.sel-great{background:rgba(16,217,138,.1);border-color:rgba(16,217,138,.35);color:var(--green)}
+.r-btn.sel-good{background:rgba(0,200,240,.08);border-color:rgba(0,200,240,.3);color:var(--cyan)}
+.r-btn.sel-ok{background:rgba(245,166,35,.08);border-color:rgba(245,166,35,.3);color:var(--amber)}
+.r-btn.sel-tough{background:rgba(244,96,122,.08);border-color:rgba(244,96,122,.3);color:var(--red)}
+/* Wizard */
 .wp{display:flex;gap:7px;margin-bottom:30px;align-items:center}
 .ws{height:3px;border-radius:2px;flex:1;background:var(--bg4);transition:all .35s}
 .ws.done{background:var(--green)}.ws.active{background:var(--cyan)}
@@ -106,7 +151,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15
 .pd{color:var(--text2);font-size:13px;margin-bottom:26px;line-height:1.75;max-width:540px}
 label{font-size:11px;font-weight:500;color:var(--text3);display:block;margin-bottom:6px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.04em}
 input[type="text"],input[type="number"],textarea,select{width:100%;background:var(--input-bg);border:1px solid var(--border2);border-radius:var(--radius);padding:11px 15px;color:var(--text);font-family:var(--sans);font-size:14px;transition:all .2s;outline:none;resize:vertical}
-input:focus,textarea:focus{border-color:rgba(0,200,240,.45);background:rgba(0,200,240,.04);box-shadow:0 0 0 3px rgba(0,200,240,.07)}
+input:focus,textarea:focus,select:focus{border-color:rgba(0,200,240,.45);background:rgba(0,200,240,.04);box-shadow:0 0 0 3px rgba(0,200,240,.07)}
 input::placeholder,textarea::placeholder{color:var(--text3)}
 .field{margin-bottom:18px}.fr{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .fh{font-size:11px;color:var(--text3);margin-top:5px;font-family:var(--mono)}
@@ -136,6 +181,8 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 .btn-p:hover{box-shadow:0 0 34px rgba(0,200,240,.38);transform:translateY(-1px)}
 .btn-s{background:var(--bg3);color:var(--text2);border:1px solid var(--border2)}
 .btn-s:hover{background:var(--bg4);color:var(--text);border-color:var(--border3)}
+.btn-g{background:rgba(16,217,138,.1);color:var(--green);border:1px solid rgba(16,217,138,.25)}
+.btn-g:hover{border-color:rgba(16,217,138,.45);box-shadow:0 0 20px rgba(16,217,138,.15)}
 .btn-d{background:rgba(244,96,122,.08);color:var(--red);border:1px solid rgba(244,96,122,.2)}
 .btn-d:hover{border-color:rgba(244,96,122,.4)}
 .btn-sm{padding:7px 15px;font-size:13px}
@@ -163,7 +210,7 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 .auth-card{background:var(--bg2);backdrop-filter:blur(20px);border:1px solid var(--border2);border-radius:var(--radius-xl);padding:48px 52px;text-align:center;max-width:400px;width:90%;position:relative;overflow:hidden;z-index:1}
 .auth-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),var(--purple),transparent)}
 .al2{font-family:var(--display);font-size:28px;font-weight:800;letter-spacing:-.02em;margin-bottom:4px;background:linear-gradient(130deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.as{font-size:14px;color:var(--text2);margin-bottom:32px}
+.as2{font-size:14px;color:var(--text2);margin-bottom:32px}
 .gb{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;padding:14px 20px;border-radius:var(--radius);background:#fff;color:#333;border:none;font-family:var(--sans);font-size:15px;font-weight:500;cursor:pointer;transition:all .2s;box-shadow:0 2px 12px rgba(0,0,0,.15)}
 .gb:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.2)}
 .an2{font-size:12px;color:var(--text3);margin-top:16px;line-height:1.6}
@@ -176,7 +223,7 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 .empty{text-align:center;padding:64px 24px;color:var(--text3)}
 .ei{font-size:44px;margin-bottom:14px;opacity:.35}.et{font-size:15px;margin-bottom:22px;line-height:1.65}
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
-@media(max-width:720px){.sidebar{width:58px}.nav-label,.logo-sub,.sb-lbl,.sb-footer{display:none}.main{margin-left:58px;padding:24px 18px}.stats-row{grid-template-columns:1fr 1fr}.fr,.crg,.cpg{grid-template-columns:1fr}}
+@media(max-width:720px){.sidebar{width:58px}.nav-label,.logo-sub,.sb-lbl,.sb-footer{display:none}.main{margin-left:58px;padding:24px 18px}.stats-row{grid-template-columns:1fr 1fr}.fr,.crg,.cpg,.sub-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -187,7 +234,7 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
   <div class="bg-canvas" style="position:absolute"><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div></div>
   <div class="auth-card">
     <div class="al2">UCAT Track</div>
-    <div class="as">Sign in to sync your reviews across all devices</div>
+    <div class="as2">Sign in to sync your reviews across all devices</div>
     <button class="gb" id="gBtn">
       <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
       Continue with Google
@@ -204,9 +251,11 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
     <div class="logo"><div class="logo-text">UCAT Track</div><div class="logo-sub">Decision Making</div></div>
     <button class="nav-btn active" id="nd"><span class="nav-icon">⬡</span><span class="nav-label">Dashboard</span></button>
     <button class="nav-btn" id="np"><span class="nav-icon">◈</span><span class="nav-label">Performance</span></button>
+    <button class="nav-btn" id="npl"><span class="nav-icon">✦</span><span class="nav-label">Practice Log</span></button>
     <div class="sb-sep"></div>
     <div class="sb-lbl">Actions</div>
     <button class="nav-btn" id="nn"><span class="nav-icon">＋</span><span class="nav-label">New Review</span></button>
+    <button class="nav-btn" id="nlp"><span class="nav-icon">◎</span><span class="nav-label">Log Practice</span></button>
     <div class="sb-footer">
       <div class="th-row"><span class="th-lbl">Light mode</span><div class="th-sw" id="tsw"><div class="th-knob"></div></div></div>
       <div class="user-block" id="ub"></div>
@@ -215,6 +264,8 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
   </nav>
 
   <main class="main">
+
+    <!-- DASHBOARD -->
     <div class="view active" id="vd">
       <div class="pg-title">Dashboard</div><div class="pg-sub">Decision Making mini-mock tracker</div>
       <div class="stats-row" id="sr"></div>
@@ -223,6 +274,7 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
       <div id="ml"></div>
     </div>
 
+    <!-- PERFORMANCE -->
     <div class="view" id="vp">
       <div class="pg-title">Performance</div><div class="pg-sub">Accuracy per category across every mock</div>
       <div id="po"></div><div class="gd"></div>
@@ -231,6 +283,81 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
       <div class="card"><div class="sec-hdr"><div class="sec-t">All categories — improvement over time</div></div><div class="ch-wrap" style="height:255px"><canvas id="mc"></canvas></div></div>
     </div>
 
+    <!-- PRACTICE LOG VIEW -->
+    <div class="view" id="vpl">
+      <div class="pg-title">Practice Log</div><div class="pg-sub">Your daily DM practice history</div>
+      <div class="stats-row" id="pl-stats"></div>
+      <div class="sec-hdr">
+        <div class="sec-t">All sessions</div>
+        <button class="btn btn-g btn-sm" id="lpBtn">+ Log Practice</button>
+      </div>
+      <div id="pl-list"></div>
+    </div>
+
+    <!-- LOG PRACTICE FORM -->
+    <div class="view" id="vlp">
+      <div class="pg-title">Log Practice Session</div><div class="pg-sub">Record what you did today</div>
+      <div class="pc">
+        <div class="ptag">◎ Practice Log</div>
+        <div class="pt">Today's session</div>
+        <div class="pd">Log your DM practice — what subtests you did, how many questions, how it went, and what to focus on next.</div>
+
+        <div class="fr">
+          <div class="field"><label>Date</label><input type="text" id="pl-date" placeholder="e.g. 9 May 2025"/></div>
+          <div class="field"><label>Total questions done</label><input type="number" id="pl-qs" placeholder="e.g. 30" min="1"/></div>
+        </div>
+
+        <div class="field">
+          <label>Subtests practised (select all that apply)</label>
+          <div class="sub-grid" id="sub-grid"></div>
+        </div>
+
+        <div class="field">
+          <label>Timed or untimed?</label>
+          <div class="tg-row">
+            <button class="tg" id="tm-timed">Timed ⏱</button>
+            <button class="tg" id="tm-untimed">Untimed</button>
+            <button class="tg" id="tm-mixed">Mixed</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>How did it go overall?</label>
+          <div class="rating-row">
+            <button class="r-btn" id="r-great">🟢 Great</button>
+            <button class="r-btn" id="r-good">🔵 Good</button>
+            <button class="r-btn" id="r-ok">🟡 Okay</button>
+            <button class="r-btn" id="r-tough">🔴 Tough</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>What went well? Any wins or breakthroughs?</label>
+          <textarea id="pl-well" rows="2" placeholder="e.g. Syllogisms felt much more automatic today, got 8/10 timed..."></textarea>
+        </div>
+
+        <div class="field">
+          <label>What was hard or went wrong?</label>
+          <textarea id="pl-hard" rows="2" placeholder="e.g. Still spending too long on logic puzzles, ran out of time on last 2..."></textarea>
+        </div>
+
+        <div class="field">
+          <label>What to implement / focus on next session</label>
+          <textarea id="pl-next" rows="3" placeholder="e.g. Drill venn diagrams with timer — specifically practice 'only A' vs 'at least A' language. Do 10 questions in 10 minutes..."></textarea>
+        </div>
+
+        <div class="field">
+          <label>Accuracy estimate (optional)</label>
+          <input type="number" id="pl-acc" placeholder="e.g. 75 (as a percentage)" min="0" max="100"/>
+        </div>
+      </div>
+      <div class="br">
+        <button class="btn btn-s" id="lpCancel">Cancel</button>
+        <button class="btn btn-g" id="lpSave">Save session ✓</button>
+      </div>
+    </div>
+
+    <!-- NEW MOCK WIZARD -->
     <div class="view" id="vn">
       <div class="pg-title">New Mock Review</div><div class="pg-sub">Complete all 5 phases — ~50 minutes total</div>
       <div class="wp" id="wp"></div>
@@ -280,23 +407,34 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
       </div>
     </div>
 
+    <!-- DETAIL -->
     <div class="view" id="vdet">
       <button class="btn btn-s btn-sm" id="btd" style="margin-bottom:22px">← All reviews</button>
       <div id="dc"></div>
     </div>
+
+    <!-- PRACTICE DETAIL -->
+    <div class="view" id="vpdet">
+      <button class="btn btn-s btn-sm" id="bpd" style="margin-bottom:22px">← Practice log</button>
+      <div id="pdc"></div>
+    </div>
+
   </main>
 </div>
 
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import{getAuth,GoogleAuthProvider,signInWithPopup,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import{getAuth,GoogleAuthProvider,signInWithRedirect,getRedirectResult,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import{getFirestore,collection,doc,setDoc,getDocs,deleteDoc,query,orderBy}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const app=initializeApp({apiKey:"AIzaSyAScpq6RdSG1OONk9Q1gcw1E8i7_kose0o",authDomain:"ucat-tracker.firebaseapp.com",projectId:"ucat-tracker",storageBucket:"ucat-tracker.firebasestorage.app",messagingSenderId:"242021359226",appId:"1:242021359226:web:e22eb46dfb655b083c65c3"});
 const auth=getAuth(app),db=getFirestore(app),prov=new GoogleAuthProvider();
-let user=null,mocks=[],phase=0,skip=null,sci=null,mci=null,dark=true;
+let user=null,mocks=[],practLogs=[],phase=0,skip=null,sci=null,mci=null,dark=true,tmMode=null,ratingVal=null;
 const $=id=>document.getElementById(id);
+
 const CATS=[{id:'syllogisms',label:'Syllogisms',color:'#a855f7'},{id:'logicPuzzles',label:'Logic Puzzles',color:'#00c8f0'},{id:'strongestArg',label:'Strongest Argument',color:'#10d98a'},{id:'inference',label:'Inference',color:'#f5a623'},{id:'vennDiagrams',label:'Venn Diagrams',color:'#4d9fff'},{id:'probability',label:'Probability',color:'#f4607a'}];
+const SUBTESTS=[{id:'syllogisms',label:'Syllogisms',cbColor:'#a855f7',cbBg:'rgba(168,85,247,.09)'},{id:'logicPuzzles',label:'Logic Puzzles',cbColor:'#00c8f0',cbBg:'rgba(0,200,240,.08)'},{id:'strongestArg',label:'Strongest Argument',cbColor:'#10d98a',cbBg:'rgba(16,217,138,.08)'},{id:'inference',label:'Inference (text-based)',cbColor:'#f5a623',cbBg:'rgba(245,166,35,.08)'},{id:'vennDiagrams',label:'Venn Diagrams',cbColor:'#4d9fff',cbBg:'rgba(77,159,255,.08)'},{id:'probability',label:'Probability',cbColor:'#f4607a',cbBg:'rgba(244,96,122,.08)'},{id:'allDM',label:'All Decision Making',cbColor:'#00c8f0',cbBg:'rgba(0,200,240,.06)'}];
+
 const scls=s=>s>=660?'high':s>=600?'mid':'low';
 const acc=d=>{const t=(d?.correct||0)+(d?.partial||0)+(d?.wrong||0);return t?Math.round(((d.correct||0)+(d.partial||0)*.5)/t*100):null};
 const toast=(m,t='ok')=>{const e=$('toast');e.textContent=m;e.className='show '+t;setTimeout(()=>e.className='',2800)};
@@ -308,12 +446,17 @@ const applyTh=()=>{document.documentElement.setAttribute('data-theme',dark?'dark
 applyTh();
 $('tsw').addEventListener('click',()=>{dark=!dark;applyTh()});
 
-// Auth
+// Auth — use redirect instead of popup (fixes popup-blocked)
 $('gBtn').addEventListener('click',async()=>{
-  try{await signInWithPopup(auth,prov)}
-  catch(e){console.error(e);toast('Sign-in failed: '+e.code,'err')}
+  try{await signInWithRedirect(auth,prov)}
+  catch(e){console.error(e);toast('Sign-in error: '+e.code,'err')}
 });
-$('soBtn').addEventListener('click',async()=>{await signOut(auth);mocks=[];$('auth-screen').style.display='flex'});
+$('soBtn').addEventListener('click',async()=>{await signOut(auth);mocks=[];practLogs=[];$('auth-screen').style.display='flex'});
+
+// Handle redirect result on page load
+getRedirectResult(auth).then(result=>{
+  if(result?.user) console.log('Redirect sign-in success');
+}).catch(e=>{ if(e.code!=='auth/no-current-user') console.error(e); });
 
 onAuthStateChanged(auth,async u=>{
   user=u;
@@ -322,8 +465,14 @@ onAuthStateChanged(auth,async u=>{
     const ini=(u.displayName||'U').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
     $('ub').innerHTML=`<div class="uavatar">${u.photoURL?`<img src="${u.photoURL}" alt=""/>`:ini}</div><div><div class="uname">${u.displayName||'Signed in'}</div><div class="uemail">${u.email||''}</div></div>`;
     load(true);
-    try{const s=await getDocs(query(collection(db,'users',u.uid,'mocks'),orderBy('savedAt','asc')));mocks=s.docs.map(d=>({id:d.id,...d.data()}))}
-    catch(e){toast("Couldn't load — check Firestore rules",'err')}
+    try{
+      const [ms,ps]=await Promise.all([
+        getDocs(query(collection(db,'users',u.uid,'mocks'),orderBy('savedAt','asc'))),
+        getDocs(query(collection(db,'users',u.uid,'practLogs'),orderBy('savedAt','desc')))
+      ]);
+      mocks=ms.docs.map(d=>({id:d.id,...d.data()}));
+      practLogs=ps.docs.map(d=>({id:d.id,...d.data()}));
+    }catch(e){toast("Couldn't load — check Firestore rules",'err')}
     load(false);
     sv('d');
   }else{$('auth-screen').style.display='flex'}
@@ -333,27 +482,39 @@ onAuthStateChanged(auth,async u=>{
 const sv=n=>{
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  const vm={d:'vd',p:'vp',n:'vn',det:'vdet'};
-  const nm={d:'nd',p:'np',n:'nn'};
+  const vm={d:'vd',p:'vp',pl:'vpl',lp:'vlp',n:'vn',det:'vdet',pdet:'vpdet'};
+  const nm={d:'nd',p:'np',pl:'npl',lp:'nlp',n:'nn'};
   $(vm[n])?.classList.add('active');
   if(nm[n])$(nm[n])?.classList.add('active');
   if(n==='d')rDash();
   if(n==='p')rPerf();
+  if(n==='pl')rPractLog();
+  if(n==='lp')resetLogForm();
   if(n==='n')resetWiz();
   window.scrollTo({top:0,behavior:'smooth'});
 };
 $('nd').addEventListener('click',()=>sv('d'));
 $('np').addEventListener('click',()=>sv('p'));
+$('npl').addEventListener('click',()=>sv('pl'));
+$('nlp').addEventListener('click',()=>sv('lp'));
 $('nn').addEventListener('click',()=>sv('n'));
 $('nrBtn').addEventListener('click',()=>sv('n'));
 $('btd').addEventListener('click',()=>sv('d'));
+$('bpd').addEventListener('click',()=>sv('pl'));
+$('lpBtn').addEventListener('click',()=>sv('lp'));
+$('lpCancel').addEventListener('click',()=>sv('pl'));
 
 // Dashboard
 function rDash(){
   const sorted=[...mocks].sort((a,b)=>b.savedAt-a.savedAt);
   const lat=sorted[0],avg=mocks.length?Math.round(mocks.reduce((a,m)=>a+m.score,0)/mocks.length):null,best=mocks.length?Math.max(...mocks.map(m=>m.score)):null;
+  const totalQs=practLogs.reduce((a,p)=>a+(p.questions||0),0);
   const sc2=lat?(lat.score>=660?'var(--green)':lat.score>=600?'var(--cyan)':'var(--red)'):'var(--text3)';
-  $('sr').innerHTML=`<div class="stat-card" style="--g:rgba(0,200,240,.07)"><div class="s-lbl">Mocks done</div><div class="s-val" style="color:var(--cyan)">${mocks.length}</div><div class="s-sub">Decision Making</div></div><div class="stat-card" style="--g:rgba(0,200,240,.06)"><div class="s-lbl">Latest score</div><div class="s-val" style="color:${sc2}">${lat?.score||'—'}</div><div class="s-sub">${lat?lat.percentile+'th percentile':'no mocks yet'}</div></div><div class="stat-card" style="--g:rgba(168,85,247,.07)"><div class="s-lbl">Average</div><div class="s-val" style="color:var(--purple)">${avg||'—'}</div><div class="s-sub">${mocks.length>1?'across '+mocks.length+' mocks':''}</div></div><div class="stat-card" style="--g:rgba(16,217,138,.07)"><div class="s-lbl">Personal best</div><div class="s-val" style="color:var(--green)">${best||'—'}</div><div class="s-sub">${best?'keep pushing':''}</div></div>`;
+  $('sr').innerHTML=`
+    <div class="stat-card" style="--g:rgba(0,200,240,.07)"><div class="s-lbl">Mocks done</div><div class="s-val" style="color:var(--cyan)">${mocks.length}</div><div class="s-sub">Decision Making</div></div>
+    <div class="stat-card" style="--g:rgba(0,200,240,.06)"><div class="s-lbl">Latest score</div><div class="s-val" style="color:${sc2}">${lat?.score||'—'}</div><div class="s-sub">${lat?lat.percentile+'th percentile':'no mocks yet'}</div></div>
+    <div class="stat-card" style="--g:rgba(168,85,247,.07)"><div class="s-lbl">Average score</div><div class="s-val" style="color:var(--purple)">${avg||'—'}</div><div class="s-sub">${mocks.length>1?'across '+mocks.length+' mocks':''}</div></div>
+    <div class="stat-card" style="--g:rgba(16,217,138,.07)"><div class="s-lbl">Qs practised</div><div class="s-val" style="color:var(--green)">${totalQs||'—'}</div><div class="s-sub">${practLogs.length} sessions logged</div></div>`;
   const ch=[...mocks].sort((a,b)=>a.savedAt-b.savedAt);
   if(sci){sci.destroy();sci=null}
   if(ch.length){
@@ -383,10 +544,122 @@ function rPerf(){
   if(ctx2&&ch.length)mci=new Chart(ctx2,{type:'line',data:{labels:ch.map((m,i)=>m.mockName||'Mock '+(i+1)),datasets:CATS.map(c=>({label:c.label,data:ch.map(m=>{const d=m.categories?.[c.id];return d?acc(d):null}),borderColor:c.color,backgroundColor:'transparent',pointBackgroundColor:c.color,pointBorderColor:dark?'#040410':'#f0f2f8',pointBorderWidth:2,pointRadius:5,tension:.4,borderWidth:2,spanGaps:true}))},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:dark?'#8892b0':'#5a6080',font:{family:'DM Sans',size:12},boxWidth:10,boxHeight:10,padding:18}}},scales:{x:{grid:{color:gc},ticks:{color:tc3,font:{family:'DM Mono',size:11}}},y:{min:0,max:100,grid:{color:gc},ticks:{color:tc3,font:{family:'DM Mono',size:11},callback:v=>v+'%'}}}}});
 }
 
+// Practice Log view
+const ratingMeta={great:{cls:'great',txt:'Great session'},good:{cls:'good',txt:'Good session'},ok:{cls:'ok',txt:'Okay session'},tough:{cls:'tough',txt:'Tough session'}};
+function rPractLog(){
+  const totalQs=practLogs.reduce((a,p)=>a+(p.questions||0),0);
+  const timedSessions=practLogs.filter(p=>p.timing==='timed'||p.timing==='mixed').length;
+  const avgAcc=practLogs.filter(p=>p.accuracy).length?Math.round(practLogs.filter(p=>p.accuracy).reduce((a,p)=>a+p.accuracy,0)/practLogs.filter(p=>p.accuracy).length):null;
+  $('pl-stats').innerHTML=`
+    <div class="stat-card" style="--g:rgba(16,217,138,.07)"><div class="s-lbl">Sessions</div><div class="s-val" style="color:var(--green)">${practLogs.length}</div><div class="s-sub">practice logged</div></div>
+    <div class="stat-card" style="--g:rgba(0,200,240,.07)"><div class="s-lbl">Questions</div><div class="s-val" style="color:var(--cyan)">${totalQs||'—'}</div><div class="s-sub">total practised</div></div>
+    <div class="stat-card" style="--g:rgba(168,85,247,.07)"><div class="s-lbl">Avg accuracy</div><div class="s-val" style="color:var(--purple)">${avgAcc?avgAcc+'%':'—'}</div><div class="s-sub">self-reported</div></div>
+    <div class="stat-card" style="--g:rgba(245,166,35,.07)"><div class="s-lbl">Timed sessions</div><div class="s-val" style="color:var(--amber)">${timedSessions}</div><div class="s-sub">of ${practLogs.length} total</div></div>`;
+  const el=$('pl-list');
+  if(!practLogs.length){el.innerHTML='<div class="empty"><div class="ei">✦</div><div class="et">No practice logged yet.<br>Log your first session to start tracking.</div></div>';return}
+  el.innerHTML=practLogs.map(p=>{
+    const rm=ratingMeta[p.rating]||{cls:'flat',txt:'—'};
+    const tags=(p.subtests||[]).map(s=>{const st=SUBTESTS.find(x=>x.id===s);return st?`<span class="pl-tag ${s}">${st.label}</span>`:''}).join('');
+    return`<div class="pl-item" data-id="${p.id}">
+      <div class="pl-header"><div><div class="m-name">${p.date||'—'}</div></div><div class="pl-qs">${p.questions||0}<span> questions</span></div></div>
+      <div class="pl-tags">${tags}${p.timing?`<span class="pl-tag allDM">${p.timing}</span>`:''}</div>
+      <div class="pl-rating"><div class="pl-dot ${rm.cls}"></div><div class="pl-rating-txt">${rm.txt}${p.accuracy?' · '+p.accuracy+'% accuracy':''}</div></div>
+      ${p.nextFocus?`<div class="pl-improve"><div class="pl-improve-lbl">Next focus</div>${p.nextFocus}</div>`:''}
+    </div>`;
+  }).join('');
+  el.querySelectorAll('.pl-item').forEach(el=>el.addEventListener('click',()=>showPDet(el.dataset.id)));
+}
+
+function showPDet(id){
+  const p=practLogs.find(x=>x.id===id);if(!p)return;sv('pdet');
+  const rm=ratingMeta[p.rating]||{cls:'flat',txt:'—'};
+  const tags=(p.subtests||[]).map(s=>{const st=SUBTESTS.find(x=>x.id===s);return st?`<span class="pl-tag ${s}">${st.label}</span>`:''}).join('');
+  $('pdc').innerHTML=`
+    <div class="pg-title">Practice Session</div>
+    <div class="dsb"><div class="dsc mid">${p.questions||0}</div><div><div class="dp">questions done</div><div class="dd">${p.date||'—'}</div></div></div>
+    <div class="card">
+      <div class="pst">Session overview</div>
+      <div class="ir"><div class="ik">Subtests</div><div class="iv" style="display:flex;flex-wrap:wrap;gap:6px">${tags||'—'}</div></div>
+      <div class="ir"><div class="ik">Timing</div><div class="iv">${p.timing||'—'}</div></div>
+      <div class="ir"><div class="ik">How it went</div><div class="iv" style="display:flex;align-items:center;gap:8px"><div class="pl-dot ${rm.cls}"></div>${rm.txt}</div></div>
+      ${p.accuracy?`<div class="ir"><div class="ik">Accuracy estimate</div><div class="iv">${p.accuracy}%</div></div>`:''}
+    </div>
+    ${p.wentWell?`<div class="card"><div class="pst">What went well</div><div style="font-size:14px;line-height:1.75">${p.wentWell}</div></div>`:''}
+    ${p.wentHard?`<div class="card"><div class="pst">What was hard</div><div style="font-size:14px;line-height:1.75">${p.wentHard}</div></div>`:''}
+    ${p.nextFocus?`<div class="ac"><div class="pst" style="color:var(--green)">What to implement next session</div><div style="font-size:14px;line-height:1.75">${p.nextFocus}</div></div>`:''}
+    <button class="btn btn-d btn-sm" id="delPBtn">Delete this session</button>`;
+  $('delPBtn').addEventListener('click',async()=>{
+    if(!confirm('Delete this session?'))return;
+    try{await deleteDoc(doc(db,'users',user.uid,'practLogs',id));practLogs=practLogs.filter(x=>x.id!==id);toast('Session deleted');sv('pl')}
+    catch(e){toast('Delete failed','err')}
+  });
+}
+
+// Log Practice form
+function buildSubGrid(){
+  $('sub-grid').innerHTML=SUBTESTS.map(s=>`
+    <label class="sub-cb" id="scb-${s.id}" style="--cb-color:${s.cbColor};--cb-bg:${s.cbBg}">
+      <input type="checkbox" id="cb-${s.id}"/>
+      <div class="cb-box" id="cbbox-${s.id}">✓</div>
+      <span class="cb-lbl">${s.label}</span>
+    </label>`).join('');
+  SUBTESTS.forEach(s=>{
+    $(`scb-${s.id}`).addEventListener('click',()=>{
+      const cb=$(`cb-${s.id}`);cb.checked=!cb.checked;
+      $(`scb-${s.id}`).classList.toggle('checked',cb.checked);
+    });
+  });
+}
+
+function resetLogForm(){
+  tmMode=null;ratingVal=null;
+  ['pl-date','pl-qs','pl-well','pl-hard','pl-next','pl-acc'].forEach(id=>{const e=$(id);if(e)e.value=''});
+  $('pl-date').value=new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'});
+  ['tm-timed','tm-untimed','tm-mixed'].forEach(id=>$(id).className='tg');
+  ['r-great','r-good','r-ok','r-tough'].forEach(id=>$(id).className='r-btn');
+  buildSubGrid();
+}
+
+// Timing toggle
+['timed','untimed','mixed'].forEach(v=>{
+  $('tm-'+v)?.addEventListener('click',()=>{
+    tmMode=v;
+    ['timed','untimed','mixed'].forEach(x=>{$('tm-'+x).className='tg'+(x===v?' yes':'')});
+  });
+});
+
+// Rating toggle
+['great','good','ok','tough'].forEach(v=>{
+  $('r-'+v)?.addEventListener('click',()=>{
+    ratingVal=v;
+    ['great','good','ok','tough'].forEach(x=>{$('r-'+x).className='r-btn'+(x===v?' sel-'+x:'')});
+  });
+});
+
+$('lpSave').addEventListener('click',async()=>{
+  const btn=$('lpSave');btn.textContent='Saving…';btn.disabled=true;
+  const subtests=SUBTESTS.filter(s=>$(`cb-${s.id}`)?.checked).map(s=>s.id);
+  const p={
+    id:Date.now().toString(),savedAt:Date.now(),
+    date:$('pl-date').value||new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'}),
+    questions:parseInt($('pl-qs').value)||0,
+    subtests,timing:tmMode||'not recorded',rating:ratingVal||null,
+    wentWell:$('pl-well').value,wentHard:$('pl-hard').value,
+    nextFocus:$('pl-next').value,
+    accuracy:parseInt($('pl-acc').value)||null
+  };
+  try{
+    await setDoc(doc(db,'users',user.uid,'practLogs',p.id),p);
+    practLogs.unshift(p);toast('Session saved ✓');sv('pl');
+  }catch(e){toast('Save failed','err');console.error(e)}
+  btn.textContent='Save session ✓';btn.disabled=false;
+});
+
 // Detail
 function showDet(id){
   const m=mocks.find(x=>x.id===id);if(!m)return;sv('det');
-  $('dc').innerHTML=`<div class="pg-title">${m.mockName||'Mini-Mock'}</div>
+  $('dc').innerHTML=`
+    <div class="pg-title">${m.mockName||'Mini-Mock'}</div>
     <div class="dsb"><div class="dsc ${scls(m.score)}">${m.score}</div><div><div class="dp">${m.percentile}th percentile</div><div class="dd">${m.mockDate||'—'}</div></div></div>
     <div class="card"><div class="pst">Category results</div><div class="crg">${CATS.map(c=>{const d=m.categories?.[c.id]||{};const a=acc(d);const cl=a>=75?'cg':a>=50?'co':'cb';return`<div class="cri"><div class="cin">${c.label}</div><div class="cis ${cl}">${d.correct||0}✓ ${d.partial||0}½ ${d.wrong||0}✗${a!==null?' · '+a+'%':''}</div></div>`}).join('')}</div><div class="gd" style="margin:14px 0 12px"></div>${CATS.map(c=>{const d=m.categories?.[c.id]||{};return d.timeNote?`<div class="ir"><div class="ik">${c.label} time notes</div><div class="iv">${d.timeNote}</div></div>`:''}).join('')}</div>
     <div class="card"><div class="pst">Phase 1 — Immediate reflection</div><div class="ir"><div class="ik">Time hurt me at</div><div class="iv">${m.p1?.timeHurt||'—'}</div></div><div class="ir"><div class="ik">Hardest category</div><div class="iv">${m.p1?.hardest||'—'}</div></div><div class="ir"><div class="ik">Used 90s skip rule</div><div class="iv">${m.p1?.skipUsed||'—'}</div></div><div class="ir"><div class="ik">Skip rule notes</div><div class="iv">${m.p1?.skipNotes||'—'}</div></div></div>
@@ -422,15 +695,12 @@ function updProg(){
 }
 function goP(n){document.querySelectorAll('.wph').forEach(p=>p.style.display='none');$('ph'+n).style.display='block';phase=n;updProg();window.scrollTo({top:0,behavior:'smooth'})}
 
-// Toggle buttons
 ['ty','tn','tpt'].forEach(id=>{
   $(id)?.addEventListener('click',()=>{
     skip=id==='ty'?'yes':id==='tn'?'no':'partial';
     [['ty','yes'],['tn','no'],['tpt','part']].forEach(([eid,cls])=>{$(eid).className='tg'+(eid===id?' '+cls:'')});
   });
 });
-
-// Wizard nav
 $('canBtn').addEventListener('click',()=>sv('d'));
 $('p0n').addEventListener('click',()=>goP(1));
 $('p1b').addEventListener('click',()=>goP(0));$('p1n').addEventListener('click',()=>goP(2));
