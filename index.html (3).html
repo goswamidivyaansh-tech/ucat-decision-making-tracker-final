@@ -202,20 +202,6 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 .al{font-size:10px;color:var(--text3);font-family:var(--mono);margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em}
 .gd{height:1px;margin:20px 0;background:linear-gradient(90deg,transparent,rgba(0,200,240,.18),rgba(168,85,247,.14),transparent)}
 
-/* Today sessions strip */
-.session-count-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(16,217,138,.07);border:1px solid rgba(16,217,138,.2);color:var(--green);font-size:12px;font-family:var(--mono);padding:5px 14px;border-radius:20px;font-weight:500}
-.today-strip{margin-bottom:18px}
-.today-strip-hdr{font-size:10px;font-family:var(--mono);color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;display:flex;align-items:center;gap:8px}
-.today-strip-hdr::after{content:'';flex:1;height:1px;background:var(--border)}
-.ts-pill-row{display:flex;flex-wrap:wrap;gap:7px}
-.ts-pill{display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border2);border-radius:10px;padding:7px 13px;font-size:12px;font-family:var(--mono);transition:all .18s}
-.ts-pill:hover{border-color:var(--border3)}
-.ts-pill-num{font-family:var(--display);font-size:13px;font-weight:700;color:var(--cyan)}
-.ts-pill-info{color:var(--text2)}
-.ts-pill-rating{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.ts-pill-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:0 2px;transition:color .15s;line-height:1}
-.ts-pill-del:hover{color:var(--red)}
-
 /* Auth screen — local version */
 #auth-screen{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;align-items:center;justify-content:center}
 .auth-card{background:var(--bg2);backdrop-filter:blur(20px);border:1px solid var(--border2);border-radius:var(--radius-xl);padding:48px 52px;text-align:center;max-width:420px;width:90%;position:relative;overflow:hidden;z-index:1}
@@ -317,18 +303,10 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 
     <!-- LOG PRACTICE FORM -->
     <div class="view" id="vlp">
-      <div style="display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:8px">
-        <div><div class="pg-title">Log Practice Session</div><div class="pg-sub">Record what you did today — add as many sessions as you need</div></div>
-        <div id="session-count-badge"></div>
-      </div>
-      <!-- Today's saved sessions strip -->
-      <div id="today-sessions-strip"></div>
+      <div class="pg-title">Log Practice Session</div><div class="pg-sub">Record what you did today</div>
       <div class="pc">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
-          <div class="ptag" id="session-ptag">◎ Session 1</div>
-          <span id="session-hint" style="font-size:11px;font-family:var(--mono);color:var(--text3)"></span>
-        </div>
-        <div class="pt">Session details</div>
+        <div class="ptag">◎ Practice Log</div>
+        <div class="pt">Today's session</div>
         <div class="pd">Log your DM practice — what subtests you did, how many questions, how it went, and what to focus on next.</div>
         <div class="fr">
           <div class="field"><label>Date</label><input type="text" id="pl-date" placeholder="e.g. 9 May 2025"/></div>
@@ -361,11 +339,8 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
         <div class="field"><label>Accuracy estimate (optional)</label><input type="number" id="pl-acc" placeholder="e.g. 75 (as a percentage)" min="0" max="100"/></div>
       </div>
       <div class="br">
-        <button class="btn btn-s" id="lpCancel">← Done</button>
-        <div style="display:flex;gap:9px">
-          <button class="btn btn-s" id="lpSaveAnother">Save &amp; add another +</button>
-          <button class="btn btn-g" id="lpSave">Save &amp; finish ✓</button>
-        </div>
+        <button class="btn btn-s" id="lpCancel">Cancel</button>
+        <button class="btn btn-g" id="lpSave">Save session ✓</button>
       </div>
     </div>
 
@@ -570,7 +545,7 @@ const sv = n => {
   if (n === 'd')  rDash();
   if (n === 'p')  rPerf();
   if (n === 'pl') rPractLog();
-  if (n === 'lp') { logSessionsThisVisit = []; resetLogForm(); }
+  if (n === 'lp') resetLogForm();
   if (n === 'n')  resetWiz();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
@@ -583,7 +558,7 @@ $('nrBtn').addEventListener('click', () => sv('n'));
 $('btd').addEventListener('click',   () => sv('d'));
 $('bpd').addEventListener('click',   () => sv('pl'));
 $('lpBtn').addEventListener('click',    () => sv('lp'));
-$('lpCancel').addEventListener('click', () => { logSessionsThisVisit = []; sv('pl'); });
+$('lpCancel').addEventListener('click', () => sv('pl'));
 
 // ── Dashboard ────────────────────────────────────────────────────────────────
 function rDash() {
@@ -728,8 +703,6 @@ function showPDet(id) {
 }
 
 // ── Log practice form ────────────────────────────────────────────────────────
-let logSessionsThisVisit = []; // tracks IDs saved in current form visit
-
 function buildSubGrid() {
   $('sub-grid').innerHTML = SUBTESTS.map(s => `
     <label class="sub-cb" id="scb-${s.id}" style="--cb-color:${s.cbColor};--cb-bg:${s.cbBg}">
@@ -745,67 +718,14 @@ function buildSubGrid() {
   });
 }
 
-function updateTodayStrip() {
-  const todaySessions = practLogs.filter(p => logSessionsThisVisit.includes(p.id));
-  const badge = $('session-count-badge');
-  const strip = $('today-sessions-strip');
-  const ptag  = $('session-ptag');
-  const hint  = $('session-hint');
-
-  const n = logSessionsThisVisit.length;
-  badge.innerHTML = n ? `<span class="session-count-badge">✦ ${n} session${n>1?'s':''} saved today</span>` : '';
-  ptag.textContent = `◎ Session ${n + 1}`;
-  hint.textContent = n ? `${n} already saved — add as many as you need` : '';
-
-  if (!todaySessions.length) { strip.innerHTML = ''; return; }
-
-  const ratingColors = { great:'var(--green)', good:'var(--cyan)', ok:'var(--amber)', tough:'var(--red)' };
-  strip.innerHTML = `
-    <div class="today-strip">
-      <div class="today-strip-hdr">Saved this session</div>
-      <div class="ts-pill-row" id="ts-pill-row">
-        ${todaySessions.map((p,i) => {
-          const rc = ratingColors[p.rating] || 'var(--text3)';
-          const subtestLabels = (p.subtests||[]).map(s => SUBTESTS.find(x=>x.id===s)?.label||s).join(', ') || '—';
-          return `<div class="ts-pill" data-pid="${p.id}">
-            <div class="ts-pill-rating" style="background:${rc}"></div>
-            <div class="ts-pill-num">${p.questions||0}q</div>
-            <div class="ts-pill-info">${subtestLabels.length > 30 ? subtestLabels.slice(0,28)+'…' : subtestLabels}</div>
-            <button class="ts-pill-del" title="Delete this session" data-del="${p.id}">×</button>
-          </div>`;
-        }).join('')}
-      </div>
-    </div>`;
-
-  strip.querySelectorAll('[data-del]').forEach(btn => {
-    btn.addEventListener('click', e => {
-      e.stopPropagation();
-      const id = btn.dataset.del;
-      if (!confirm('Remove this session?')) return;
-      practLogs = practLogs.filter(x => x.id !== id);
-      logSessionsThisVisit = logSessionsThisVisit.filter(x => x !== id);
-      lsSet(LS_LOGS, practLogs);
-      toast('Session removed');
-      updateTodayStrip();
-    });
-  });
-}
-
-function resetLogForm(keepDate = false) {
+function resetLogForm() {
   tmMode = null; ratingVal = null;
-  const savedDate = keepDate ? $('pl-date').value : '';
   ['pl-date','pl-qs','pl-well','pl-hard','pl-next','pl-acc'].forEach(id => { const e=$(id); if(e) e.value=''; });
-  $('pl-date').value = savedDate || new Date().toLocaleDateString('en-AU', {day:'numeric',month:'long',year:'numeric'});
+  $('pl-date').value = new Date().toLocaleDateString('en-AU', {day:'numeric',month:'long',year:'numeric'});
   ['tm-timed','tm-untimed','tm-mixed'].forEach(id => $(id).className='tg');
   ['r-great','r-good','r-ok','r-tough'].forEach(id => $(id).className='r-btn');
   buildSubGrid();
-  updateTodayStrip();
 }
-
-// When navigating TO the log form, reset the visit tracker
-const _origSv = sv;
-// patch sv to reset logSessionsThisVisit when opening the form fresh
-const _svOrig = sv;
 
 ['timed','untimed','mixed'].forEach(v => {
   $('tm-'+v)?.addEventListener('click', () => {
@@ -821,7 +741,8 @@ const _svOrig = sv;
   });
 });
 
-function collectAndSaveSession() {
+$('lpSave').addEventListener('click', () => {
+  const btn = $('lpSave'); btn.textContent='Saving…'; btn.disabled=true;
   const subtests = SUBTESTS.filter(s => $(`cb-${s.id}`)?.checked).map(s => s.id);
   const p = {
     id: Date.now().toString(), savedAt: Date.now(),
@@ -832,35 +753,8 @@ function collectAndSaveSession() {
     nextFocus: $('pl-next').value, accuracy: parseInt($('pl-acc').value)||null,
   };
   practLogs.unshift(p);
-  if (lsSet(LS_LOGS, practLogs)) {
-    logSessionsThisVisit.unshift(p.id);
-    return p;
-  }
-  practLogs.shift();
-  return null;
-}
-
-$('lpSave').addEventListener('click', () => {
-  const btn = $('lpSave'); btn.textContent='Saving…'; btn.disabled=true;
-  const p = collectAndSaveSession();
-  if (p) {
-    const n = logSessionsThisVisit.length;
-    toast(`${n} session${n>1?'s':''} saved ✓`);
-    logSessionsThisVisit = [];
-    sv('pl');
-  }
-  btn.textContent='Save & finish ✓'; btn.disabled=false;
-});
-
-$('lpSaveAnother').addEventListener('click', () => {
-  const btn = $('lpSaveAnother'); btn.textContent='Saving…'; btn.disabled=true;
-  const p = collectAndSaveSession();
-  if (p) {
-    toast('Session saved — add another ✓');
-    resetLogForm(true); // keep date, clear everything else
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-  btn.textContent='Save & add another +'; btn.disabled=false;
+  if (lsSet(LS_LOGS, practLogs)) { toast('Session saved ✓'); sv('pl'); }
+  btn.textContent='Save session ✓'; btn.disabled=false;
 });
 
 // ── Detail view ──────────────────────────────────────────────────────────────
