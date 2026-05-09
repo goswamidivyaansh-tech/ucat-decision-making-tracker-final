@@ -39,8 +39,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15
 .sb-lbl{font-size:10px;font-family:var(--mono);color:var(--text3);letter-spacing:.1em;text-transform:uppercase;padding:8px 13px 3px}
 .sb-footer{margin-top:auto;padding:14px 10px 0;border-top:1px solid var(--border)}
 .user-block{display:flex;align-items:center;gap:9px;margin-bottom:10px}
-.uavatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--purple));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;overflow:hidden}
-.uavatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.uavatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--purple));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
 .uname{font-size:12px;font-weight:500;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .uemail{font-size:10px;color:var(--text3);font-family:var(--mono)}
 .signout-btn{width:100%;padding:7px 12px;border-radius:9px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-size:12px;font-family:var(--sans);cursor:pointer;transition:all .2s;text-align:left}
@@ -95,7 +94,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15
 .cptr.up{color:var(--green)}.cptr.down{color:var(--red)}.cptr.flat{color:var(--text3)}
 .ib{height:3px;background:var(--bg4);border-radius:2px;margin-top:10px;overflow:hidden}
 .if{height:100%;border-radius:2px;background:var(--cc,var(--cyan));transition:width 1.2s cubic-bezier(.34,1.56,.64,1)}
-/* Practice log */
 .pl-item{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 22px;margin-bottom:10px;cursor:pointer;transition:all .22s;position:relative;overflow:hidden}
 .pl-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--green),var(--cyan));opacity:0;transition:opacity .22s;border-radius:3px 0 0 3px}
 .pl-item:hover{border-color:var(--border2);transform:translateX(4px)}
@@ -122,7 +120,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15
 .pl-rating-txt{font-size:12px;color:var(--text2)}
 .pl-improve{font-size:13px;color:var(--text2);line-height:1.6;border-top:1px solid var(--border);padding-top:10px;margin-top:10px}
 .pl-improve-lbl{font-size:10px;font-family:var(--mono);color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
-/* subtest checkboxes */
 .sub-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
 .sub-cb{display:flex;align-items:center;gap:9px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:9px 13px;cursor:pointer;transition:all .18s;user-select:none}
 .sub-cb:hover{border-color:var(--border2)}
@@ -131,7 +128,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15
 .cb-box{width:16px;height:16px;border-radius:4px;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .18s;font-size:10px}
 .sub-cb.checked .cb-box{background:var(--cb-color,var(--cyan));border-color:var(--cb-color,var(--cyan));color:#fff}
 .cb-lbl{font-size:13px;font-weight:500}
-/* rating buttons */
 .rating-row{display:flex;gap:8px;margin-top:6px}
 .r-btn{flex:1;padding:9px 8px;border-radius:var(--radius);border:1px solid var(--border2);background:var(--bg3);color:var(--text2);font-family:var(--sans);font-size:12px;font-weight:500;cursor:pointer;transition:all .18s;text-align:center}
 .r-btn:hover{border-color:var(--border3);color:var(--text)}
@@ -139,7 +135,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15
 .r-btn.sel-good{background:rgba(0,200,240,.08);border-color:rgba(0,200,240,.3);color:var(--cyan)}
 .r-btn.sel-ok{background:rgba(245,166,35,.08);border-color:rgba(245,166,35,.3);color:var(--amber)}
 .r-btn.sel-tough{background:rgba(244,96,122,.08);border-color:rgba(244,96,122,.3);color:var(--red)}
-/* Wizard */
 .wp{display:flex;gap:7px;margin-bottom:30px;align-items:center}
 .ws{height:3px;border-radius:2px;flex:1;background:var(--bg4);transition:all .35s}
 .ws.done{background:var(--green)}.ws.active{background:var(--cyan)}
@@ -206,16 +201,26 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 .an{width:25px;height:25px;border-radius:50%;background:rgba(0,200,240,.12);color:var(--cyan);font-size:11px;font-family:var(--mono);font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .al{font-size:10px;color:var(--text3);font-family:var(--mono);margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em}
 .gd{height:1px;margin:20px 0;background:linear-gradient(90deg,transparent,rgba(0,200,240,.18),rgba(168,85,247,.14),transparent)}
+
+/* Auth screen — local version */
 #auth-screen{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;align-items:center;justify-content:center}
-.auth-card{background:var(--bg2);backdrop-filter:blur(20px);border:1px solid var(--border2);border-radius:var(--radius-xl);padding:48px 52px;text-align:center;max-width:400px;width:90%;position:relative;overflow:hidden;z-index:1}
+.auth-card{background:var(--bg2);backdrop-filter:blur(20px);border:1px solid var(--border2);border-radius:var(--radius-xl);padding:48px 52px;text-align:center;max-width:420px;width:90%;position:relative;overflow:hidden;z-index:1}
 .auth-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),var(--purple),transparent)}
 .al2{font-family:var(--display);font-size:28px;font-weight:800;letter-spacing:-.02em;margin-bottom:4px;background:linear-gradient(130deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.as2{font-size:14px;color:var(--text2);margin-bottom:32px}
-.gb{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;padding:14px 20px;border-radius:var(--radius);background:#fff;color:#333;border:none;font-family:var(--sans);font-size:15px;font-weight:500;cursor:pointer;transition:all .2s;box-shadow:0 2px 12px rgba(0,0,0,.15)}
-.gb:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.2)}
-.an2{font-size:12px;color:var(--text3);margin-top:16px;line-height:1.6}
-#lb{position:fixed;top:0;left:0;right:0;height:2px;z-index:300;background:linear-gradient(90deg,var(--cyan),var(--purple),var(--cyan));background-size:200% 100%;animation:la 1.2s linear infinite;display:none}
-@keyframes la{0%{background-position:0%}100%{background-position:200%}}
+.as2{font-size:14px;color:var(--text2);margin-bottom:28px}
+.auth-name-wrap{position:relative;margin-bottom:16px;text-align:left}
+.auth-name-wrap label{margin-bottom:8px}
+.auth-name-wrap input{font-size:15px;padding:13px 16px}
+.gb{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px 20px;border-radius:var(--radius);background:linear-gradient(130deg,var(--cyan),#0090c0);color:#fff;border:none;font-family:var(--display);font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.01em;box-shadow:0 0 28px rgba(0,200,240,.25)}
+.gb:hover{transform:translateY(-2px);box-shadow:0 6px 32px rgba(0,200,240,.38)}
+.an2{font-size:11px;color:var(--text3);margin-top:16px;line-height:1.7;font-family:var(--mono)}
+.local-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(16,217,138,.07);border:1px solid rgba(16,217,138,.2);color:var(--green);font-size:11px;font-family:var(--mono);padding:4px 12px;border-radius:20px;margin-bottom:24px}
+
+/* Export/Import bar */
+.data-bar{display:flex;gap:8px;margin-bottom:16px;padding:12px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);align-items:center}
+.data-bar-lbl{font-size:11px;font-family:var(--mono);color:var(--text3);text-transform:uppercase;letter-spacing:.06em;flex:1}
+.btn-xs{padding:5px 13px;font-size:12px;border-radius:8px}
+
 #toast{position:fixed;bottom:28px;right:28px;z-index:400;background:var(--bg2);backdrop-filter:blur(16px);border:1px solid var(--border2);border-radius:var(--radius);padding:13px 20px;font-size:14px;font-weight:500;box-shadow:0 16px 48px rgba(0,0,0,.24);transform:translateY(80px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none}
 #toast.show{transform:translateY(0);opacity:1}
 #toast.ok{border-color:rgba(16,217,138,.3);color:var(--green)}
@@ -227,19 +232,21 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 </style>
 </head>
 <body>
-<div id="lb"></div>
 <div id="toast"></div>
 
+<!-- AUTH / SETUP SCREEN -->
 <div id="auth-screen">
   <div class="bg-canvas" style="position:absolute"><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div></div>
   <div class="auth-card">
     <div class="al2">UCAT Track</div>
-    <div class="as2">Sign in to sync your reviews across all devices</div>
-    <button class="gb" id="gBtn">
-      <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-      Continue with Google
-    </button>
-    <div class="an2">Your data is stored in Firebase and syncs to every device you sign in on.</div>
+    <div class="as2">Your personal Decision Making review tracker</div>
+    <div class="local-badge">⬡ Stored locally on this device</div>
+    <div class="auth-name-wrap">
+      <label>Your name (optional)</label>
+      <input type="text" id="authName" placeholder="e.g. Alex" maxlength="40"/>
+    </div>
+    <button class="gb" id="gBtn">Get started →</button>
+    <div class="an2">All data is saved in your browser's local storage.<br>Nothing leaves your device. Export a backup anytime.</div>
   </div>
 </div>
 
@@ -259,7 +266,7 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
     <div class="sb-footer">
       <div class="th-row"><span class="th-lbl">Light mode</span><div class="th-sw" id="tsw"><div class="th-knob"></div></div></div>
       <div class="user-block" id="ub"></div>
-      <button class="signout-btn" id="soBtn">← Sign out</button>
+      <button class="signout-btn" id="soBtn">← Reset / clear data</button>
     </div>
   </nav>
 
@@ -301,17 +308,14 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
         <div class="ptag">◎ Practice Log</div>
         <div class="pt">Today's session</div>
         <div class="pd">Log your DM practice — what subtests you did, how many questions, how it went, and what to focus on next.</div>
-
         <div class="fr">
           <div class="field"><label>Date</label><input type="text" id="pl-date" placeholder="e.g. 9 May 2025"/></div>
           <div class="field"><label>Total questions done</label><input type="number" id="pl-qs" placeholder="e.g. 30" min="1"/></div>
         </div>
-
         <div class="field">
           <label>Subtests practised (select all that apply)</label>
           <div class="sub-grid" id="sub-grid"></div>
         </div>
-
         <div class="field">
           <label>Timed or untimed?</label>
           <div class="tg-row">
@@ -320,7 +324,6 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
             <button class="tg" id="tm-mixed">Mixed</button>
           </div>
         </div>
-
         <div class="field">
           <label>How did it go overall?</label>
           <div class="rating-row">
@@ -330,26 +333,10 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
             <button class="r-btn" id="r-tough">🔴 Tough</button>
           </div>
         </div>
-
-        <div class="field">
-          <label>What went well? Any wins or breakthroughs?</label>
-          <textarea id="pl-well" rows="2" placeholder="e.g. Syllogisms felt much more automatic today, got 8/10 timed..."></textarea>
-        </div>
-
-        <div class="field">
-          <label>What was hard or went wrong?</label>
-          <textarea id="pl-hard" rows="2" placeholder="e.g. Still spending too long on logic puzzles, ran out of time on last 2..."></textarea>
-        </div>
-
-        <div class="field">
-          <label>What to implement / focus on next session</label>
-          <textarea id="pl-next" rows="3" placeholder="e.g. Drill venn diagrams with timer — specifically practice 'only A' vs 'at least A' language. Do 10 questions in 10 minutes..."></textarea>
-        </div>
-
-        <div class="field">
-          <label>Accuracy estimate (optional)</label>
-          <input type="number" id="pl-acc" placeholder="e.g. 75 (as a percentage)" min="0" max="100"/>
-        </div>
+        <div class="field"><label>What went well? Any wins or breakthroughs?</label><textarea id="pl-well" rows="2" placeholder="e.g. Syllogisms felt much more automatic today, got 8/10 timed..."></textarea></div>
+        <div class="field"><label>What was hard or went wrong?</label><textarea id="pl-hard" rows="2" placeholder="e.g. Still spending too long on logic puzzles, ran out of time on last 2..."></textarea></div>
+        <div class="field"><label>What to implement / focus on next session</label><textarea id="pl-next" rows="3" placeholder="e.g. Drill venn diagrams with timer — specifically practice 'only A' vs 'at least A' language. Do 10 questions in 10 minutes..."></textarea></div>
+        <div class="field"><label>Accuracy estimate (optional)</label><input type="number" id="pl-acc" placeholder="e.g. 75 (as a percentage)" min="0" max="100"/></div>
       </div>
       <div class="br">
         <button class="btn btn-s" id="lpCancel">Cancel</button>
@@ -361,7 +348,6 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
     <div class="view" id="vn">
       <div class="pg-title">New Mock Review</div><div class="pg-sub">Complete all 5 phases — ~50 minutes total</div>
       <div class="wp" id="wp"></div>
-
       <div id="ph0" class="wph">
         <div class="pc"><div class="ptag">◈ Setup</div><div class="pt">Mock details</div><div class="pd">Enter the basics before starting the review process.</div>
         <div class="field"><label>Mock name</label><input type="text" id="mN" placeholder="e.g. Decision Making Mini-Mock 3 – Revised 2025"/></div>
@@ -369,7 +355,6 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
         <div class="field"><label>Percentile</label><input type="number" id="mP" placeholder="e.g. 55" min="1" max="99"/></div></div>
         <div class="br"><button class="btn btn-s" id="canBtn">Cancel</button><button class="btn btn-p" id="p0n">Phase 1: Immediate reflection →</button></div>
       </div>
-
       <div id="ph1" class="wph" style="display:none">
         <div class="pc"><div class="ptag">◈ Phase 1 · 5 min</div><div class="pt">Immediate reflection</div><div class="pd">Do this before looking at results. Capture your raw feeling while it's fresh.</div>
         <div class="field"><label>Where did time hurt you? Which questions felt rushed or panicked?</label><textarea id="p1t" rows="3" placeholder="e.g. Q6 took over 2 minutes, Q33 was a 3-second panic click..."></textarea></div>
@@ -378,12 +363,10 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
         <div class="field"><label>Where did you get stuck and not skip?</label><textarea id="p1s" rows="2" placeholder="e.g. Q6 — spent 2+ minutes on one syllogism instead of skipping at 90 seconds..."></textarea></div></div>
         <div class="br"><button class="btn btn-s" id="p1b">← Back</button><button class="btn btn-p" id="p1n">Phase 2: Category tallies →</button></div>
       </div>
-
       <div id="ph2" class="wph" style="display:none">
         <div class="pc"><div class="ptag">◈ Phase 2 · 10 min</div><div class="pt">Category results</div><div class="pd">Tally from results screen. Correct = full marks, Partial = yellow, Wrong = zero.</div><div id="ci"></div></div>
         <div class="br"><button class="btn btn-s" id="p2b">← Back</button><button class="btn btn-p" id="p2n">Phase 3: Question review →</button></div>
       </div>
-
       <div id="ph3" class="wph" style="display:none">
         <div class="pc"><div class="ptag">◈ Phase 3 · 20–30 min</div><div class="pt">Question analysis</div><div class="pd">Classify every wrong question. Type A first — that's where logic is broken.</div>
         <div class="ts"><div class="th2"><span class="tb2 ta">Type A</span><span class="tl">Confident but wrong — find exactly where logic broke</span></div><textarea id="p3a" rows="4" placeholder="e.g. Q6 — was certain conclusion followed but missed that 'some' ≠ 'all'..."></textarea><div class="fh">// Most important. Find the precise step where your reasoning diverged.</div></div>
@@ -391,12 +374,10 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
         <div class="ts"><div class="th2"><span class="tb2 tc3">Type C</span><span class="tl">Right but unsure — was your reasoning actually correct?</span></div><textarea id="p3c" rows="3" placeholder="e.g. Q14 — guessed correctly. Need to verify logic was right, not just the answer..."></textarea></div></div>
         <div class="br"><button class="btn btn-s" id="p3b2">← Back</button><button class="btn btn-p" id="p3n">Phase 4: Pattern analysis →</button></div>
       </div>
-
       <div id="ph4" class="wph" style="display:none">
         <div class="pc"><div class="ptag">◈ Phase 4 · 10 min</div><div class="pt">Category pattern analysis</div><div class="pd">One specific sentence per category. This drives your next practice session.</div><div id="pi"></div></div>
         <div class="br"><button class="btn btn-s" id="p4b">← Back</button><button class="btn btn-p" id="p4n">Phase 5: Action notes →</button></div>
       </div>
-
       <div id="ph5" class="wph" style="display:none">
         <div class="pc"><div class="ptag">◈ Phase 5 · 5 min</div><div class="pt">Action notes</div><div class="pd">The three specific things that change your next performance. Read before every session.</div>
         <div class="field"><label>1. Technique to drill before next mini-mock</label><textarea id="p5d" rows="2" placeholder="e.g. 5 syllogisms daily with strict 60-second timer — stop when it goes off"></textarea></div>
@@ -422,154 +403,283 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
   </main>
 </div>
 
-<script type="module">
-import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import{getAuth,GoogleAuthProvider,signInWithPopup,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import{getFirestore,collection,doc,setDoc,getDocs,deleteDoc,query,orderBy}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+<script>
+'use strict';
 
-const app=initializeApp({apiKey:"AIzaSyAScpq6RdSG1OONk9Q1gcw1E8i7_kose0o",authDomain:"ucat-tracker.firebaseapp.com",projectId:"ucat-tracker",storageBucket:"ucat-tracker.firebasestorage.app",messagingSenderId:"242021359226",appId:"1:242021359226:web:e22eb46dfb655b083c65c3"});
-const auth=getAuth(app),db=getFirestore(app),prov=new GoogleAuthProvider();
-let user=null,mocks=[],practLogs=[],phase=0,skip=null,sci=null,mci=null,dark=true,tmMode=null,ratingVal=null;
-const $=id=>document.getElementById(id);
+// ── Storage helpers ──────────────────────────────────────────────────────────
+const LS_MOCKS    = 'ucat_mocks';
+const LS_LOGS     = 'ucat_practLogs';
+const LS_USER     = 'ucat_user';
+const LS_THEME    = 'ucat_th';
+const LS_SETUP    = 'ucat_setup';
 
-const CATS=[{id:'syllogisms',label:'Syllogisms',color:'#a855f7'},{id:'logicPuzzles',label:'Logic Puzzles',color:'#00c8f0'},{id:'strongestArg',label:'Strongest Argument',color:'#10d98a'},{id:'inference',label:'Inference',color:'#f5a623'},{id:'vennDiagrams',label:'Venn Diagrams',color:'#4d9fff'},{id:'probability',label:'Probability',color:'#f4607a'}];
-const SUBTESTS=[{id:'syllogisms',label:'Syllogisms',cbColor:'#a855f7',cbBg:'rgba(168,85,247,.09)'},{id:'logicPuzzles',label:'Logic Puzzles',cbColor:'#00c8f0',cbBg:'rgba(0,200,240,.08)'},{id:'strongestArg',label:'Strongest Argument',cbColor:'#10d98a',cbBg:'rgba(16,217,138,.08)'},{id:'inference',label:'Inference (text-based)',cbColor:'#f5a623',cbBg:'rgba(245,166,35,.08)'},{id:'vennDiagrams',label:'Venn Diagrams',cbColor:'#4d9fff',cbBg:'rgba(77,159,255,.08)'},{id:'probability',label:'Probability',cbColor:'#f4607a',cbBg:'rgba(244,96,122,.08)'},{id:'allDM',label:'All Decision Making',cbColor:'#00c8f0',cbBg:'rgba(0,200,240,.06)'}];
+function lsGet(key, fallback = null) {
+  try { const v = localStorage.getItem(key); return v !== null ? JSON.parse(v) : fallback; }
+  catch { return fallback; }
+}
+function lsSet(key, val) {
+  try { localStorage.setItem(key, JSON.stringify(val)); return true; }
+  catch { toast('Storage full — export a backup now', 'err'); return false; }
+}
 
-const scls=s=>s>=660?'high':s>=600?'mid':'low';
-const acc=d=>{const t=(d?.correct||0)+(d?.partial||0)+(d?.wrong||0);return t?Math.round(((d.correct||0)+(d.partial||0)*.5)/t*100):null};
-const toast=(m,t='ok')=>{const e=$('toast');e.textContent=m;e.className='show '+t;setTimeout(()=>e.className='',2800)};
-const load=on=>{$('lb').style.display=on?'block':'none'};
+// ── State ────────────────────────────────────────────────────────────────────
+let mocks     = lsGet(LS_MOCKS, []);
+let practLogs = lsGet(LS_LOGS, []);
+let userData  = lsGet(LS_USER, { name: '' });
+let phase = 0, skip = null, sci = null, mci = null;
+let dark = lsGet(LS_THEME, 'dark') !== 'light';
+let tmMode = null, ratingVal = null;
 
-// Theme
-dark=localStorage.getItem('ucat_th')!=='light';
-const applyTh=()=>{document.documentElement.setAttribute('data-theme',dark?'dark':'light');$('tsw')?.classList.toggle('on',!dark);localStorage.setItem('ucat_th',dark?'dark':'light')};
-applyTh();
-$('tsw').addEventListener('click',()=>{dark=!dark;applyTh()});
+const $ = id => document.getElementById(id);
 
-// Auth — popup flow (avoids sessionStorage partitioning bug with redirect)
-$('gBtn').addEventListener('click',async()=>{
-  try{await signInWithPopup(auth,prov)}
-  catch(e){console.error(e);toast('Sign-in error: '+e.code,'err')}
-});
-$('soBtn').addEventListener('click',async()=>{await signOut(auth);mocks=[];practLogs=[];$('auth-screen').style.display='flex'});
+const CATS = [
+  {id:'syllogisms',   label:'Syllogisms',          color:'#a855f7'},
+  {id:'logicPuzzles', label:'Logic Puzzles',        color:'#00c8f0'},
+  {id:'strongestArg', label:'Strongest Argument',   color:'#10d98a'},
+  {id:'inference',    label:'Inference',             color:'#f5a623'},
+  {id:'vennDiagrams', label:'Venn Diagrams',         color:'#4d9fff'},
+  {id:'probability',  label:'Probability',           color:'#f4607a'},
+];
+const SUBTESTS = [
+  {id:'syllogisms',   label:'Syllogisms',            cbColor:'#a855f7', cbBg:'rgba(168,85,247,.09)'},
+  {id:'logicPuzzles', label:'Logic Puzzles',          cbColor:'#00c8f0', cbBg:'rgba(0,200,240,.08)'},
+  {id:'strongestArg', label:'Strongest Argument',     cbColor:'#10d98a', cbBg:'rgba(16,217,138,.08)'},
+  {id:'inference',    label:'Inference (text-based)', cbColor:'#f5a623', cbBg:'rgba(245,166,35,.08)'},
+  {id:'vennDiagrams', label:'Venn Diagrams',           cbColor:'#4d9fff', cbBg:'rgba(77,159,255,.08)'},
+  {id:'probability',  label:'Probability',             cbColor:'#f4607a', cbBg:'rgba(244,96,122,.08)'},
+  {id:'allDM',        label:'All Decision Making',     cbColor:'#00c8f0', cbBg:'rgba(0,200,240,.06)'},
+];
 
-onAuthStateChanged(auth,async u=>{
-  user=u;
-  if(u){
-    $('auth-screen').style.display='none';
-    const ini=(u.displayName||'U').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-    $('ub').innerHTML=`<div class="uavatar">${u.photoURL?`<img src="${u.photoURL}" alt=""/>`:ini}</div><div><div class="uname">${u.displayName||'Signed in'}</div><div class="uemail">${u.email||''}</div></div>`;
-    load(true);
-    try{
-      const [ms,ps]=await Promise.all([
-        getDocs(query(collection(db,'users',u.uid,'mocks'),orderBy('savedAt','asc'))),
-        getDocs(query(collection(db,'users',u.uid,'practLogs'),orderBy('savedAt','desc')))
-      ]);
-      mocks=ms.docs.map(d=>({id:d.id,...d.data()}));
-      practLogs=ps.docs.map(d=>({id:d.id,...d.data()}));
-    }catch(e){toast("Couldn't load — check Firestore rules",'err')}
-    load(false);
-    sv('d');
-  }else{$('auth-screen').style.display='flex'}
-});
+const scls = s => s >= 660 ? 'high' : s >= 600 ? 'mid' : 'low';
+const acc  = d => { const t=(d?.correct||0)+(d?.partial||0)+(d?.wrong||0); return t ? Math.round(((d.correct||0)+(d.partial||0)*.5)/t*100) : null; };
+const toast = (m, t='ok') => { const e=$('toast'); e.textContent=m; e.className='show '+t; setTimeout(()=>e.className='',2800); };
 
-// Nav
-const sv=n=>{
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  const vm={d:'vd',p:'vp',pl:'vpl',lp:'vlp',n:'vn',det:'vdet',pdet:'vpdet'};
-  const nm={d:'nd',p:'np',pl:'npl',lp:'nlp',n:'nn'};
-  $(vm[n])?.classList.add('active');
-  if(nm[n])$(nm[n])?.classList.add('active');
-  if(n==='d')rDash();
-  if(n==='p')rPerf();
-  if(n==='pl')rPractLog();
-  if(n==='lp')resetLogForm();
-  if(n==='n')resetWiz();
-  window.scrollTo({top:0,behavior:'smooth'});
+// ── Theme ────────────────────────────────────────────────────────────────────
+const applyTh = () => {
+  document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+  $('tsw')?.classList.toggle('on', !dark);
+  lsSet(LS_THEME, dark ? 'dark' : 'light');
 };
-$('nd').addEventListener('click',()=>sv('d'));
-$('np').addEventListener('click',()=>sv('p'));
-$('npl').addEventListener('click',()=>sv('pl'));
-$('nlp').addEventListener('click',()=>sv('lp'));
-$('nn').addEventListener('click',()=>sv('n'));
-$('nrBtn').addEventListener('click',()=>sv('n'));
-$('btd').addEventListener('click',()=>sv('d'));
-$('bpd').addEventListener('click',()=>sv('pl'));
-$('lpBtn').addEventListener('click',()=>sv('lp'));
-$('lpCancel').addEventListener('click',()=>sv('pl'));
+applyTh();
+$('tsw').addEventListener('click', () => { dark = !dark; applyTh(); });
 
-// Dashboard
-function rDash(){
-  const sorted=[...mocks].sort((a,b)=>b.savedAt-a.savedAt);
-  const lat=sorted[0],avg=mocks.length?Math.round(mocks.reduce((a,m)=>a+m.score,0)/mocks.length):null,best=mocks.length?Math.max(...mocks.map(m=>m.score)):null;
-  const totalQs=practLogs.reduce((a,p)=>a+(p.questions||0),0);
-  const sc2=lat?(lat.score>=660?'var(--green)':lat.score>=600?'var(--cyan)':'var(--red)'):'var(--text3)';
-  $('sr').innerHTML=`
+// ── Auth / setup ─────────────────────────────────────────────────────────────
+function initApp() {
+  $('auth-screen').style.display = 'none';
+  const ini = (userData.name || 'U').split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+  $('ub').innerHTML = `
+    <div class="uavatar">${ini}</div>
+    <div>
+      <div class="uname">${userData.name || 'Local user'}</div>
+      <div class="uemail">stored on device</div>
+    </div>`;
+  sv('d');
+}
+
+if (lsGet(LS_SETUP)) {
+  initApp();
+} else {
+  $('auth-screen').style.display = 'flex';
+}
+
+$('gBtn').addEventListener('click', () => {
+  const name = $('authName').value.trim();
+  userData = { name };
+  lsSet(LS_USER, userData);
+  lsSet(LS_SETUP, true);
+  initApp();
+});
+$('authName').addEventListener('keydown', e => { if (e.key === 'Enter') $('gBtn').click(); });
+
+// Reset / clear
+$('soBtn').addEventListener('click', () => {
+  if (!confirm('This will permanently delete ALL your reviews and practice logs from this device. Are you sure?')) return;
+  [LS_MOCKS, LS_LOGS, LS_USER, LS_SETUP].forEach(k => localStorage.removeItem(k));
+  mocks = []; practLogs = []; userData = { name: '' };
+  $('authName').value = '';
+  $('auth-screen').style.display = 'flex';
+});
+
+// ── Export / Import helpers ──────────────────────────────────────────────────
+function exportData() {
+  const blob = new Blob([JSON.stringify({ mocks, practLogs, userData, exportedAt: Date.now() }, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `ucat-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast('Backup downloaded ✓');
+}
+
+function importData() {
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = '.json';
+  inp.onchange = e => {
+    const file = e.target.files[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const d = JSON.parse(ev.target.result);
+        if (!Array.isArray(d.mocks) || !Array.isArray(d.practLogs)) throw new Error('Invalid backup file');
+        if (!confirm(`Import ${d.mocks.length} reviews and ${d.practLogs.length} sessions? This will REPLACE all current data.`)) return;
+        mocks = d.mocks; practLogs = d.practLogs;
+        if (d.userData) { userData = d.userData; lsSet(LS_USER, userData); }
+        lsSet(LS_MOCKS, mocks); lsSet(LS_LOGS, practLogs);
+        toast(`Imported ${mocks.length} reviews + ${practLogs.length} sessions ✓`);
+        sv('d');
+      } catch(err) { toast('Import failed: ' + err.message, 'err'); }
+    };
+    reader.readAsText(file);
+  };
+  inp.click();
+}
+
+// ── Nav ──────────────────────────────────────────────────────────────────────
+const sv = n => {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  const vm = {d:'vd',p:'vp',pl:'vpl',lp:'vlp',n:'vn',det:'vdet',pdet:'vpdet'};
+  const nm = {d:'nd',p:'np',pl:'npl',lp:'nlp',n:'nn'};
+  $(vm[n])?.classList.add('active');
+  if (nm[n]) $(nm[n])?.classList.add('active');
+  if (n === 'd')  rDash();
+  if (n === 'p')  rPerf();
+  if (n === 'pl') rPractLog();
+  if (n === 'lp') resetLogForm();
+  if (n === 'n')  resetWiz();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+$('nd').addEventListener('click',  () => sv('d'));
+$('np').addEventListener('click',  () => sv('p'));
+$('npl').addEventListener('click', () => sv('pl'));
+$('nlp').addEventListener('click', () => sv('lp'));
+$('nn').addEventListener('click',  () => sv('n'));
+$('nrBtn').addEventListener('click', () => sv('n'));
+$('btd').addEventListener('click',   () => sv('d'));
+$('bpd').addEventListener('click',   () => sv('pl'));
+$('lpBtn').addEventListener('click',    () => sv('lp'));
+$('lpCancel').addEventListener('click', () => sv('pl'));
+
+// ── Dashboard ────────────────────────────────────────────────────────────────
+function rDash() {
+  const sorted = [...mocks].sort((a,b) => b.savedAt - a.savedAt);
+  const lat = sorted[0];
+  const avg = mocks.length ? Math.round(mocks.reduce((a,m) => a+m.score, 0) / mocks.length) : null;
+  const best = mocks.length ? Math.max(...mocks.map(m => m.score)) : null;
+  const totalQs = practLogs.reduce((a,p) => a+(p.questions||0), 0);
+  const sc2 = lat ? (lat.score>=660?'var(--green)':lat.score>=600?'var(--cyan)':'var(--red)') : 'var(--text3)';
+
+  $('sr').innerHTML = `
     <div class="stat-card" style="--g:rgba(0,200,240,.07)"><div class="s-lbl">Mocks done</div><div class="s-val" style="color:var(--cyan)">${mocks.length}</div><div class="s-sub">Decision Making</div></div>
-    <div class="stat-card" style="--g:rgba(0,200,240,.06)"><div class="s-lbl">Latest score</div><div class="s-val" style="color:${sc2}">${lat?.score||'—'}</div><div class="s-sub">${lat?lat.percentile+'th percentile':'no mocks yet'}</div></div>
-    <div class="stat-card" style="--g:rgba(168,85,247,.07)"><div class="s-lbl">Average score</div><div class="s-val" style="color:var(--purple)">${avg||'—'}</div><div class="s-sub">${mocks.length>1?'across '+mocks.length+' mocks':''}</div></div>
+    <div class="stat-card" style="--g:rgba(0,200,240,.06)"><div class="s-lbl">Latest score</div><div class="s-val" style="color:${sc2}">${lat?.score||'—'}</div><div class="s-sub">${lat ? lat.percentile+'th percentile' : 'no mocks yet'}</div></div>
+    <div class="stat-card" style="--g:rgba(168,85,247,.07)"><div class="s-lbl">Average score</div><div class="s-val" style="color:var(--purple)">${avg||'—'}</div><div class="s-sub">${mocks.length>1 ? 'across '+mocks.length+' mocks' : ''}</div></div>
     <div class="stat-card" style="--g:rgba(16,217,138,.07)"><div class="s-lbl">Qs practised</div><div class="s-val" style="color:var(--green)">${totalQs||'—'}</div><div class="s-sub">${practLogs.length} sessions logged</div></div>`;
-  const ch=[...mocks].sort((a,b)=>a.savedAt-b.savedAt);
-  if(sci){sci.destroy();sci=null}
-  if(ch.length){
-    const ctx=$('sc').getContext('2d'),g=ctx.createLinearGradient(0,0,0,200);
-    g.addColorStop(0,'rgba(0,200,240,.14)');g.addColorStop(1,'rgba(0,200,240,0)');
-    const tc=dark?'#8892b0':'#8090b8',gc=dark?'rgba(255,255,255,.04)':'rgba(0,0,0,.05)';
-    sci=new Chart(ctx,{type:'line',data:{labels:ch.map((m,i)=>m.mockName||'Mock '+(i+1)),datasets:[{data:ch.map(m=>m.score),borderColor:'#00c8f0',backgroundColor:g,pointBackgroundColor:'#00c8f0',pointBorderColor:dark?'#040410':'#f0f2f8',pointBorderWidth:2,pointRadius:6,pointHoverRadius:9,tension:.4,fill:true,borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:dark?'rgba(4,4,16,.92)':'rgba(240,242,248,.95)',borderColor:'rgba(0,200,240,.3)',borderWidth:1,titleColor:'#00c8f0',bodyColor:dark?'#e2e8f8':'#12142a',padding:12,cornerRadius:10}},scales:{x:{grid:{color:gc},ticks:{color:tc,font:{family:'DM Mono',size:11}}},y:{min:300,max:900,grid:{color:gc},ticks:{color:tc,font:{family:'DM Mono',size:11},stepSize:100}}}}});
+
+  // Data management bar
+  const dataBar = document.createElement('div');
+  dataBar.className = 'data-bar';
+  dataBar.innerHTML = `
+    <span class="data-bar-lbl">💾 Local data</span>
+    <button class="btn btn-s btn-xs" id="expBtn">Export backup</button>
+    <button class="btn btn-s btn-xs" id="impBtn">Import backup</button>`;
+  const existingBar = $('vd').querySelector('.data-bar');
+  if (existingBar) existingBar.remove();
+  $('vd').querySelector('.card').before(dataBar);
+  $('expBtn').addEventListener('click', exportData);
+  $('impBtn').addEventListener('click', importData);
+
+  const ch = [...mocks].sort((a,b) => a.savedAt - b.savedAt);
+  if (sci) { sci.destroy(); sci = null; }
+  if (ch.length) {
+    const ctx = $('sc').getContext('2d');
+    const g = ctx.createLinearGradient(0,0,0,200);
+    g.addColorStop(0,'rgba(0,200,240,.14)'); g.addColorStop(1,'rgba(0,200,240,0)');
+    const tc = dark?'#8892b0':'#8090b8', gc = dark?'rgba(255,255,255,.04)':'rgba(0,0,0,.05)';
+    sci = new Chart(ctx, {
+      type:'line',
+      data:{labels:ch.map((m,i)=>m.mockName||'Mock '+(i+1)),datasets:[{data:ch.map(m=>m.score),borderColor:'#00c8f0',backgroundColor:g,pointBackgroundColor:'#00c8f0',pointBorderColor:dark?'#040410':'#f0f2f8',pointBorderWidth:2,pointRadius:6,pointHoverRadius:9,tension:.4,fill:true,borderWidth:2}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:dark?'rgba(4,4,16,.92)':'rgba(240,242,248,.95)',borderColor:'rgba(0,200,240,.3)',borderWidth:1,titleColor:'#00c8f0',bodyColor:dark?'#e2e8f8':'#12142a',padding:12,cornerRadius:10}},scales:{x:{grid:{color:gc},ticks:{color:tc,font:{family:'DM Mono',size:11}}},y:{min:300,max:900,grid:{color:gc},ticks:{color:tc,font:{family:'DM Mono',size:11},stepSize:100}}}}
+    });
   }
-  const ml=$('ml');
-  if(!sorted.length){ml.innerHTML='<div class="empty"><div class="ei">◈</div><div class="et">No reviews yet.<br>Complete your first mini-mock review.</div></div>';return}
-  ml.innerHTML=sorted.map(m=>`<div class="mock-item" data-id="${m.id}"><div><div class="m-name">${m.mockName||'Mini-Mock'}</div><div class="m-date">${m.mockDate||'—'}</div></div><div class="m-right"><div class="sc-badge ${scls(m.score)}">${m.score}</div><div class="pct">${m.percentile}th %ile</div><div class="arr">›</div></div></div>`).join('');
-  ml.querySelectorAll('.mock-item').forEach(el=>el.addEventListener('click',()=>showDet(el.dataset.id)));
+
+  const ml = $('ml');
+  if (!sorted.length) {
+    ml.innerHTML = '<div class="empty"><div class="ei">◈</div><div class="et">No reviews yet.<br>Complete your first mini-mock review.</div></div>';
+    return;
+  }
+  ml.innerHTML = sorted.map(m => `
+    <div class="mock-item" data-id="${m.id}">
+      <div><div class="m-name">${m.mockName||'Mini-Mock'}</div><div class="m-date">${m.mockDate||'—'}</div></div>
+      <div class="m-right"><div class="sc-badge ${scls(m.score)}">${m.score}</div><div class="pct">${m.percentile}th %ile</div><div class="arr">›</div></div>
+    </div>`).join('');
+  ml.querySelectorAll('.mock-item').forEach(el => el.addEventListener('click', () => showDet(el.dataset.id)));
 }
 
-// Performance
-function rPerf(){
-  const ch=[...mocks].sort((a,b)=>a.savedAt-b.savedAt);
-  if(!ch.length){$('po').innerHTML='<div class="empty"><div class="ei">◈</div><div class="et">No data yet. Complete a mock review first.</div></div>';$('cpg').innerHTML='';return}
-  const cd={};CATS.forEach(c=>{cd[c.id]=[]});
-  ch.forEach(m=>CATS.forEach(c=>{const d=m.categories?.[c.id];if(d){const a=acc(d);cd[c.id].push({mock:m.mockName||'Mock',acc:a})}}));
-  $('po').innerHTML=`<div class="stats-row" style="grid-template-columns:repeat(3,1fr)">${CATS.map(c=>{const a=cd[c.id],l=a.length?a[a.length-1].acc:null,p=a.length>1?a[a.length-2].acc:null,tr=l!==null&&p!==null?l-p:null;return`<div class="stat-card" style="--g:${c.color}18"><div class="s-lbl">${c.label}</div><div class="s-val" style="color:${c.color}">${l!==null?l+'%':'—'}</div><div class="s-sub" style="color:${tr===null?'var(--text3)':tr>=0?'var(--green)':'var(--red)'}">${tr===null?'no comparison yet':tr>=0?'↑ +'+tr+'% from last':'↓ '+tr+'% from last'}</div></div>`}).join('')}</div>`;
-  $('cpg').innerHTML=CATS.map(c=>{const a=cd[c.id],l=a.length?a[a.length-1].acc:null,p=a.length>1?a[a.length-2].acc:null,tr=l!==null&&p!==null?l-p:null,tc2=tr===null?'flat':tr>0?'up':'down',tt=tr===null?'no comparison yet':tr>0?'↑ +'+tr+'% vs last':'↓ '+tr+'% vs last';return`<div class="cpc" style="--cc:${c.color}"><div class="cph"><div><div class="cpn">${c.label}</div><div class="cptr ${tc2}">${tt}</div></div><div class="cpp">${l!==null?l+'%':'—'}</div></div><div class="ch-sm"><canvas id="cc-${c.id}"></canvas></div><div class="ib"><div class="if" style="width:${l||0}%"></div></div></div>`}).join('');
-  const tc3=dark?'#4a5280':'#9098b8',gc=dark?'rgba(255,255,255,.03)':'rgba(0,0,0,.04)';
-  CATS.forEach(c=>{const a=cd[c.id];if(!a.length)return;const ctx=document.getElementById('cc-'+c.id)?.getContext('2d');if(!ctx)return;new Chart(ctx,{type:'line',data:{labels:a.map(d=>d.mock),datasets:[{data:a.map(d=>d.acc),borderColor:c.color,backgroundColor:c.color+'18',pointBackgroundColor:c.color,pointBorderColor:dark?'#040410':'#f0f2f8',pointBorderWidth:2,pointRadius:4,tension:.4,fill:true,borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{display:false},y:{min:0,max:100,grid:{color:gc},ticks:{color:tc3,font:{size:9,family:'DM Mono'},callback:v=>v+'%',maxTicksLimit:3}}}}})});
-  if(mci){mci.destroy();mci=null}
-  const ctx2=$('mc')?.getContext('2d');
-  if(ctx2&&ch.length)mci=new Chart(ctx2,{type:'line',data:{labels:ch.map((m,i)=>m.mockName||'Mock '+(i+1)),datasets:CATS.map(c=>({label:c.label,data:ch.map(m=>{const d=m.categories?.[c.id];return d?acc(d):null}),borderColor:c.color,backgroundColor:'transparent',pointBackgroundColor:c.color,pointBorderColor:dark?'#040410':'#f0f2f8',pointBorderWidth:2,pointRadius:5,tension:.4,borderWidth:2,spanGaps:true}))},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:dark?'#8892b0':'#5a6080',font:{family:'DM Sans',size:12},boxWidth:10,boxHeight:10,padding:18}}},scales:{x:{grid:{color:gc},ticks:{color:tc3,font:{family:'DM Mono',size:11}}},y:{min:0,max:100,grid:{color:gc},ticks:{color:tc3,font:{family:'DM Mono',size:11},callback:v=>v+'%'}}}}});
+// ── Performance ──────────────────────────────────────────────────────────────
+function rPerf() {
+  const ch = [...mocks].sort((a,b) => a.savedAt - b.savedAt);
+  if (!ch.length) { $('po').innerHTML='<div class="empty"><div class="ei">◈</div><div class="et">No data yet. Complete a mock review first.</div></div>'; $('cpg').innerHTML=''; return; }
+  const cd = {}; CATS.forEach(c => { cd[c.id] = []; });
+  ch.forEach(m => CATS.forEach(c => { const d = m.categories?.[c.id]; if (d) { const a = acc(d); cd[c.id].push({mock:m.mockName||'Mock',acc:a}); } }));
+  $('po').innerHTML = `<div class="stats-row" style="grid-template-columns:repeat(3,1fr)">${CATS.map(c => {
+    const a=cd[c.id], l=a.length?a[a.length-1].acc:null, p=a.length>1?a[a.length-2].acc:null, tr=l!==null&&p!==null?l-p:null;
+    return `<div class="stat-card" style="--g:${c.color}18"><div class="s-lbl">${c.label}</div><div class="s-val" style="color:${c.color}">${l!==null?l+'%':'—'}</div><div class="s-sub" style="color:${tr===null?'var(--text3)':tr>=0?'var(--green)':'var(--red)'}">${tr===null?'no comparison yet':tr>=0?'↑ +'+tr+'% from last':'↓ '+tr+'% from last'}</div></div>`;
+  }).join('')}</div>`;
+  $('cpg').innerHTML = CATS.map(c => {
+    const a=cd[c.id], l=a.length?a[a.length-1].acc:null, p=a.length>1?a[a.length-2].acc:null, tr=l!==null&&p!==null?l-p:null;
+    const tc2=tr===null?'flat':tr>0?'up':'down', tt=tr===null?'no comparison yet':tr>0?'↑ +'+tr+'% vs last':'↓ '+tr+'% vs last';
+    return `<div class="cpc" style="--cc:${c.color}"><div class="cph"><div><div class="cpn">${c.label}</div><div class="cptr ${tc2}">${tt}</div></div><div class="cpp">${l!==null?l+'%':'—'}</div></div><div class="ch-sm"><canvas id="cc-${c.id}"></canvas></div><div class="ib"><div class="if" style="width:${l||0}%"></div></div></div>`;
+  }).join('');
+  const tc3=dark?'#4a5280':'#9098b8', gc=dark?'rgba(255,255,255,.03)':'rgba(0,0,0,.04)';
+  CATS.forEach(c => {
+    const a=cd[c.id]; if(!a.length) return;
+    const ctx=document.getElementById('cc-'+c.id)?.getContext('2d'); if(!ctx) return;
+    new Chart(ctx,{type:'line',data:{labels:a.map(d=>d.mock),datasets:[{data:a.map(d=>d.acc),borderColor:c.color,backgroundColor:c.color+'18',pointBackgroundColor:c.color,pointBorderColor:dark?'#040410':'#f0f2f8',pointBorderWidth:2,pointRadius:4,tension:.4,fill:true,borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{display:false},y:{min:0,max:100,grid:{color:gc},ticks:{color:tc3,font:{size:9,family:'DM Mono'},callback:v=>v+'%',maxTicksLimit:3}}}}});
+  });
+  if (mci) { mci.destroy(); mci = null; }
+  const ctx2 = $('mc')?.getContext('2d');
+  if (ctx2 && ch.length) mci = new Chart(ctx2,{type:'line',data:{labels:ch.map((m,i)=>m.mockName||'Mock '+(i+1)),datasets:CATS.map(c=>({label:c.label,data:ch.map(m=>{const d=m.categories?.[c.id];return d?acc(d):null}),borderColor:c.color,backgroundColor:'transparent',pointBackgroundColor:c.color,pointBorderColor:dark?'#040410':'#f0f2f8',pointBorderWidth:2,pointRadius:5,tension:.4,borderWidth:2,spanGaps:true}))},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:dark?'#8892b0':'#5a6080',font:{family:'DM Sans',size:12},boxWidth:10,boxHeight:10,padding:18}}},scales:{x:{grid:{color:gc},ticks:{color:tc3,font:{family:'DM Mono',size:11}}},y:{min:0,max:100,grid:{color:gc},ticks:{color:tc3,font:{family:'DM Mono',size:11},callback:v=>v+'%'}}}}});
 }
 
-// Practice Log view
-const ratingMeta={great:{cls:'great',txt:'Great session'},good:{cls:'good',txt:'Good session'},ok:{cls:'ok',txt:'Okay session'},tough:{cls:'tough',txt:'Tough session'}};
-function rPractLog(){
-  const totalQs=practLogs.reduce((a,p)=>a+(p.questions||0),0);
-  const timedSessions=practLogs.filter(p=>p.timing==='timed'||p.timing==='mixed').length;
-  const avgAcc=practLogs.filter(p=>p.accuracy).length?Math.round(practLogs.filter(p=>p.accuracy).reduce((a,p)=>a+p.accuracy,0)/practLogs.filter(p=>p.accuracy).length):null;
-  $('pl-stats').innerHTML=`
+// ── Practice log view ────────────────────────────────────────────────────────
+const ratingMeta = {
+  great:{cls:'great',txt:'Great session'},
+  good: {cls:'good', txt:'Good session'},
+  ok:   {cls:'ok',   txt:'Okay session'},
+  tough:{cls:'tough',txt:'Tough session'},
+};
+
+function rPractLog() {
+  const totalQs = practLogs.reduce((a,p) => a+(p.questions||0), 0);
+  const timedSessions = practLogs.filter(p => p.timing==='timed'||p.timing==='mixed').length;
+  const withAcc = practLogs.filter(p => p.accuracy);
+  const avgAcc  = withAcc.length ? Math.round(withAcc.reduce((a,p) => a+p.accuracy, 0)/withAcc.length) : null;
+  $('pl-stats').innerHTML = `
     <div class="stat-card" style="--g:rgba(16,217,138,.07)"><div class="s-lbl">Sessions</div><div class="s-val" style="color:var(--green)">${practLogs.length}</div><div class="s-sub">practice logged</div></div>
     <div class="stat-card" style="--g:rgba(0,200,240,.07)"><div class="s-lbl">Questions</div><div class="s-val" style="color:var(--cyan)">${totalQs||'—'}</div><div class="s-sub">total practised</div></div>
     <div class="stat-card" style="--g:rgba(168,85,247,.07)"><div class="s-lbl">Avg accuracy</div><div class="s-val" style="color:var(--purple)">${avgAcc?avgAcc+'%':'—'}</div><div class="s-sub">self-reported</div></div>
     <div class="stat-card" style="--g:rgba(245,166,35,.07)"><div class="s-lbl">Timed sessions</div><div class="s-val" style="color:var(--amber)">${timedSessions}</div><div class="s-sub">of ${practLogs.length} total</div></div>`;
-  const el=$('pl-list');
-  if(!practLogs.length){el.innerHTML='<div class="empty"><div class="ei">✦</div><div class="et">No practice logged yet.<br>Log your first session to start tracking.</div></div>';return}
-  el.innerHTML=practLogs.map(p=>{
-    const rm=ratingMeta[p.rating]||{cls:'flat',txt:'—'};
-    const tags=(p.subtests||[]).map(s=>{const st=SUBTESTS.find(x=>x.id===s);return st?`<span class="pl-tag ${s}">${st.label}</span>`:''}).join('');
-    return`<div class="pl-item" data-id="${p.id}">
+  const el = $('pl-list');
+  if (!practLogs.length) { el.innerHTML='<div class="empty"><div class="ei">✦</div><div class="et">No practice logged yet.<br>Log your first session to start tracking.</div></div>'; return; }
+  el.innerHTML = practLogs.map(p => {
+    const rm = ratingMeta[p.rating]||{cls:'flat',txt:'—'};
+    const tags = (p.subtests||[]).map(s => { const st=SUBTESTS.find(x=>x.id===s); return st?`<span class="pl-tag ${s}">${st.label}</span>`:''; }).join('');
+    return `<div class="pl-item" data-id="${p.id}">
       <div class="pl-header"><div><div class="m-name">${p.date||'—'}</div></div><div class="pl-qs">${p.questions||0}<span> questions</span></div></div>
       <div class="pl-tags">${tags}${p.timing?`<span class="pl-tag allDM">${p.timing}</span>`:''}</div>
       <div class="pl-rating"><div class="pl-dot ${rm.cls}"></div><div class="pl-rating-txt">${rm.txt}${p.accuracy?' · '+p.accuracy+'% accuracy':''}</div></div>
       ${p.nextFocus?`<div class="pl-improve"><div class="pl-improve-lbl">Next focus</div>${p.nextFocus}</div>`:''}
     </div>`;
   }).join('');
-  el.querySelectorAll('.pl-item').forEach(el=>el.addEventListener('click',()=>showPDet(el.dataset.id)));
+  el.querySelectorAll('.pl-item').forEach(el => el.addEventListener('click', () => showPDet(el.dataset.id)));
 }
 
-function showPDet(id){
-  const p=practLogs.find(x=>x.id===id);if(!p)return;sv('pdet');
-  const rm=ratingMeta[p.rating]||{cls:'flat',txt:'—'};
-  const tags=(p.subtests||[]).map(s=>{const st=SUBTESTS.find(x=>x.id===s);return st?`<span class="pl-tag ${s}">${st.label}</span>`:''}).join('');
-  $('pdc').innerHTML=`
+function showPDet(id) {
+  const p = practLogs.find(x => x.id === id); if (!p) return;
+  sv('pdet');
+  const rm = ratingMeta[p.rating]||{cls:'flat',txt:'—'};
+  const tags = (p.subtests||[]).map(s => { const st=SUBTESTS.find(x=>x.id===s); return st?`<span class="pl-tag ${s}">${st.label}</span>`:''; }).join('');
+  $('pdc').innerHTML = `
     <div class="pg-title">Practice Session</div>
     <div class="dsb"><div class="dsc mid">${p.questions||0}</div><div><div class="dp">questions done</div><div class="dd">${p.date||'—'}</div></div></div>
     <div class="card">
@@ -583,135 +693,169 @@ function showPDet(id){
     ${p.wentHard?`<div class="card"><div class="pst">What was hard</div><div style="font-size:14px;line-height:1.75">${p.wentHard}</div></div>`:''}
     ${p.nextFocus?`<div class="ac"><div class="pst" style="color:var(--green)">What to implement next session</div><div style="font-size:14px;line-height:1.75">${p.nextFocus}</div></div>`:''}
     <button class="btn btn-d btn-sm" id="delPBtn">Delete this session</button>`;
-  $('delPBtn').addEventListener('click',async()=>{
-    if(!confirm('Delete this session?'))return;
-    try{await deleteDoc(doc(db,'users',user.uid,'practLogs',id));practLogs=practLogs.filter(x=>x.id!==id);toast('Session deleted');sv('pl')}
-    catch(e){toast('Delete failed','err')}
+  $('delPBtn').addEventListener('click', () => {
+    if (!confirm('Delete this session?')) return;
+    practLogs = practLogs.filter(x => x.id !== id);
+    lsSet(LS_LOGS, practLogs);
+    toast('Session deleted');
+    sv('pl');
   });
 }
 
-// Log Practice form
-function buildSubGrid(){
-  $('sub-grid').innerHTML=SUBTESTS.map(s=>`
+// ── Log practice form ────────────────────────────────────────────────────────
+function buildSubGrid() {
+  $('sub-grid').innerHTML = SUBTESTS.map(s => `
     <label class="sub-cb" id="scb-${s.id}" style="--cb-color:${s.cbColor};--cb-bg:${s.cbBg}">
       <input type="checkbox" id="cb-${s.id}"/>
       <div class="cb-box" id="cbbox-${s.id}">✓</div>
       <span class="cb-lbl">${s.label}</span>
     </label>`).join('');
-  SUBTESTS.forEach(s=>{
-    $(`scb-${s.id}`).addEventListener('click',()=>{
-      const cb=$(`cb-${s.id}`);cb.checked=!cb.checked;
-      $(`scb-${s.id}`).classList.toggle('checked',cb.checked);
+  SUBTESTS.forEach(s => {
+    $(`scb-${s.id}`).addEventListener('click', () => {
+      const cb = $(`cb-${s.id}`); cb.checked = !cb.checked;
+      $(`scb-${s.id}`).classList.toggle('checked', cb.checked);
     });
   });
 }
 
-function resetLogForm(){
-  tmMode=null;ratingVal=null;
-  ['pl-date','pl-qs','pl-well','pl-hard','pl-next','pl-acc'].forEach(id=>{const e=$(id);if(e)e.value=''});
-  $('pl-date').value=new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'});
-  ['tm-timed','tm-untimed','tm-mixed'].forEach(id=>$(id).className='tg');
-  ['r-great','r-good','r-ok','r-tough'].forEach(id=>$(id).className='r-btn');
+function resetLogForm() {
+  tmMode = null; ratingVal = null;
+  ['pl-date','pl-qs','pl-well','pl-hard','pl-next','pl-acc'].forEach(id => { const e=$(id); if(e) e.value=''; });
+  $('pl-date').value = new Date().toLocaleDateString('en-AU', {day:'numeric',month:'long',year:'numeric'});
+  ['tm-timed','tm-untimed','tm-mixed'].forEach(id => $(id).className='tg');
+  ['r-great','r-good','r-ok','r-tough'].forEach(id => $(id).className='r-btn');
   buildSubGrid();
 }
 
-// Timing toggle
-['timed','untimed','mixed'].forEach(v=>{
-  $('tm-'+v)?.addEventListener('click',()=>{
-    tmMode=v;
-    ['timed','untimed','mixed'].forEach(x=>{$('tm-'+x).className='tg'+(x===v?' yes':'')});
+['timed','untimed','mixed'].forEach(v => {
+  $('tm-'+v)?.addEventListener('click', () => {
+    tmMode = v;
+    ['timed','untimed','mixed'].forEach(x => { $('tm-'+x).className='tg'+(x===v?' yes':''); });
   });
 });
 
-// Rating toggle
-['great','good','ok','tough'].forEach(v=>{
-  $('r-'+v)?.addEventListener('click',()=>{
-    ratingVal=v;
-    ['great','good','ok','tough'].forEach(x=>{$('r-'+x).className='r-btn'+(x===v?' sel-'+x:'')});
+['great','good','ok','tough'].forEach(v => {
+  $('r-'+v)?.addEventListener('click', () => {
+    ratingVal = v;
+    ['great','good','ok','tough'].forEach(x => { $('r-'+x).className='r-btn'+(x===v?' sel-'+x:''); });
   });
 });
 
-$('lpSave').addEventListener('click',async()=>{
-  const btn=$('lpSave');btn.textContent='Saving…';btn.disabled=true;
-  const subtests=SUBTESTS.filter(s=>$(`cb-${s.id}`)?.checked).map(s=>s.id);
-  const p={
-    id:Date.now().toString(),savedAt:Date.now(),
-    date:$('pl-date').value||new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'}),
-    questions:parseInt($('pl-qs').value)||0,
-    subtests,timing:tmMode||'not recorded',rating:ratingVal||null,
-    wentWell:$('pl-well').value,wentHard:$('pl-hard').value,
-    nextFocus:$('pl-next').value,
-    accuracy:parseInt($('pl-acc').value)||null
+$('lpSave').addEventListener('click', () => {
+  const btn = $('lpSave'); btn.textContent='Saving…'; btn.disabled=true;
+  const subtests = SUBTESTS.filter(s => $(`cb-${s.id}`)?.checked).map(s => s.id);
+  const p = {
+    id: Date.now().toString(), savedAt: Date.now(),
+    date: $('pl-date').value || new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'}),
+    questions: parseInt($('pl-qs').value)||0,
+    subtests, timing: tmMode||'not recorded', rating: ratingVal||null,
+    wentWell: $('pl-well').value, wentHard: $('pl-hard').value,
+    nextFocus: $('pl-next').value, accuracy: parseInt($('pl-acc').value)||null,
   };
-  try{
-    await setDoc(doc(db,'users',user.uid,'practLogs',p.id),p);
-    practLogs.unshift(p);toast('Session saved ✓');sv('pl');
-  }catch(e){toast('Save failed','err');console.error(e)}
-  btn.textContent='Save session ✓';btn.disabled=false;
+  practLogs.unshift(p);
+  if (lsSet(LS_LOGS, practLogs)) { toast('Session saved ✓'); sv('pl'); }
+  btn.textContent='Save session ✓'; btn.disabled=false;
 });
 
-// Detail
-function showDet(id){
-  const m=mocks.find(x=>x.id===id);if(!m)return;sv('det');
-  $('dc').innerHTML=`
+// ── Detail view ──────────────────────────────────────────────────────────────
+function showDet(id) {
+  const m = mocks.find(x => x.id === id); if (!m) return;
+  sv('det');
+  $('dc').innerHTML = `
     <div class="pg-title">${m.mockName||'Mini-Mock'}</div>
     <div class="dsb"><div class="dsc ${scls(m.score)}">${m.score}</div><div><div class="dp">${m.percentile}th percentile</div><div class="dd">${m.mockDate||'—'}</div></div></div>
-    <div class="card"><div class="pst">Category results</div><div class="crg">${CATS.map(c=>{const d=m.categories?.[c.id]||{};const a=acc(d);const cl=a>=75?'cg':a>=50?'co':'cb';return`<div class="cri"><div class="cin">${c.label}</div><div class="cis ${cl}">${d.correct||0}✓ ${d.partial||0}½ ${d.wrong||0}✗${a!==null?' · '+a+'%':''}</div></div>`}).join('')}</div><div class="gd" style="margin:14px 0 12px"></div>${CATS.map(c=>{const d=m.categories?.[c.id]||{};return d.timeNote?`<div class="ir"><div class="ik">${c.label} time notes</div><div class="iv">${d.timeNote}</div></div>`:''}).join('')}</div>
+    <div class="card"><div class="pst">Category results</div><div class="crg">${CATS.map(c=>{const d=m.categories?.[c.id]||{};const a=acc(d);const cl=a>=75?'cg':a>=50?'co':'cb';return`<div class="cri"><div class="cin">${c.label}</div><div class="cis ${cl}">${d.correct||0}✓ ${d.partial||0}½ ${d.wrong||0}✗${a!==null?' · '+a+'%':''}</div></div>`;}).join('')}</div><div class="gd" style="margin:14px 0 12px"></div>${CATS.map(c=>{const d=m.categories?.[c.id]||{};return d.timeNote?`<div class="ir"><div class="ik">${c.label} time notes</div><div class="iv">${d.timeNote}</div></div>`:''}).join('')}</div>
     <div class="card"><div class="pst">Phase 1 — Immediate reflection</div><div class="ir"><div class="ik">Time hurt me at</div><div class="iv">${m.p1?.timeHurt||'—'}</div></div><div class="ir"><div class="ik">Hardest category</div><div class="iv">${m.p1?.hardest||'—'}</div></div><div class="ir"><div class="ik">Used 90s skip rule</div><div class="iv">${m.p1?.skipUsed||'—'}</div></div><div class="ir"><div class="ik">Skip rule notes</div><div class="iv">${m.p1?.skipNotes||'—'}</div></div></div>
     <div class="card"><div class="pst">Phase 3 — Question analysis</div><div class="ts" style="margin-bottom:14px"><div class="th2" style="margin-bottom:7px"><span class="tb2 ta">Type A</span><span class="tl">Confident but wrong</span></div><div style="font-size:14px;line-height:1.75">${m.p3?.typeA||'—'}</div></div><div class="gd" style="margin:10px 0"></div><div class="ts" style="margin-bottom:14px"><div class="th2" style="margin-bottom:7px"><span class="tb2 tb">Type B</span><span class="tl">Rushed / guessing</span></div><div style="font-size:14px;line-height:1.75">${m.p3?.typeB||'—'}</div></div><div class="gd" style="margin:10px 0"></div><div class="ts"><div class="th2" style="margin-bottom:7px"><span class="tb2 tc3">Type C</span><span class="tl">Right but unsure</span></div><div style="font-size:14px;line-height:1.75">${m.p3?.typeC||'—'}</div></div></div>
     <div class="card"><div class="pst">Phase 4 — Category patterns</div>${CATS.map(c=>{const v=m.patterns?.[c.id];return v?`<div class="ir"><div class="ik">${c.label}</div><div class="iv">${v}</div></div>`:''}).filter(Boolean).join('')||'<div style="color:var(--text3);font-size:14px">No patterns recorded.</div>'}</div>
     <div class="ac"><div class="pst" style="color:var(--cyan)">Phase 5 — Action notes · Read before every session</div><div class="ai"><div class="an">1</div><div><div class="al">Technique to drill</div><div>${m.p5?.drill||'—'}</div></div></div><div class="ai"><div class="an">2</div><div><div class="al">Time rule I broke</div><div>${m.p5?.rule||'—'}</div></div></div><div class="ai"><div class="an">3</div><div><div class="al">Priority category</div><div>${m.p5?.category||'—'}</div></div></div>${m.p5?.other?`<div class="ai"><div class="an" style="background:var(--bg4);color:var(--text2)">+</div><div><div class="al">Other notes</div><div>${m.p5.other}</div></div></div>`:''}</div>
     <button class="btn btn-d btn-sm" id="delBtn">Delete this review</button>`;
-  $('delBtn').addEventListener('click',async()=>{
-    if(!confirm('Delete this review? Cannot be undone.'))return;
-    try{await deleteDoc(doc(db,'users',user.uid,'mocks',id));mocks=mocks.filter(m=>m.id!==id);toast('Review deleted');sv('d')}
-    catch(e){toast('Delete failed','err')}
+  $('delBtn').addEventListener('click', () => {
+    if (!confirm('Delete this review? Cannot be undone.')) return;
+    mocks = mocks.filter(x => x.id !== id);
+    lsSet(LS_MOCKS, mocks);
+    toast('Review deleted');
+    sv('d');
   });
 }
 
-// Wizard
-function resetWiz(){
-  phase=0;skip=null;
-  document.querySelectorAll('.wph').forEach(p=>p.style.display='none');
+// ── Wizard ───────────────────────────────────────────────────────────────────
+function resetWiz() {
+  phase = 0; skip = null;
+  document.querySelectorAll('.wph').forEach(p => p.style.display='none');
   $('ph0').style.display='block';
-  ['mN','mD','mS','mP','p1t','p1h','p1s','p3a','p3b','p3c','p5d','p5r','p5c','p5o'].forEach(id=>{const e=$(id);if(e)e.value=''});
-  ['ty','tn','tpt'].forEach(id=>{const e=$(id);if(e)e.className='tg'});
-  buildCI();buildPI();updProg();
+  ['mN','mD','mS','mP','p1t','p1h','p1s','p3a','p3b','p3c','p5d','p5r','p5c','p5o'].forEach(id => { const e=$(id); if(e) e.value=''; });
+  ['ty','tn','tpt'].forEach(id => { const e=$(id); if(e) e.className='tg'; });
+  buildCI(); buildPI(); updProg();
 }
-function buildCI(){
-  $('ci').innerHTML=CATS.map(c=>`<div class="cr"><div class="crn" style="color:${c.color}">${c.label}</div><div class="tr"><div class="ti tc"><label>Correct ✓</label><input type="number" id="c${c.id}c" min="0" max="20" value="0"/></div><div class="ti tp"><label>Partial ½</label><input type="number" id="c${c.id}p" min="0" max="20" value="0"/></div><div class="ti tw"><label>Wrong ✗</label><input type="number" id="c${c.id}w" min="0" max="20" value="0"/></div></div><div class="field" style="margin-bottom:0"><label>Time notes</label><input type="text" id="c${c.id}n" placeholder="e.g. Q6 took 2min+..."/></div></div>`).join('');
-}
-function buildPI(){
-  $('pi').innerHTML=CATS.map(c=>`<div class="field"><label style="color:${c.color}88">${c.label}</label><input type="text" id="pt${c.id}" placeholder="My ${c.label} problem today was..."/></div>`).join('');
-}
-function updProg(){
-  const ls=['Setup','Phase 1','Phase 2','Phase 3','Phase 4','Phase 5'];
-  $('wp').innerHTML=ls.map((_,i)=>`<div class="ws ${i<phase?'done':i===phase?'active':''}"></div>`).join('')+`<span class="wl">${ls[phase]}</span>`;
-}
-function goP(n){document.querySelectorAll('.wph').forEach(p=>p.style.display='none');$('ph'+n).style.display='block';phase=n;updProg();window.scrollTo({top:0,behavior:'smooth'})}
 
-['ty','tn','tpt'].forEach(id=>{
-  $(id)?.addEventListener('click',()=>{
-    skip=id==='ty'?'yes':id==='tn'?'no':'partial';
-    [['ty','yes'],['tn','no'],['tpt','part']].forEach(([eid,cls])=>{$(eid).className='tg'+(eid===id?' '+cls:'')});
+function buildCI() {
+  $('ci').innerHTML = CATS.map(c => `
+    <div class="cr">
+      <div class="crn" style="color:${c.color}">${c.label}</div>
+      <div class="tr">
+        <div class="ti tc"><label>Correct ✓</label><input type="number" id="c${c.id}c" min="0" max="20" value="0"/></div>
+        <div class="ti tp"><label>Partial ½</label><input type="number" id="c${c.id}p" min="0" max="20" value="0"/></div>
+        <div class="ti tw"><label>Wrong ✗</label><input type="number" id="c${c.id}w" min="0" max="20" value="0"/></div>
+      </div>
+      <div class="field" style="margin-bottom:0"><label>Time notes</label><input type="text" id="c${c.id}n" placeholder="e.g. Q6 took 2min+..."/></div>
+    </div>`).join('');
+}
+
+function buildPI() {
+  $('pi').innerHTML = CATS.map(c => `
+    <div class="field">
+      <label style="color:${c.color}88">${c.label}</label>
+      <input type="text" id="pt${c.id}" placeholder="My ${c.label} problem today was..."/>
+    </div>`).join('');
+}
+
+function updProg() {
+  const ls = ['Setup','Phase 1','Phase 2','Phase 3','Phase 4','Phase 5'];
+  $('wp').innerHTML = ls.map((_,i) => `<div class="ws ${i<phase?'done':i===phase?'active':''}"></div>`).join('') + `<span class="wl">${ls[phase]}</span>`;
+}
+
+function goP(n) {
+  document.querySelectorAll('.wph').forEach(p => p.style.display='none');
+  $('ph'+n).style.display='block';
+  phase = n; updProg();
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+['ty','tn','tpt'].forEach(id => {
+  $(id)?.addEventListener('click', () => {
+    skip = id==='ty'?'yes':id==='tn'?'no':'partial';
+    [['ty','yes'],['tn','no'],['tpt','part']].forEach(([eid,cls]) => { $(eid).className='tg'+(eid===id?' '+cls:''); });
   });
 });
-$('canBtn').addEventListener('click',()=>sv('d'));
-$('p0n').addEventListener('click',()=>goP(1));
-$('p1b').addEventListener('click',()=>goP(0));$('p1n').addEventListener('click',()=>goP(2));
-$('p2b').addEventListener('click',()=>goP(1));$('p2n').addEventListener('click',()=>goP(3));
-$('p3b2').addEventListener('click',()=>goP(2));$('p3n').addEventListener('click',()=>goP(4));
-$('p4b').addEventListener('click',()=>goP(3));$('p4n').addEventListener('click',()=>goP(5));
-$('p5b').addEventListener('click',()=>goP(4));
 
-$('svBtn').addEventListener('click',async()=>{
-  const btn=$('svBtn');btn.textContent='Saving…';btn.disabled=true;
-  const cats={};CATS.forEach(c=>{cats[c.id]={correct:parseInt($('c'+c.id+'c')?.value)||0,partial:parseInt($('c'+c.id+'p')?.value)||0,wrong:parseInt($('c'+c.id+'w')?.value)||0,timeNote:$('c'+c.id+'n')?.value||''}});
-  const pats={};CATS.forEach(c=>{pats[c.id]=$('pt'+c.id)?.value||''});
-  const m={id:Date.now().toString(),savedAt:Date.now(),mockName:$('mN').value||'Mini-Mock',mockDate:$('mD').value||new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'}),score:parseInt($('mS').value)||0,percentile:parseInt($('mP').value)||0,categories:cats,patterns:pats,p1:{timeHurt:$('p1t').value,hardest:$('p1h').value,skipUsed:skip||'not recorded',skipNotes:$('p1s').value},p3:{typeA:$('p3a').value,typeB:$('p3b').value,typeC:$('p3c').value},p5:{drill:$('p5d').value,rule:$('p5r').value,category:$('p5c').value,other:$('p5o').value}};
-  try{await setDoc(doc(db,'users',user.uid,'mocks',m.id),m);mocks.push(m);toast('Review saved ✓');showDet(m.id)}
-  catch(e){toast('Save failed — check connection','err');console.error(e)}
-  btn.textContent='Save review ✓';btn.disabled=false;
+$('canBtn').addEventListener('click', () => sv('d'));
+$('p0n').addEventListener('click',  () => goP(1));
+$('p1b').addEventListener('click',  () => goP(0)); $('p1n').addEventListener('click', () => goP(2));
+$('p2b').addEventListener('click',  () => goP(1)); $('p2n').addEventListener('click', () => goP(3));
+$('p3b2').addEventListener('click', () => goP(2)); $('p3n').addEventListener('click', () => goP(4));
+$('p4b').addEventListener('click',  () => goP(3)); $('p4n').addEventListener('click', () => goP(5));
+$('p5b').addEventListener('click',  () => goP(4));
+
+$('svBtn').addEventListener('click', () => {
+  const btn = $('svBtn'); btn.textContent='Saving…'; btn.disabled=true;
+  const cats = {}; CATS.forEach(c => { cats[c.id] = {correct:parseInt($('c'+c.id+'c')?.value)||0,partial:parseInt($('c'+c.id+'p')?.value)||0,wrong:parseInt($('c'+c.id+'w')?.value)||0,timeNote:$('c'+c.id+'n')?.value||''}; });
+  const pats = {}; CATS.forEach(c => { pats[c.id] = $('pt'+c.id)?.value||''; });
+  const m = {
+    id: Date.now().toString(), savedAt: Date.now(),
+    mockName:   $('mN').value || 'Mini-Mock',
+    mockDate:   $('mD').value || new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'}),
+    score:      parseInt($('mS').value)||0,
+    percentile: parseInt($('mP').value)||0,
+    categories: cats, patterns: pats,
+    p1: { timeHurt:$('p1t').value, hardest:$('p1h').value, skipUsed:skip||'not recorded', skipNotes:$('p1s').value },
+    p3: { typeA:$('p3a').value, typeB:$('p3b').value, typeC:$('p3c').value },
+    p5: { drill:$('p5d').value, rule:$('p5r').value, category:$('p5c').value, other:$('p5o').value },
+  };
+  mocks.push(m);
+  if (lsSet(LS_MOCKS, mocks)) { toast('Review saved ✓'); showDet(m.id); }
+  else { mocks.pop(); }
+  btn.textContent='Save review ✓'; btn.disabled=false;
 });
 </script>
 </body>
