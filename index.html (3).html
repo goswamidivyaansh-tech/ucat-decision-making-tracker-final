@@ -424,7 +424,7 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import{getAuth,GoogleAuthProvider,signInWithRedirect,getRedirectResult,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import{getAuth,GoogleAuthProvider,signInWithPopup,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import{getFirestore,collection,doc,setDoc,getDocs,deleteDoc,query,orderBy}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const app=initializeApp({apiKey:"AIzaSyAScpq6RdSG1OONk9Q1gcw1E8i7_kose0o",authDomain:"ucat-tracker.firebaseapp.com",projectId:"ucat-tracker",storageBucket:"ucat-tracker.firebasestorage.app",messagingSenderId:"242021359226",appId:"1:242021359226:web:e22eb46dfb655b083c65c3"});
@@ -446,17 +446,12 @@ const applyTh=()=>{document.documentElement.setAttribute('data-theme',dark?'dark
 applyTh();
 $('tsw').addEventListener('click',()=>{dark=!dark;applyTh()});
 
-// Auth — use redirect instead of popup (fixes popup-blocked)
+// Auth — popup flow (avoids sessionStorage partitioning bug with redirect)
 $('gBtn').addEventListener('click',async()=>{
-  try{await signInWithRedirect(auth,prov)}
+  try{await signInWithPopup(auth,prov)}
   catch(e){console.error(e);toast('Sign-in error: '+e.code,'err')}
 });
 $('soBtn').addEventListener('click',async()=>{await signOut(auth);mocks=[];practLogs=[];$('auth-screen').style.display='flex'});
-
-// Handle redirect result on page load
-getRedirectResult(auth).then(result=>{
-  if(result?.user) console.log('Redirect sign-in success');
-}).catch(e=>{ if(e.code!=='auth/no-current-user') console.error(e); });
 
 onAuthStateChanged(auth,async u=>{
   user=u;
