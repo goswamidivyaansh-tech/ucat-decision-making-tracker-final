@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
@@ -35,6 +36,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15
 .nav-btn.active{background:rgba(0,200,240,.08);color:var(--cyan);border-color:rgba(0,200,240,.18)}
 .nav-icon{width:30px;height:30px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:15px;background:var(--bg4);transition:all .2s}
 .nav-btn.active .nav-icon{background:rgba(0,200,240,.14);box-shadow:0 0 10px rgba(0,200,240,.25)}
+.nav-btn.eb-nav.active{background:rgba(244,96,122,.08);color:var(--red);border-color:rgba(244,96,122,.2)}
+.nav-btn.eb-nav.active .nav-icon{background:rgba(244,96,122,.12);box-shadow:0 0 10px rgba(244,96,122,.2)}
 .sb-sep{height:1px;background:var(--border);margin:8px 10px}
 .sb-lbl{font-size:10px;font-family:var(--mono);color:var(--text3);letter-spacing:.1em;text-transform:uppercase;padding:8px 13px 3px}
 .sb-footer{margin-top:auto;padding:14px 10px 0;border-top:1px solid var(--border)}
@@ -122,7 +125,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15
 .pl-rating-txt{font-size:12px;color:var(--text2)}
 .pl-improve{font-size:13px;color:var(--text2);line-height:1.6;border-top:1px solid var(--border);padding-top:10px;margin-top:10px}
 .pl-improve-lbl{font-size:10px;font-family:var(--mono);color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
-/* NEW: per-cat accuracy row on list items */
 .pl-cat-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
 .pl-cat-badge{font-size:10px;font-family:var(--mono);font-weight:500;padding:2px 8px;border-radius:14px;border:1px solid}
 .sub-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
@@ -140,17 +142,14 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15
 .r-btn.sel-good{background:rgba(0,200,240,.08);border-color:rgba(0,200,240,.3);color:var(--cyan)}
 .r-btn.sel-ok{background:rgba(245,166,35,.08);border-color:rgba(245,166,35,.3);color:var(--amber)}
 .r-btn.sel-tough{background:rgba(244,96,122,.08);border-color:rgba(244,96,122,.3);color:var(--red)}
-/* NEW: category accuracy grid in practice form */
 .cat-acc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px}
-.cat-acc-field{display:flex;flex-direction:column;gap:5px}
+.cat-acc-field{display:flex;flex-direction:column;gap:5px;transition:opacity .2s}
 .cat-acc-label{font-size:10px;font-family:var(--mono);font-weight:500;text-transform:uppercase;letter-spacing:.05em}
 .cat-acc-wrap{position:relative}
 .cat-acc-wrap input{padding-right:28px;text-align:center}
 .cat-acc-pct{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--text3);font-family:var(--mono);pointer-events:none}
-/* NEW: section header pill */
 .section-pill{display:inline-flex;align-items:center;gap:7px;background:var(--bg3);border:1px solid var(--border2);border-radius:20px;padding:6px 14px;font-size:11px;font-family:var(--mono);font-weight:500;letter-spacing:.06em;color:var(--text2);margin-bottom:14px;margin-top:4px}
 .section-pill .dot{width:7px;height:7px;border-radius:50%}
-/* NEW: empty-data note in performance */
 .perf-note{font-size:13px;font-family:var(--mono);color:var(--text3);padding:20px 0 28px;line-height:1.7}
 .wp{display:flex;gap:7px;margin-bottom:30px;align-items:center}
 .ws{height:3px;border-radius:2px;flex:1;background:var(--bg4);transition:all .35s}
@@ -218,8 +217,7 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 .an{width:25px;height:25px;border-radius:50%;background:rgba(0,200,240,.12);color:var(--cyan);font-size:11px;font-family:var(--mono);font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .al{font-size:10px;color:var(--text3);font-family:var(--mono);margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em}
 .gd{height:1px;margin:20px 0;background:linear-gradient(90deg,transparent,rgba(0,200,240,.18),rgba(168,85,247,.14),transparent)}
-
-/* ── Auth screen ── */
+/* ─── Auth screen ─── */
 #auth-screen{position:fixed;inset:0;z-index:300;background:var(--bg);display:flex;align-items:center;justify-content:center}
 #auth-screen.hidden{display:none !important}
 .auth-card{background:var(--bg2);backdrop-filter:blur(20px);border:1px solid var(--border2);border-radius:var(--radius-xl);padding:48px 52px;text-align:center;max-width:420px;width:90%;position:relative;overflow:hidden;z-index:1}
@@ -244,7 +242,58 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 .empty{text-align:center;padding:64px 24px;color:var(--text3)}
 .ei{font-size:44px;margin-bottom:14px;opacity:.35}.et{font-size:15px;margin-bottom:22px;line-height:1.65}
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
-@media(max-width:720px){.sidebar{width:58px}.nav-label,.logo-sub,.sb-lbl,.sb-footer{display:none}.main{margin-left:58px;padding:24px 18px}.stats-row{grid-template-columns:1fr 1fr}.fr,.crg,.cpg,.sub-grid,.cat-acc-grid{grid-template-columns:1fr}}
+
+/* ─── NEW: Draft banner ─── */
+.draft-banner{display:flex;align-items:center;justify-content:space-between;gap:12px;background:rgba(245,166,35,.07);border:1px solid rgba(245,166,35,.22);border-radius:var(--radius-lg);padding:13px 18px;margin-bottom:18px;flex-wrap:wrap}
+.draft-banner-txt{font-size:13px;color:var(--amber);font-family:var(--mono);line-height:1.5}
+.draft-auto-lbl{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-family:var(--mono);color:var(--text3);background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:2px 9px;margin-left:8px;vertical-align:middle}
+
+/* ─── NEW: Error bank ─── */
+.eb-filter{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;flex:1}
+.eb-tab{padding:6px 14px;border-radius:20px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);font-family:var(--mono);font-size:11px;font-weight:500;cursor:pointer;transition:all .18s;letter-spacing:.05em;white-space:nowrap}
+.eb-tab:hover{border-color:var(--border3);color:var(--text)}
+.eb-tab.active{border-color:var(--cyan);background:rgba(0,200,240,.08);color:var(--cyan)}
+.eb-top{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:4px;flex-wrap:wrap}
+.eb-add-panel{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-xl);padding:24px 28px;margin-bottom:20px;display:none;animation:fu .22s ease}
+.eb-add-panel.open{display:block}
+.err-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px;margin-bottom:20px}
+.err-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 18px;position:relative;overflow:hidden;transition:all .22s;display:flex;flex-direction:column;gap:10px}
+.err-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--ec,var(--cyan))}
+.err-card:hover{border-color:var(--border2);box-shadow:0 6px 24px rgba(0,0,0,.16)}
+.err-card-cat{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-family:var(--mono);font-weight:500;letter-spacing:.06em;padding:3px 10px;border-radius:20px;border:1px solid;text-transform:uppercase}
+.err-card-desc{font-size:14px;line-height:1.7;color:var(--text);word-break:break-word}
+.err-card-notes{font-size:12px;line-height:1.65;color:var(--text2);padding:9px 12px;background:var(--bg3);border-radius:var(--radius);border:1px solid var(--border);word-break:break-word}
+.err-card-img{width:100%;border-radius:var(--radius);border:1px solid var(--border);object-fit:contain;max-height:220px;cursor:zoom-in;transition:border-color .18s;background:var(--bg3)}
+.err-card-img:hover{border-color:var(--border2)}
+.err-card-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:auto;padding-top:4px}
+.err-card-date{font-size:10px;font-family:var(--mono);color:var(--text3)}
+.err-src{font-size:10px;font-family:var(--mono);padding:2px 8px;border-radius:14px;border:1px solid;white-space:nowrap}
+.err-src.manual{background:rgba(168,85,247,.08);color:#a855f7;border-color:rgba(168,85,247,.25)}
+.err-src.log{background:rgba(0,200,240,.06);color:var(--cyan);border-color:rgba(0,200,240,.2)}
+.err-del{width:26px;height:26px;border-radius:7px;background:var(--bg3);border:1px solid var(--border);color:var(--text3);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;transition:all .18s;flex-shrink:0;line-height:1}
+.err-del:hover{background:rgba(244,96,122,.1);border-color:rgba(244,96,122,.3);color:var(--red)}
+.err-count{font-family:var(--mono);font-size:10px;color:var(--text3);padding:3px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:20px}
+
+/* ─── NEW: Pending errors in log form ─── */
+.perr-item{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;display:flex;align-items:flex-start;gap:10px;margin-bottom:8px}
+.perr-left{flex:1;min-width:0}
+.perr-cat-pill{font-size:10px;font-family:var(--mono);font-weight:500;padding:2px 8px;border-radius:14px;border:1px solid;display:inline-flex;margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em}
+.perr-desc{font-size:13px;line-height:1.6;color:var(--text);word-break:break-word}
+.perr-note{font-size:11px;color:var(--text3);margin-top:3px;font-family:var(--mono)}
+.perr-thumb{width:52px;height:52px;border-radius:8px;object-fit:cover;flex-shrink:0;border:1px solid var(--border);cursor:zoom-in}
+.err-add-form{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:18px 20px;margin-top:12px;animation:fu .2s ease}
+
+/* ─── NEW: Image lightbox ─── */
+.img-lb{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.9);display:flex;align-items:center;justify-content:center;cursor:zoom-out;animation:fu .15s ease}
+.img-lb img{max-width:92vw;max-height:92vh;border-radius:var(--radius-lg);box-shadow:0 24px 80px rgba(0,0,0,.7);object-fit:contain}
+.img-lb-close{position:fixed;top:20px;right:24px;color:#fff;font-size:26px;cursor:pointer;opacity:.6;z-index:501;line-height:1;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:rgba(255,255,255,.08)}
+.img-lb-close:hover{opacity:1;background:rgba(255,255,255,.15)}
+
+/* ─── File input style ─── */
+input[type="file"]{background:var(--bg4);border:1px dashed var(--border2);border-radius:var(--radius);padding:10px 14px;cursor:pointer;font-size:13px;color:var(--text2)}
+input[type="file"]:hover{border-color:var(--border3)}
+
+@media(max-width:720px){.sidebar{width:58px}.nav-label,.logo-sub,.sb-lbl,.sb-footer{display:none}.main{margin-left:58px;padding:24px 18px}.stats-row{grid-template-columns:1fr 1fr}.fr,.crg,.cpg,.sub-grid,.cat-acc-grid,.err-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -276,6 +325,7 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
     <button class="nav-btn active" id="nd"><span class="nav-icon">⬡</span><span class="nav-label">Dashboard</span></button>
     <button class="nav-btn" id="np"><span class="nav-icon">◈</span><span class="nav-label">Performance</span></button>
     <button class="nav-btn" id="npl"><span class="nav-icon">✦</span><span class="nav-label">Practice Log</span></button>
+    <button class="nav-btn eb-nav" id="neb"><span class="nav-icon">⚡</span><span class="nav-label">Error Bank</span></button>
     <div class="sb-sep"></div>
     <div class="sb-lbl">Actions</div>
     <button class="nav-btn" id="nn"><span class="nav-icon">＋</span><span class="nav-label">New Review</span></button>
@@ -300,20 +350,16 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
       <div id="ml"></div>
     </div>
 
-    <!-- PERFORMANCE — now has 3 sections: mock, practice, combined -->
+    <!-- PERFORMANCE -->
     <div class="view" id="vp">
       <div class="pg-title">Performance</div>
       <div class="pg-sub">Category accuracy across mocks &amp; practice — combined improvement view</div>
-
-      <!-- SECTION 1: Mock performance -->
       <div class="section-pill"><div class="dot" style="background:var(--cyan)"></div>MOCK PERFORMANCE</div>
       <div id="po"></div>
       <div class="gd"></div>
       <div class="sec-hdr"><div class="sec-t">Mocks — category breakdown</div></div>
       <div class="cpg" id="cpg"></div>
       <div class="card"><div class="sec-hdr"><div class="sec-t">Mocks — all categories over time</div></div><div class="ch-wrap" style="height:255px"><canvas id="mc"></canvas></div></div>
-
-      <!-- SECTION 2: Practice performance -->
       <div class="gd" style="margin-top:28px"></div>
       <div class="section-pill" style="margin-top:24px"><div class="dot" style="background:var(--green)"></div>PRACTICE ACCURACY</div>
       <div id="pract-note" class="perf-note" style="display:none"></div>
@@ -323,8 +369,6 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
         <div class="sec-hdr"><div class="sec-t">Practice sessions — all categories over time</div></div>
         <div class="ch-wrap" style="height:255px"><canvas id="pmc"></canvas></div>
       </div>
-
-      <!-- SECTION 3: Combined improvement -->
       <div class="gd" style="margin-top:28px"></div>
       <div class="section-pill" style="margin-top:24px"><div class="dot" style="background:var(--purple)"></div>COMBINED IMPROVEMENT</div>
       <div class="card">
@@ -345,6 +389,16 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
     <!-- LOG PRACTICE FORM -->
     <div class="view" id="vlp">
       <div class="pg-title">Log Practice Session</div><div class="pg-sub">Record what you did today</div>
+
+      <!-- DRAFT BANNER -->
+      <div class="draft-banner" id="draft-banner" style="display:none">
+        <div class="draft-banner-txt">📝 Unsaved draft from <strong id="draft-age">earlier</strong> — pick up where you left off?</div>
+        <div style="display:flex;gap:8px;flex-shrink:0">
+          <button class="btn btn-p btn-sm" id="resumeDraftBtn">Resume draft</button>
+          <button class="btn btn-d btn-sm" id="discardDraftBtn">Discard</button>
+        </div>
+      </div>
+
       <div class="pc">
         <div class="ptag">◎ Practice Log</div>
         <div class="pt">Today's session</div>
@@ -357,10 +411,10 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
         <div class="field"><label>Timed or untimed?</label><div class="tg-row"><button class="tg" id="tm-timed">Timed ⏱</button><button class="tg" id="tm-untimed">Untimed</button><button class="tg" id="tm-mixed">Mixed</button></div></div>
         <div class="field"><label>How did it go overall?</label><div class="rating-row"><button class="r-btn" id="r-great">🟢 Great</button><button class="r-btn" id="r-good">🔵 Good</button><button class="r-btn" id="r-ok">🟡 Okay</button><button class="r-btn" id="r-tough">🔴 Tough</button></div></div>
 
-        <!-- NEW: Per-category accuracy -->
-        <div class="field">
+        <!-- Per-category accuracy — only shown for checked subtests -->
+        <div class="field" id="cat-acc-section">
           <label>Accuracy per category — optional</label>
-          <div class="fh" style="margin-top:0;margin-bottom:8px">Enter % correct for each category you tracked. Leave blank to skip.</div>
+          <div class="fh" style="margin-top:0;margin-bottom:8px">Only shows categories you've ticked above. Leave blank to skip.</div>
           <div class="cat-acc-grid" id="cat-acc-grid"></div>
         </div>
 
@@ -368,8 +422,62 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
         <div class="field"><label>What was hard or went wrong?</label><textarea id="pl-hard" rows="2" placeholder="e.g. Still spending too long on logic puzzles, ran out of time on last 2..."></textarea></div>
         <div class="field"><label>What to implement / focus on next session</label><textarea id="pl-next" rows="3" placeholder="e.g. Drill venn diagrams with timer..."></textarea></div>
         <div class="field"><label>Overall accuracy estimate (optional)</label><input type="number" id="pl-acc" placeholder="e.g. 75 (as a percentage)" min="0" max="100"/></div>
+
+        <!-- ERROR LOG QUESTIONS -->
+        <div class="field">
+          <label style="color:var(--red)">⚡ Hard questions — error log</label>
+          <div class="fh" style="margin-top:0;margin-bottom:12px">Add questions or patterns that tripped you up. Attach a photo if useful. They sync automatically to your Error Bank.</div>
+          <div id="perr-list"></div>
+          <button class="btn btn-s btn-sm" id="addErrBtn" type="button" style="border-color:rgba(244,96,122,.25);color:var(--red)">⚡ Add hard question</button>
+
+          <!-- Inline error add form -->
+          <div class="err-add-form" id="err-add-form" style="display:none">
+            <div style="font-family:var(--display);font-size:14px;font-weight:600;margin-bottom:14px;color:var(--red)">Add to error log</div>
+            <div class="field">
+              <label>Category</label>
+              <select id="err-cat"></select>
+            </div>
+            <div class="field">
+              <label>Question / pattern (describe it)</label>
+              <textarea id="err-desc" rows="3" placeholder="e.g. Syllogism with double negation — 'No A are B, some C are B, therefore...' — I got confused about what conclusion follows..."></textarea>
+            </div>
+            <div class="field">
+              <label>What went wrong & the fix</label>
+              <textarea id="err-notes" rows="2" placeholder="e.g. I need to draw the Euler diagram for every syllogism before choosing an answer..."></textarea>
+            </div>
+            <div class="field">
+              <label>Photo of question (optional)</label>
+              <input type="file" id="err-img" accept="image/*"/>
+              <div id="err-img-preview" style="display:none;margin-top:10px">
+                <img id="err-img-thumb" style="max-height:130px;border-radius:var(--radius);border:1px solid var(--border);display:block;object-fit:contain;background:var(--bg4)"/>
+                <button class="btn btn-d btn-sm" id="errImgClear" style="margin-top:8px;display:block">Remove image</button>
+              </div>
+            </div>
+            <div class="br">
+              <button class="btn btn-s btn-sm" id="errFormCancel">Cancel</button>
+              <button class="btn btn-d btn-sm" id="errFormSave" style="background:rgba(244,96,122,.1);border-color:rgba(244,96,122,.3)">Add to log ⚡</button>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="br"><button class="btn btn-s" id="lpCancel">Cancel</button><button class="btn btn-g" id="lpSave">Save session ✓</button></div>
+    </div>
+
+    <!-- ERROR BANK -->
+    <div class="view" id="veb">
+      <div class="pg-title">Error Bank</div>
+      <div class="pg-sub">Hard questions &amp; patterns — synced from practice logs &amp; standalone entries</div>
+      <div class="eb-top">
+        <div class="eb-filter" id="eb-filter"></div>
+        <div style="display:flex;gap:8px;align-items:center;flex-shrink:0;padding-top:2px">
+          <span class="err-count" id="eb-count"></span>
+          <button class="btn btn-d btn-sm" id="addErrStandaloneBtn" style="white-space:nowrap">⚡ Add question</button>
+        </div>
+      </div>
+      <!-- Standalone add panel -->
+      <div class="eb-add-panel" id="eb-add-panel"></div>
+      <!-- Cards -->
+      <div id="eb-cards"></div>
     </div>
 
     <!-- NEW MOCK WIZARD -->
@@ -432,31 +540,38 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 
 <script>
 'use strict';
-const LS_MOCKS='ucat_mocks', LS_LOGS='ucat_practLogs', LS_USER='ucat_user', LS_THEME='ucat_th', LS_SETUP='ucat_setup';
+// ─── LocalStorage keys — all original keys preserved, new ones added ───
+const LS_MOCKS='ucat_mocks', LS_LOGS='ucat_practLogs', LS_USER='ucat_user',
+      LS_THEME='ucat_th', LS_SETUP='ucat_setup',
+      LS_ERRORS='ucat_errorLog',   // NEW
+      LS_DRAFT='ucat_draft';       // NEW
 
 function lsGet(k,fb=null){try{const v=localStorage.getItem(k);return v!==null?JSON.parse(v):fb;}catch{return fb;}}
 function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true;}catch{toast('Storage full — export a backup','err');return false;}}
 
-// All existing localStorage keys are preserved — only additive changes to data shape
 let mocks=lsGet(LS_MOCKS,[]),
     practLogs=lsGet(LS_LOGS,[]),
     userData=lsGet(LS_USER,{name:''}),
+    errorLog=lsGet(LS_ERRORS,[]),   // NEW
+    draftLog=lsGet(LS_DRAFT,null),  // NEW
+    pendingErrors=[],               // NEW: staged during current log session
+    errImgData=null,                // NEW: current image in error add form
+    draftTimer=null,                // NEW: debounce handle
+    ebFilterCat='all',              // NEW: error bank active filter
     phase=0, skip=null,
-    sci=null, mci=null,
-    pmci=null,   // NEW: practice multi-category chart
-    cbi=null,    // NEW: combined improvement chart
+    sci=null, mci=null, pmci=null, cbi=null,
     dark=lsGet(LS_THEME,'dark')!=='light',
     tmMode=null, ratingVal=null;
 
 const $=id=>document.getElementById(id);
 
 const CATS=[
-  {id:'syllogisms',  label:'Syllogisms',        color:'#a855f7'},
-  {id:'logicPuzzles',label:'Logic Puzzles',      color:'#00c8f0'},
-  {id:'strongestArg',label:'Strongest Arg',      color:'#10d98a'},
-  {id:'inference',   label:'Inference',          color:'#f5a623'},
-  {id:'vennDiagrams',label:'Venn Diagrams',      color:'#4d9fff'},
-  {id:'probability', label:'Probability',        color:'#f4607a'}
+  {id:'syllogisms',  label:'Syllogisms',       color:'#a855f7'},
+  {id:'logicPuzzles',label:'Logic Puzzles',     color:'#00c8f0'},
+  {id:'strongestArg',label:'Strongest Arg',     color:'#10d98a'},
+  {id:'inference',   label:'Inference',         color:'#f5a623'},
+  {id:'vennDiagrams',label:'Venn Diagrams',     color:'#4d9fff'},
+  {id:'probability', label:'Probability',       color:'#f4607a'}
 ];
 const SUBTESTS=[
   {id:'syllogisms',  label:'Syllogisms',            cbColor:'#a855f7',cbBg:'rgba(168,85,247,.09)'},
@@ -471,6 +586,37 @@ const SUBTESTS=[
 const scls=s=>s>=660?'high':s>=600?'mid':'low';
 const acc=d=>{const t=(d?.correct||0)+(d?.partial||0)+(d?.wrong||0);return t?Math.round(((d.correct||0)+(d.partial||0)*.5)/t*100):null;};
 const toast=(m,t='ok')=>{const e=$('toast');e.textContent=m;e.className='show '+t;setTimeout(()=>e.className='',2800);};
+
+/* ─── Image resize utility (NEW) ─── */
+async function resizeImage(file,maxPx=820){
+  return new Promise(resolve=>{
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      const img=new Image();
+      img.onload=()=>{
+        const canvas=document.createElement('canvas');
+        let {width:w,height:h}=img;
+        if(w>maxPx||h>maxPx){
+          if(w>h){h=Math.round(h*maxPx/w);w=maxPx;}
+          else{w=Math.round(w*maxPx/h);h=maxPx;}
+        }
+        canvas.width=w;canvas.height=h;
+        canvas.getContext('2d').drawImage(img,0,0,w,h);
+        resolve(canvas.toDataURL('image/jpeg',0.72));
+      };
+      img.src=ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+/* ─── Lightbox (NEW) ─── */
+function openLightbox(src){
+  const lb=document.createElement('div');lb.className='img-lb';
+  lb.innerHTML=`<span class="img-lb-close" title="Close">✕</span><img src="${src}" alt="question"/>`;
+  lb.addEventListener('click',e=>{if(e.target===lb||e.target.classList.contains('img-lb-close'))lb.remove();});
+  document.body.appendChild(lb);
+}
 
 /* ─── Theme ─── */
 const applyTh=()=>{document.documentElement.setAttribute('data-theme',dark?'dark':'light');$('tsw')?.classList.toggle('on',!dark);lsSet(LS_THEME,dark?'dark':'light');};
@@ -510,14 +656,15 @@ $('soBtn').addEventListener('click',()=>{
   userData={name:''};showAuthScreen();toast('Signed out — data kept safely');
 });
 $('clrBtn').addEventListener('click',()=>{
-  if(!confirm('Permanently delete ALL mock reviews and practice logs?\n\nThis cannot be undone. Export a backup first if you want to keep it.'))return;
-  mocks=[];practLogs=[];lsSet(LS_MOCKS,[]);lsSet(LS_LOGS,[]);
+  if(!confirm('Permanently delete ALL mock reviews, practice logs, and error bank entries?\n\nThis cannot be undone. Export a backup first if you want to keep it.'))return;
+  mocks=[];practLogs=[];errorLog=[];
+  lsSet(LS_MOCKS,[]);lsSet(LS_LOGS,[]);lsSet(LS_ERRORS,[]);lsSet(LS_DRAFT,null);
   toast('All data cleared');sv('d');
 });
 
 /* ─── Export / Import ─── */
 function exportData(){
-  const blob=new Blob([JSON.stringify({mocks,practLogs,userData,exportedAt:Date.now()},null,2)],{type:'application/json'});
+  const blob=new Blob([JSON.stringify({mocks,practLogs,errorLog,userData,exportedAt:Date.now()},null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);
   a.download=`ucat-backup-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(a.href);
   toast('Backup downloaded ✓');
@@ -531,41 +678,161 @@ function importData(){
       try{
         const d=JSON.parse(ev.target.result);
         if(!Array.isArray(d.mocks)||!Array.isArray(d.practLogs))throw new Error('Invalid file');
-        if(!confirm(`Import ${d.mocks.length} reviews and ${d.practLogs.length} sessions? This replaces current data.`))return;
-        mocks=d.mocks;practLogs=d.practLogs;
+        if(!confirm(`Import ${d.mocks.length} reviews, ${d.practLogs.length} sessions, and ${(d.errorLog||[]).length} error entries? This replaces current data.`))return;
+        mocks=d.mocks;practLogs=d.practLogs;errorLog=d.errorLog||[];
         if(d.userData){userData=d.userData;lsSet(LS_USER,userData);renderUser();}
-        lsSet(LS_MOCKS,mocks);lsSet(LS_LOGS,practLogs);
-        toast(`Imported ${mocks.length} reviews + ${practLogs.length} sessions ✓`);sv('d');
+        lsSet(LS_MOCKS,mocks);lsSet(LS_LOGS,practLogs);lsSet(LS_ERRORS,errorLog);
+        toast(`Imported ${mocks.length} reviews + ${practLogs.length} sessions + ${errorLog.length} errors ✓`);sv('d');
       }catch(err){toast('Import failed: '+err.message,'err');}
     };r.readAsText(file);
   };inp.click();
+}
+
+/* ─── Draft system (NEW) ─── */
+function collectDraft(){
+  return{
+    savedAt:Date.now(),
+    date:$('pl-date')?.value||'',
+    questions:$('pl-qs')?.value||'',
+    subtestIds:SUBTESTS.filter(s=>$(`cb-${s.id}`)?.checked).map(s=>s.id),
+    timing:tmMode,
+    rating:ratingVal,
+    catAcc:(()=>{const ca={};CATS.forEach(c=>{const v=$('pl-ca-'+c.id)?.value||'';if(v!=='')ca[c.id]=v;});return ca;})(),
+    wentWell:$('pl-well')?.value||'',
+    wentHard:$('pl-hard')?.value||'',
+    nextFocus:$('pl-next')?.value||'',
+    accuracy:$('pl-acc')?.value||'',
+    pendingErrors:[...pendingErrors]
+  };
+}
+
+function isDraftMeaningful(d){
+  if(!d)return false;
+  return !!(d.questions||d.wentWell||d.wentHard||d.nextFocus||(d.subtestIds&&d.subtestIds.length)||(d.pendingErrors&&d.pendingErrors.length));
+}
+
+function scheduleDraftSave(){
+  clearTimeout(draftTimer);
+  draftTimer=setTimeout(()=>{
+    if($('vlp')?.classList.contains('active')){
+      lsSet(LS_DRAFT,collectDraft());
+    }
+  },900);
+}
+
+function restoreDraft(d){
+  if(!d)return;
+  if($('pl-date'))$('pl-date').value=d.date||'';
+  if($('pl-qs'))$('pl-qs').value=d.questions||'';
+  if($('pl-well'))$('pl-well').value=d.wentWell||'';
+  if($('pl-hard'))$('pl-hard').value=d.wentHard||'';
+  if($('pl-next'))$('pl-next').value=d.nextFocus||'';
+  if($('pl-acc'))$('pl-acc').value=d.accuracy||'';
+
+  // Subtests
+  if(d.subtestIds){
+    SUBTESTS.forEach(s=>{
+      const cb=$(`cb-${s.id}`),wrap=$(`scb-${s.id}`);
+      if(cb&&wrap){const chk=d.subtestIds.includes(s.id);cb.checked=chk;wrap.classList.toggle('checked',chk);}
+    });
+  }
+  updateCatAccVisibility();
+
+  // Cat accuracy values
+  if(d.catAcc){CATS.forEach(c=>{const el=$('pl-ca-'+c.id);if(el&&d.catAcc[c.id]!=null)el.value=d.catAcc[c.id];});}
+
+  // Timing
+  if(d.timing){
+    tmMode=d.timing;
+    ['timed','untimed','mixed'].forEach(v=>{$('tm-'+v).className='tg'+(v===d.timing?' yes':'');});
+  }
+
+  // Rating
+  if(d.rating){
+    ratingVal=d.rating;
+    ['great','good','ok','tough'].forEach(v=>{$('r-'+v).className='r-btn'+(v===d.rating?' sel-'+v:'');});
+  }
+
+  // Pending errors
+  if(d.pendingErrors&&d.pendingErrors.length){
+    pendingErrors=[...d.pendingErrors];
+    renderPendingErrors();
+  }
+}
+
+function clearDraft(){
+  draftLog=null;
+  lsSet(LS_DRAFT,null);
+}
+
+/* ─── Category accuracy visibility (NEW) ─── */
+function updateCatAccVisibility(){
+  const checkedIds=SUBTESTS.filter(s=>$(`cb-${s.id}`)?.checked).map(s=>s.id);
+  const showAll=checkedIds.length===0||checkedIds.includes('allDM');
+  CATS.forEach(c=>{
+    const field=$(`pl-ca-field-${c.id}`);
+    if(field)field.style.display=(showAll||checkedIds.includes(c.id))?'':'none';
+  });
 }
 
 /* ─── Nav ─── */
 function sv(n){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  const vm={d:'vd',p:'vp',pl:'vpl',lp:'vlp',n:'vn',det:'vdet',pdet:'vpdet'};
-  const nm={d:'nd',p:'np',pl:'npl',lp:'nlp',n:'nn'};
+  const vm={d:'vd',p:'vp',pl:'vpl',lp:'vlp',n:'vn',det:'vdet',pdet:'vpdet',eb:'veb'};
+  const nm={d:'nd',p:'np',pl:'npl',lp:'nlp',n:'nn',eb:'neb'};
   $(vm[n])?.classList.add('active');
   if(nm[n])$(nm[n])?.classList.add('active');
   if(n==='d')rDash();
   if(n==='p')rPerf();
   if(n==='pl')rPractLog();
-  if(n==='lp')resetLogForm();
+  if(n==='lp'){
+    resetLogForm();
+    // Check for draft
+    draftLog=lsGet(LS_DRAFT,null);
+    if(isDraftMeaningful(draftLog)){
+      const ageMs=Date.now()-draftLog.savedAt;
+      const ageMin=Math.round(ageMs/60000);
+      const ageTxt=ageMin<1?'just now':ageMin<60?ageMin+' min ago':Math.round(ageMin/60)+'h ago';
+      $('draft-age').textContent=ageTxt;
+      $('draft-banner').style.display='flex';
+    }else{
+      $('draft-banner').style.display='none';
+    }
+  }
   if(n==='n')resetWiz();
+  if(n==='eb'){ebFilterCat='all';$('eb-add-panel')?.classList.remove('open');rErrorBank();}
   window.scrollTo({top:0,behavior:'smooth'});
 }
+
 $('nd').addEventListener('click',()=>sv('d'));
 $('np').addEventListener('click',()=>sv('p'));
 $('npl').addEventListener('click',()=>sv('pl'));
 $('nlp').addEventListener('click',()=>sv('lp'));
 $('nn').addEventListener('click',()=>sv('n'));
+$('neb').addEventListener('click',()=>sv('eb'));  // NEW
 $('nrBtn').addEventListener('click',()=>sv('n'));
 $('btd').addEventListener('click',()=>sv('d'));
 $('bpd').addEventListener('click',()=>sv('pl'));
 $('lpBtn').addEventListener('click',()=>sv('lp'));
-$('lpCancel').addEventListener('click',()=>sv('pl'));
+$('lpCancel').addEventListener('click',()=>sv('pl'));  // draft NOT cleared — user can resume
+
+/* ─── Draft banner actions (NEW) ─── */
+$('resumeDraftBtn').addEventListener('click',()=>{
+  restoreDraft(draftLog);
+  $('draft-banner').style.display='none';
+  toast('Draft restored ✓');
+});
+$('discardDraftBtn').addEventListener('click',()=>{
+  clearDraft();
+  $('draft-banner').style.display='none';
+  toast('Draft discarded');
+});
+
+/* ─── Draft auto-save for static log inputs (NEW) ─── */
+['pl-date','pl-qs','pl-well','pl-hard','pl-next','pl-acc'].forEach(id=>{
+  $(id)?.addEventListener('input',scheduleDraftSave);
+});
 
 /* ─── Dashboard ─── */
 function rDash(){
@@ -599,184 +866,47 @@ function rDash(){
   ml.querySelectorAll('.mock-item').forEach(el=>el.addEventListener('click',()=>showDet(el.dataset.id)));
 }
 
-/* ─── Performance ─── (UPDATED: adds practice + combined sections) */
+/* ─── Performance ─── */
 function rPerf(){
-  // Shared chart style vars
-  const tc3=dark?'#4a5280':'#9098b8', gc=dark?'rgba(255,255,255,.03)':'rgba(0,0,0,.04)';
-
-  // Destroy old chart instances
+  const tc3=dark?'#4a5280':'#9098b8',gc=dark?'rgba(255,255,255,.03)':'rgba(0,0,0,.04)';
   if(mci){mci.destroy();mci=null;}
   if(pmci){pmci.destroy();pmci=null;}
   if(cbi){cbi.destroy();cbi=null;}
-
   const ch=[...mocks].sort((a,b)=>a.savedAt-b.savedAt);
-
-  /* ── SECTION 1: Mock performance (unchanged) ── */
   if(!ch.length){
     $('po').innerHTML='<div class="empty"><div class="ei">◈</div><div class="et">No mock data yet. Complete a mock review first.</div></div>';
     $('cpg').innerHTML='';
-  } else {
+  }else{
     const cd={};CATS.forEach(c=>{cd[c.id]=[];});
     ch.forEach(m=>CATS.forEach(c=>{const d=m.categories?.[c.id];if(d){const a=acc(d);cd[c.id].push({mock:m.mockName||'Mock',acc:a});}}));
     $('po').innerHTML=`<div class="stats-row" style="grid-template-columns:repeat(3,1fr)">${CATS.map(c=>{const a=cd[c.id],l=a.length?a[a.length-1].acc:null,p=a.length>1?a[a.length-2].acc:null,tr=l!==null&&p!==null?l-p:null;return`<div class="stat-card" style="--g:${c.color}18"><div class="s-lbl">${c.label}</div><div class="s-val" style="color:${c.color}">${l!==null?l+'%':'—'}</div><div class="s-sub" style="color:${tr===null?'var(--text3)':tr>=0?'var(--green)':'var(--red)'}">${tr===null?'no comparison yet':tr>=0?'↑ +'+tr+'% from last':'↓ '+tr+'% from last'}</div></div>`;}).join('')}</div>`;
     $('cpg').innerHTML=CATS.map(c=>{const a=cd[c.id],l=a.length?a[a.length-1].acc:null,p=a.length>1?a[a.length-2].acc:null,tr=l!==null&&p!==null?l-p:null,tc2=tr===null?'flat':tr>0?'up':'down',tt=tr===null?'no comparison yet':tr>0?'↑ +'+tr+'% vs last':'↓ '+tr+'% vs last';return`<div class="cpc" style="--cc:${c.color}"><div class="cph"><div><div class="cpn">${c.label}</div><div class="cptr ${tc2}">${tt}</div></div><div class="cpp">${l!==null?l+'%':'—'}</div></div><div class="ch-sm"><canvas id="cc-${c.id}"></canvas></div><div class="ib"><div class="if" style="width:${l||0}%"></div></div></div>`;}).join('');
-    CATS.forEach(c=>{
-      const a=cd[c.id];if(!a.length)return;
-      const ctx=document.getElementById('cc-'+c.id)?.getContext('2d');if(!ctx)return;
-      new Chart(ctx,{type:'line',data:{labels:a.map(d=>d.mock),datasets:[{data:a.map(d=>d.acc),borderColor:c.color,backgroundColor:c.color+'18',pointBackgroundColor:c.color,pointBorderColor:dark?'#040410':'#f0f2f8',pointBorderWidth:2,pointRadius:4,tension:.4,fill:true,borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{display:false},y:{min:0,max:100,grid:{color:gc},ticks:{color:tc3,font:{size:9,family:'DM Mono'},callback:v=>v+'%',maxTicksLimit:3}}}}});
-    });
+    CATS.forEach(c=>{const a=cd[c.id];if(!a.length)return;const ctx=document.getElementById('cc-'+c.id)?.getContext('2d');if(!ctx)return;new Chart(ctx,{type:'line',data:{labels:a.map(d=>d.mock),datasets:[{data:a.map(d=>d.acc),borderColor:c.color,backgroundColor:c.color+'18',pointBackgroundColor:c.color,pointBorderColor:dark?'#040410':'#f0f2f8',pointBorderWidth:2,pointRadius:4,tension:.4,fill:true,borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{display:false},y:{min:0,max:100,grid:{color:gc},ticks:{color:tc3,font:{size:9,family:'DM Mono'},callback:v=>v+'%',maxTicksLimit:3}}}}});});
     const ctx2=$('mc')?.getContext('2d');
-    if(ctx2) mci=new Chart(ctx2,{type:'line',data:{labels:ch.map((m,i)=>m.mockName||'Mock '+(i+1)),datasets:CATS.map(c=>({label:c.label,data:ch.map(m=>{const d=m.categories?.[c.id];return d?acc(d):null}),borderColor:c.color,backgroundColor:'transparent',pointBackgroundColor:c.color,pointBorderColor:dark?'#040410':'#f0f2f8',pointBorderWidth:2,pointRadius:5,tension:.4,borderWidth:2,spanGaps:true}))},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:dark?'#8892b0':'#5a6080',font:{family:'DM Sans',size:12},boxWidth:10,boxHeight:10,padding:18}}},scales:{x:{grid:{color:gc},ticks:{color:tc3,font:{family:'DM Mono',size:11}}},y:{min:0,max:100,grid:{color:gc},ticks:{color:tc3,font:{family:'DM Mono',size:11},callback:v=>v+'%'}}}}});
+    if(ctx2)mci=new Chart(ctx2,{type:'line',data:{labels:ch.map((m,i)=>m.mockName||'Mock '+(i+1)),datasets:CATS.map(c=>({label:c.label,data:ch.map(m=>{const d=m.categories?.[c.id];return d?acc(d):null}),borderColor:c.color,backgroundColor:'transparent',pointBackgroundColor:c.color,pointBorderColor:dark?'#040410':'#f0f2f8',pointBorderWidth:2,pointRadius:5,tension:.4,borderWidth:2,spanGaps:true}))},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:dark?'#8892b0':'#5a6080',font:{family:'DM Sans',size:12},boxWidth:10,boxHeight:10,padding:18}}},scales:{x:{grid:{color:gc},ticks:{color:tc3,font:{family:'DM Mono',size:11}}},y:{min:0,max:100,grid:{color:gc},ticks:{color:tc3,font:{family:'DM Mono',size:11},callback:v=>v+'%'}}}}});
   }
-
-  /* ── SECTION 2: Practice accuracy per category (NEW) ── */
   const pSorted=[...practLogs].sort((a,b)=>a.savedAt-b.savedAt);
-  // practLogs with any categoryAccuracy data
   const pWithCat=pSorted.filter(p=>p.categoryAccuracy&&Object.keys(p.categoryAccuracy).length>0);
-
   if(!pWithCat.length){
     $('pract-note').style.display='block';
     $('pract-note').innerHTML='No per-category practice data yet. When logging a session, enter your accuracy % for each category you practised — the charts will appear here automatically.';
-    $('pract-cpg').innerHTML='';
-    $('pract-chart-card').style.display='none';
-  } else {
+    $('pract-cpg').innerHTML='';$('pract-chart-card').style.display='none';
+  }else{
     $('pract-note').style.display='none';
-    // Build per-category time series from practice logs
     const pcd={};CATS.forEach(c=>{pcd[c.id]=[];});
-    pWithCat.forEach(p=>{
-      CATS.forEach(c=>{
-        const v=p.categoryAccuracy[c.id];
-        if(v!=null) pcd[c.id].push({session:p.date||'Session',acc:v,savedAt:p.savedAt});
-      });
-    });
-    // Render practice category cards (mirrors mock cards)
-    $('pract-cpg').innerHTML=CATS.map(c=>{
-      const a=pcd[c.id];
-      const l=a.length?a[a.length-1].acc:null;
-      const prev=a.length>1?a[a.length-2].acc:null;
-      const tr=l!==null&&prev!==null?l-prev:null;
-      const tc2=tr===null?'flat':tr>0?'up':'down';
-      const tt=tr===null?'no comparison yet':tr>0?'↑ +'+tr+'% vs last':'↓ '+tr+'% vs last';
-      return`<div class="cpc" style="--cc:${c.color}"><div class="cph"><div><div class="cpn">${c.label}</div><div class="cptr ${tc2}">${tt}</div></div><div class="cpp">${l!==null?l+'%':'—'}</div></div><div class="ch-sm"><canvas id="pcc-${c.id}"></canvas></div><div class="ib"><div class="if" style="width:${l||0}%"></div></div></div>`;
-    }).join('');
-    // Mini charts
-    CATS.forEach(c=>{
-      const a=pcd[c.id];if(!a.length)return;
-      const ctx=document.getElementById('pcc-'+c.id)?.getContext('2d');if(!ctx)return;
-      new Chart(ctx,{type:'line',data:{labels:a.map(d=>d.session),datasets:[{data:a.map(d=>d.acc),borderColor:c.color,backgroundColor:c.color+'18',pointBackgroundColor:c.color,pointBorderColor:dark?'#040410':'#f0f2f8',pointBorderWidth:2,pointRadius:4,tension:.4,fill:true,borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{display:false},y:{min:0,max:100,grid:{color:gc},ticks:{color:tc3,font:{size:9,family:'DM Mono'},callback:v=>v+'%',maxTicksLimit:3}}}}});
-    });
-    // Practice all-categories multi-line chart
+    pWithCat.forEach(p=>{CATS.forEach(c=>{const v=p.categoryAccuracy[c.id];if(v!=null)pcd[c.id].push({session:p.date||'Session',acc:v,savedAt:p.savedAt});});});
+    $('pract-cpg').innerHTML=CATS.map(c=>{const a=pcd[c.id],l=a.length?a[a.length-1].acc:null,prev=a.length>1?a[a.length-2].acc:null,tr=l!==null&&prev!==null?l-prev:null,tc2=tr===null?'flat':tr>0?'up':'down',tt=tr===null?'no comparison yet':tr>0?'↑ +'+tr+'% vs last':'↓ '+tr+'% vs last';return`<div class="cpc" style="--cc:${c.color}"><div class="cph"><div><div class="cpn">${c.label}</div><div class="cptr ${tc2}">${tt}</div></div><div class="cpp">${l!==null?l+'%':'—'}</div></div><div class="ch-sm"><canvas id="pcc-${c.id}"></canvas></div><div class="ib"><div class="if" style="width:${l||0}%"></div></div></div>`;}).join('');
+    CATS.forEach(c=>{const a=pcd[c.id];if(!a.length)return;const ctx=document.getElementById('pcc-'+c.id)?.getContext('2d');if(!ctx)return;new Chart(ctx,{type:'line',data:{labels:a.map(d=>d.session),datasets:[{data:a.map(d=>d.acc),borderColor:c.color,backgroundColor:c.color+'18',pointBackgroundColor:c.color,pointBorderColor:dark?'#040410':'#f0f2f8',pointBorderWidth:2,pointRadius:4,tension:.4,fill:true,borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{display:false},y:{min:0,max:100,grid:{color:gc},ticks:{color:tc3,font:{size:9,family:'DM Mono'},callback:v=>v+'%',maxTicksLimit:3}}}}});});
     $('pract-chart-card').style.display='block';
     const pmctx=$('pmc')?.getContext('2d');
-    if(pmctx) pmci=new Chart(pmctx,{
-      type:'line',
-      data:{
-        labels:pWithCat.map((p,i)=>p.date||'Session '+(i+1)),
-        datasets:CATS.map(c=>({
-          label:c.label,
-          data:pWithCat.map(p=>p.categoryAccuracy?.[c.id]??null),
-          borderColor:c.color,backgroundColor:'transparent',
-          pointBackgroundColor:c.color,pointBorderColor:dark?'#040410':'#f0f2f8',
-          pointBorderWidth:2,pointRadius:5,tension:.4,borderWidth:2,spanGaps:true
-        }))
-      },
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:dark?'#8892b0':'#5a6080',font:{family:'DM Sans',size:12},boxWidth:10,boxHeight:10,padding:18}}},scales:{x:{grid:{color:gc},ticks:{color:tc3,font:{family:'DM Mono',size:11}}},y:{min:0,max:100,grid:{color:gc},ticks:{color:tc3,font:{family:'DM Mono',size:11},callback:v=>v+'%'}}}}
-    });
+    if(pmctx)pmci=new Chart(pmctx,{type:'line',data:{labels:pWithCat.map((p,i)=>p.date||'Session '+(i+1)),datasets:CATS.map(c=>({label:c.label,data:pWithCat.map(p=>p.categoryAccuracy?.[c.id]??null),borderColor:c.color,backgroundColor:'transparent',pointBackgroundColor:c.color,pointBorderColor:dark?'#040410':'#f0f2f8',pointBorderWidth:2,pointRadius:5,tension:.4,borderWidth:2,spanGaps:true}))},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:dark?'#8892b0':'#5a6080',font:{family:'DM Sans',size:12},boxWidth:10,boxHeight:10,padding:18}}},scales:{x:{grid:{color:gc},ticks:{color:tc3,font:{family:'DM Mono',size:11}}},y:{min:0,max:100,grid:{color:gc},ticks:{color:tc3,font:{family:'DM Mono',size:11},callback:v=>v+'%'}}}}});
   }
-
-  /* ── SECTION 3: Combined improvement trend (NEW) ── */
-  // Compute average accuracy per mock (across all categories with data)
-  const mockPoints=ch.map(m=>{
-    const accs=CATS.map(c=>{const d=m.categories?.[c.id];return d?acc(d):null}).filter(v=>v!==null);
-    const avg=accs.length?Math.round(accs.reduce((s,v)=>s+v,0)/accs.length):null;
-    return avg!==null?{t:m.savedAt,label:m.mockName||'Mock',val:avg,type:'mock'}:null;
-  }).filter(Boolean);
-
-  // Compute average accuracy per practice session (across reported categories)
-  const practPoints=pWithCat.map((p,i)=>{
-    const vals=Object.values(p.categoryAccuracy).filter(v=>v!=null&&typeof v==='number');
-    const avg=vals.length?Math.round(vals.reduce((s,v)=>s+v,0)/vals.length):null;
-    return avg!==null?{t:p.savedAt,label:p.date||'Session '+(i+1),val:avg,type:'practice'}:null;
-  }).filter(Boolean);
-
-  // Merge and sort chronologically
+  const mockPoints=ch.map(m=>{const accs=CATS.map(c=>{const d=m.categories?.[c.id];return d?acc(d):null}).filter(v=>v!==null);const avg2=accs.length?Math.round(accs.reduce((s,v)=>s+v,0)/accs.length):null;return avg2!==null?{t:m.savedAt,label:m.mockName||'Mock',val:avg2,type:'mock'}:null;}).filter(Boolean);
+  const practPoints=pWithCat.map((p,i)=>{const vals=Object.values(p.categoryAccuracy).filter(v=>v!=null&&typeof v==='number');const avg2=vals.length?Math.round(vals.reduce((s,v)=>s+v,0)/vals.length):null;return avg2!==null?{t:p.savedAt,label:p.date||'Session '+(i+1),val:avg2,type:'practice'}:null;}).filter(Boolean);
   const allPoints=[...mockPoints,...practPoints].sort((a,b)=>a.t-b.t);
-
-  const cbcEl=$('cbc');
-  const noteEl=$('cbc-note');
-  if(allPoints.length<2){
-    noteEl.style.display='block';
-    noteEl.textContent=allPoints.length===0
-      ?'Complete a mock review or log a practice session with per-category accuracy to see your combined improvement trend here.'
-      :'Add more data — complete another mock or log a practice session with category accuracy — to see your trend.';
-    cbcEl.style.display='none';
-  } else {
-    noteEl.style.display='none';
-    cbcEl.style.display='block';
-    const cbctx=cbcEl.getContext('2d');
-    cbi=new Chart(cbctx,{
-      type:'line',
-      data:{
-        labels:allPoints.map(p=>p.label),
-        datasets:[
-          {
-            label:'Mock avg accuracy',
-            data:allPoints.map(p=>p.type==='mock'?p.val:null),
-            borderColor:'#00c8f0',
-            backgroundColor:'rgba(0,200,240,.07)',
-            pointBackgroundColor:'#00c8f0',
-            pointBorderColor:dark?'#040410':'#f0f2f8',
-            pointBorderWidth:2,
-            pointRadius:allPoints.map(p=>p.type==='mock'?7:0),
-            pointHoverRadius:9,
-            tension:.35,
-            borderWidth:2.5,
-            spanGaps:true,
-            fill:true
-          },
-          {
-            label:'Practice avg accuracy',
-            data:allPoints.map(p=>p.type==='practice'?p.val:null),
-            borderColor:'#10d98a',
-            backgroundColor:'rgba(16,217,138,.05)',
-            pointBackgroundColor:'#10d98a',
-            pointBorderColor:dark?'#040410':'#f0f2f8',
-            pointBorderWidth:2,
-            pointRadius:allPoints.map(p=>p.type==='practice'?7:0),
-            pointHoverRadius:9,
-            tension:.35,
-            borderDash:[6,4],
-            borderWidth:2.5,
-            spanGaps:true,
-            fill:true
-          }
-        ]
-      },
-      options:{
-        responsive:true,maintainAspectRatio:false,
-        plugins:{
-          legend:{display:true,labels:{color:dark?'#8892b0':'#5a6080',font:{family:'DM Sans',size:13},boxWidth:12,boxHeight:3,padding:20,usePointStyle:false}},
-          tooltip:{
-            backgroundColor:dark?'rgba(4,4,16,.92)':'rgba(240,242,248,.95)',
-            borderColor:'rgba(0,200,240,.25)',borderWidth:1,
-            titleColor:'#00c8f0',bodyColor:dark?'#e2e8f8':'#12142a',
-            padding:12,cornerRadius:10,
-            callbacks:{
-              label:ctx2=>{
-                if(ctx2.raw===null)return null;
-                const type=allPoints[ctx2.dataIndex]?.type;
-                return `${type==='mock'?'Mock':'Practice'}: ${ctx2.raw}% avg accuracy`;
-              }
-            }
-          }
-        },
-        scales:{
-          x:{grid:{color:gc},ticks:{color:tc3,font:{family:'DM Mono',size:11},maxRotation:30}},
-          y:{min:0,max:100,grid:{color:gc},ticks:{color:tc3,font:{family:'DM Mono',size:11},callback:v=>v+'%'}}
-        }
-      }
-    });
-  }
+  const cbcEl=$('cbc'),noteEl=$('cbc-note');
+  if(allPoints.length<2){noteEl.style.display='block';noteEl.textContent=allPoints.length===0?'Complete a mock review or log a practice session with per-category accuracy to see your combined improvement trend here.':'Add more data — complete another mock or log a practice session with category accuracy — to see your trend.';cbcEl.style.display='none';}
+  else{noteEl.style.display='none';cbcEl.style.display='block';const cbctx=cbcEl.getContext('2d');cbi=new Chart(cbctx,{type:'line',data:{labels:allPoints.map(p=>p.label),datasets:[{label:'Mock avg accuracy',data:allPoints.map(p=>p.type==='mock'?p.val:null),borderColor:'#00c8f0',backgroundColor:'rgba(0,200,240,.07)',pointBackgroundColor:'#00c8f0',pointBorderColor:dark?'#040410':'#f0f2f8',pointBorderWidth:2,pointRadius:allPoints.map(p=>p.type==='mock'?7:0),pointHoverRadius:9,tension:.35,borderWidth:2.5,spanGaps:true,fill:true},{label:'Practice avg accuracy',data:allPoints.map(p=>p.type==='practice'?p.val:null),borderColor:'#10d98a',backgroundColor:'rgba(16,217,138,.05)',pointBackgroundColor:'#10d98a',pointBorderColor:dark?'#040410':'#f0f2f8',pointBorderWidth:2,pointRadius:allPoints.map(p=>p.type==='practice'?7:0),pointHoverRadius:9,tension:.35,borderDash:[6,4],borderWidth:2.5,spanGaps:true,fill:true}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:dark?'#8892b0':'#5a6080',font:{family:'DM Sans',size:13},boxWidth:12,boxHeight:3,padding:20,usePointStyle:false}},tooltip:{backgroundColor:dark?'rgba(4,4,16,.92)':'rgba(240,242,248,.95)',borderColor:'rgba(0,200,240,.25)',borderWidth:1,titleColor:'#00c8f0',bodyColor:dark?'#e2e8f8':'#12142a',padding:12,cornerRadius:10,callbacks:{label:ctx2=>{if(ctx2.raw===null)return null;const type=allPoints[ctx2.dataIndex]?.type;return`${type==='mock'?'Mock':'Practice'}: ${ctx2.raw}% avg accuracy`;}}}},scales:{x:{grid:{color:gc},ticks:{color:tc3,font:{family:'DM Mono',size:11},maxRotation:30}},y:{min:0,max:100,grid:{color:gc},ticks:{color:tc3,font:{family:'DM Mono',size:11},callback:v=>v+'%'}}}}});}
 }
 
 /* ─── Practice log list ─── */
@@ -789,24 +919,19 @@ function rPractLog(){
     <div class="stat-card" style="--g:rgba(16,217,138,.07)"><div class="s-lbl">Sessions</div><div class="s-val" style="color:var(--green)">${practLogs.length}</div><div class="s-sub">practice logged</div></div>
     <div class="stat-card" style="--g:rgba(0,200,240,.07)"><div class="s-lbl">Questions</div><div class="s-val" style="color:var(--cyan)">${totalQs||'—'}</div><div class="s-sub">total practised</div></div>
     <div class="stat-card" style="--g:rgba(168,85,247,.07)"><div class="s-lbl">Avg accuracy</div><div class="s-val" style="color:var(--purple)">${avgAcc?avgAcc+'%':'—'}</div><div class="s-sub">self-reported</div></div>
-    <div class="stat-card" style="--g:rgba(245,166,35,.07)"><div class="s-lbl">Timed sessions</div><div class="s-val" style="color:var(--amber)">${timedSessions}</div><div class="s-sub">of ${practLogs.length} total</div></div>`;
+    <div class="stat-card" style="--g:rgba(244,96,122,.07)"><div class="s-lbl">Error entries</div><div class="s-val" style="color:var(--red)">${errorLog.length}</div><div class="s-sub">in error bank</div></div>`;
   const el=$('pl-list');
   if(!practLogs.length){el.innerHTML='<div class="empty"><div class="ei">✦</div><div class="et">No practice logged yet.<br>Log your first session to start tracking.</div></div>';return;}
   el.innerHTML=practLogs.map(p=>{
     const rm=ratingMeta[p.rating]||{cls:'flat',txt:'—'};
     const tags=(p.subtests||[]).map(s=>{const st=SUBTESTS.find(x=>x.id===s);return st?`<span class="pl-tag ${s}">${st.label}</span>`:''}).join('');
-    // NEW: per-category accuracy mini badges
     let catRow='';
     if(p.categoryAccuracy&&Object.keys(p.categoryAccuracy).length){
-      const badges=CATS.map(c=>{
-        const v=p.categoryAccuracy[c.id];
-        if(v==null)return'';
-        const cl=v>=75?'cg':v>=50?'co':'cb';
-        return`<span class="pl-cat-badge ${cl}" style="border-color:${c.color}40;background:${c.color}10;color:${c.color}">${c.label.split(' ')[0]} ${v}%</span>`;
-      }).filter(Boolean).join('');
-      if(badges) catRow=`<div class="pl-cat-row">${badges}</div>`;
+      const badges=CATS.map(c=>{const v=p.categoryAccuracy[c.id];if(v==null)return'';const cl=v>=75?'cg':v>=50?'co':'cb';return`<span class="pl-cat-badge ${cl}" style="border-color:${c.color}40;background:${c.color}10;color:${c.color}">${c.label.split(' ')[0]} ${v}%</span>`;}).filter(Boolean).join('');
+      if(badges)catRow=`<div class="pl-cat-row">${badges}</div>`;
     }
-    return`<div class="pl-item" data-id="${p.id}"><div class="pl-header"><div><div class="m-name">${p.date||'—'}</div></div><div class="pl-qs">${p.questions||0}<span> questions</span></div></div><div class="pl-tags">${tags}${p.timing?`<span class="pl-tag allDM">${p.timing}</span>`:''}</div><div class="pl-rating"><div class="pl-dot ${rm.cls}"></div><div class="pl-rating-txt">${rm.txt}${p.accuracy?' · '+p.accuracy+'% accuracy':''}</div></div>${catRow}${p.nextFocus?`<div class="pl-improve"><div class="pl-improve-lbl">Next focus</div>${p.nextFocus}</div>`:''}</div>`;
+    const errCount=errorLog.filter(e=>e.sourceLogId===p.id).length;
+    return`<div class="pl-item" data-id="${p.id}"><div class="pl-header"><div><div class="m-name">${p.date||'—'}</div></div><div style="display:flex;align-items:center;gap:10px"><div class="pl-qs">${p.questions||0}<span> questions</span></div>${errCount?`<span class="err-count" style="border-color:rgba(244,96,122,.25);color:var(--red);background:rgba(244,96,122,.06)">⚡ ${errCount} err${errCount!==1?'s':''}</span>`:''}</div></div><div class="pl-tags">${tags}${p.timing?`<span class="pl-tag allDM">${p.timing}</span>`:''}</div><div class="pl-rating"><div class="pl-dot ${rm.cls}"></div><div class="pl-rating-txt">${rm.txt}${p.accuracy?' · '+p.accuracy+'% accuracy':''}</div></div>${catRow}${p.nextFocus?`<div class="pl-improve"><div class="pl-improve-lbl">Next focus</div>${p.nextFocus}</div>`:''}</div>`;
   }).join('');
   el.querySelectorAll('.pl-item').forEach(el=>el.addEventListener('click',()=>showPDet(el.dataset.id)));
 }
@@ -816,13 +941,12 @@ function showPDet(id){
   const p=practLogs.find(x=>x.id===id);if(!p)return;sv('pdet');
   const rm=ratingMeta[p.rating]||{cls:'flat',txt:'—'};
   const tags=(p.subtests||[]).map(s=>{const st=SUBTESTS.find(x=>x.id===s);return st?`<span class="pl-tag ${s}">${st.label}</span>`:''}).join('');
-  // NEW: per-category accuracy block
-  const catAccHtml=p.categoryAccuracy&&Object.keys(p.categoryAccuracy).length?`
-    <div class="card">
-      <div class="pst">Per-category accuracy</div>
-      <div class="crg">${CATS.map(c=>{const v=p.categoryAccuracy[c.id];if(v==null)return'';const cl=v>=75?'cg':v>=50?'co':'cb';return`<div class="cri"><div class="cin">${c.label}</div><div class="cis ${cl}" style="color:${c.color}">${v}%</div></div>`;}).filter(Boolean).join('')}</div>
-    </div>`:'';
-  $('pdc').innerHTML=`<div class="pg-title">Practice Session</div><div class="dsb"><div class="dsc mid">${p.questions||0}</div><div><div class="dp">questions done</div><div class="dd">${p.date||'—'}</div></div></div><div class="card"><div class="pst">Session overview</div><div class="ir"><div class="ik">Subtests</div><div class="iv" style="display:flex;flex-wrap:wrap;gap:6px">${tags||'—'}</div></div><div class="ir"><div class="ik">Timing</div><div class="iv">${p.timing||'—'}</div></div><div class="ir"><div class="ik">How it went</div><div class="iv" style="display:flex;align-items:center;gap:8px"><div class="pl-dot ${rm.cls}"></div>${rm.txt}</div></div>${p.accuracy?`<div class="ir"><div class="ik">Overall accuracy</div><div class="iv">${p.accuracy}%</div></div>`:''}</div>${catAccHtml}${p.wentWell?`<div class="card"><div class="pst">What went well</div><div style="font-size:14px;line-height:1.75">${p.wentWell}</div></div>`:''}${p.wentHard?`<div class="card"><div class="pst">What was hard</div><div style="font-size:14px;line-height:1.75">${p.wentHard}</div></div>`:''}${p.nextFocus?`<div class="ac"><div class="pst" style="color:var(--green)">What to implement next session</div><div style="font-size:14px;line-height:1.75">${p.nextFocus}</div></div>`:''}<button class="btn btn-d btn-sm" id="delPBtn">Delete this session</button>`;
+  const catAccHtml=p.categoryAccuracy&&Object.keys(p.categoryAccuracy).length?`<div class="card"><div class="pst">Per-category accuracy</div><div class="crg">${CATS.map(c=>{const v=p.categoryAccuracy[c.id];if(v==null)return'';const cl=v>=75?'cg':v>=50?'co':'cb';return`<div class="cri"><div class="cin">${c.label}</div><div class="cis ${cl}" style="color:${c.color}">${v}%</div></div>`;}).filter(Boolean).join('')}</div></div>`:'';
+  // Error entries linked to this log
+  const logErrors=errorLog.filter(e=>e.sourceLogId===id);
+  const errHtml=logErrors.length?`<div class="card"><div class="pst" style="color:var(--red)">Error log entries (${logErrors.length})</div><div class="err-grid">${logErrors.map(e=>{const cat=CATS.find(c=>c.id===e.category);const cc=cat?.color||'var(--text3)';return`<div class="err-card" style="--ec:${cc}"><span class="err-card-cat" style="color:${cc};border-color:${cc}35;background:${cc}10">${cat?.label||'?'}</span><div class="err-card-desc">${e.description||'—'}</div>${e.notes?`<div class="err-card-notes">${e.notes}</div>`:''} ${e.imageData?`<img class="err-card-img" src="${e.imageData}" data-src="${e.imageData}" alt="question" style="cursor:zoom-in"/>`:''}</div>`;}).join('')}</div></div>`:'';
+  $('pdc').innerHTML=`<div class="pg-title">Practice Session</div><div class="dsb"><div class="dsc mid">${p.questions||0}</div><div><div class="dp">questions done</div><div class="dd">${p.date||'—'}</div></div></div><div class="card"><div class="pst">Session overview</div><div class="ir"><div class="ik">Subtests</div><div class="iv" style="display:flex;flex-wrap:wrap;gap:6px">${tags||'—'}</div></div><div class="ir"><div class="ik">Timing</div><div class="iv">${p.timing||'—'}</div></div><div class="ir"><div class="ik">How it went</div><div class="iv" style="display:flex;align-items:center;gap:8px"><div class="pl-dot ${rm.cls}"></div>${rm.txt}</div></div>${p.accuracy?`<div class="ir"><div class="ik">Overall accuracy</div><div class="iv">${p.accuracy}%</div></div>`:''}</div>${catAccHtml}${errHtml}${p.wentWell?`<div class="card"><div class="pst">What went well</div><div style="font-size:14px;line-height:1.75">${p.wentWell}</div></div>`:''}${p.wentHard?`<div class="card"><div class="pst">What was hard</div><div style="font-size:14px;line-height:1.75">${p.wentHard}</div></div>`:''}${p.nextFocus?`<div class="ac"><div class="pst" style="color:var(--green)">What to implement next session</div><div style="font-size:14px;line-height:1.75">${p.nextFocus}</div></div>`:''}<button class="btn btn-d btn-sm" id="delPBtn">Delete this session</button>`;
+  $('pdc').querySelectorAll('.err-card-img').forEach(img=>img.addEventListener('click',()=>openLightbox(img.dataset.src)));
   $('delPBtn').addEventListener('click',()=>{if(!confirm('Delete this session?'))return;practLogs=practLogs.filter(x=>x.id!==id);lsSet(LS_LOGS,practLogs);toast('Session deleted');sv('pl');});
 }
 
@@ -833,68 +957,274 @@ function buildSubGrid(){
     $(`scb-${s.id}`).addEventListener('click',()=>{
       const cb=$(`cb-${s.id}`);cb.checked=!cb.checked;
       $(`scb-${s.id}`).classList.toggle('checked',cb.checked);
+      updateCatAccVisibility();  // NEW
+      scheduleDraftSave();       // NEW
     });
   });
+  updateCatAccVisibility();  // NEW: initial state
 }
 
-// NEW: build per-category accuracy inputs
 function buildCatAccGrid(){
   $('cat-acc-grid').innerHTML=CATS.map(c=>`
-    <div class="cat-acc-field">
+    <div class="cat-acc-field" id="pl-ca-field-${c.id}">
       <div class="cat-acc-label" style="color:${c.color}">${c.label}</div>
       <div class="cat-acc-wrap">
         <input type="number" id="pl-ca-${c.id}" placeholder="e.g. 75" min="0" max="100"/>
         <span class="cat-acc-pct">%</span>
       </div>
     </div>`).join('');
+  // Draft save on cat acc input
+  CATS.forEach(c=>{$('pl-ca-'+c.id)?.addEventListener('input',scheduleDraftSave);});
+}
+
+function buildErrCatSelect(){
+  const sel=$('err-cat');if(!sel)return;
+  sel.innerHTML=`<option value="">Select category...</option>`+CATS.map(c=>`<option value="${c.id}">${c.label}</option>`).join('');
 }
 
 function resetLogForm(){
-  tmMode=null;ratingVal=null;
+  tmMode=null;ratingVal=null;pendingErrors=[];errImgData=null;
   ['pl-date','pl-qs','pl-well','pl-hard','pl-next','pl-acc'].forEach(id=>{const e=$(id);if(e)e.value='';});
   $('pl-date').value=new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'});
   ['tm-timed','tm-untimed','tm-mixed'].forEach(id=>$(id).className='tg');
   ['r-great','r-good','r-ok','r-tough'].forEach(id=>$(id).className='r-btn');
+  if($('err-add-form'))$('err-add-form').style.display='none';
+  if($('err-desc'))$('err-desc').value='';
+  if($('err-notes'))$('err-notes').value='';
+  if($('err-img-preview'))$('err-img-preview').style.display='none';
+  if($('err-img'))$('err-img').value='';
   buildSubGrid();
-  buildCatAccGrid(); // NEW
+  buildCatAccGrid();
+  buildErrCatSelect();
+  renderPendingErrors();
 }
+
+/* ─── Pending errors (NEW) ─── */
+function renderPendingErrors(){
+  const el=$('perr-list');if(!el)return;
+  if(!pendingErrors.length){el.innerHTML='';return;}
+  el.innerHTML=pendingErrors.map((e,i)=>{
+    const cat=CATS.find(c=>c.id===e.category)||{label:e.category||'?',color:'var(--text3)'};
+    return`<div class="perr-item">
+      <div class="perr-left">
+        <div class="perr-cat-pill" style="color:${cat.color};border-color:${cat.color}40;background:${cat.color}10">${cat.label}</div>
+        <div class="perr-desc">${e.description||'(no description)'}</div>
+        ${e.notes?`<div class="perr-note">${e.notes}</div>`:''}
+      </div>
+      ${e.imageData?`<img class="perr-thumb" src="${e.imageData}" alt="question" data-src="${e.imageData}"/>`:''}
+      <button class="err-del" data-idx="${i}" title="Remove">✕</button>
+    </div>`;
+  }).join('');
+  el.querySelectorAll('.err-del').forEach(btn=>btn.addEventListener('click',()=>{
+    const idx=parseInt(btn.dataset.idx);pendingErrors.splice(idx,1);renderPendingErrors();scheduleDraftSave();
+  }));
+  el.querySelectorAll('.perr-thumb').forEach(img=>img.addEventListener('click',()=>openLightbox(img.dataset.src)));
+}
+
+/* ─── Timing / rating listeners ─── */
 ['timed','untimed','mixed'].forEach(v=>{
   $('tm-'+v)?.addEventListener('click',()=>{
     tmMode=v;['timed','untimed','mixed'].forEach(x=>{$('tm-'+x).className='tg'+(x===v?' yes':'');});
+    scheduleDraftSave();
   });
 });
 ['great','good','ok','tough'].forEach(v=>{
   $('r-'+v)?.addEventListener('click',()=>{
-    ratingVal=v;['great','good','ok','tough'].forEach(x=>{$('r-'+x).className='r-btn'+(x===v?' sel-'+x:'');});
+    ratingVal=v;['great','good','ok','tough'].forEach(x=>{$('r-'+x).className='r-btn'+(x===v?' sel-'+v:'');});
+    scheduleDraftSave();
   });
 });
 
+/* ─── Error add form in log (NEW) ─── */
+$('addErrBtn')?.addEventListener('click',()=>{
+  const f=$('err-add-form');
+  f.style.display=f.style.display==='none'?'block':'none';
+});
+$('errFormCancel')?.addEventListener('click',()=>{
+  $('err-add-form').style.display='none';
+  $('err-desc').value='';$('err-notes').value='';$('err-cat').value='';
+  errImgData=null;$('err-img').value='';$('err-img-preview').style.display='none';
+});
+$('err-img')?.addEventListener('change',async e=>{
+  const file=e.target.files[0];if(!file)return;
+  errImgData=await resizeImage(file);
+  $('err-img-thumb').src=errImgData;$('err-img-preview').style.display='block';
+});
+$('errImgClear')?.addEventListener('click',()=>{
+  errImgData=null;$('err-img').value='';$('err-img-preview').style.display='none';
+});
+$('errFormSave')?.addEventListener('click',()=>{
+  const desc=($('err-desc')?.value||'').trim();
+  if(!desc){toast('Add a description first','err');return;}
+  const entry={
+    id:Date.now().toString()+Math.random().toString(36).slice(2,5),
+    savedAt:Date.now(),
+    date:new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'}),
+    category:$('err-cat')?.value||'',
+    description:desc,
+    notes:($('err-notes')?.value||'').trim(),
+    imageData:errImgData||null,
+    source:'log',
+    sourceLogId:null  // filled in when log is saved
+  };
+  pendingErrors.push(entry);
+  renderPendingErrors();
+  $('err-add-form').style.display='none';
+  $('err-desc').value='';$('err-notes').value='';$('err-cat').value='';
+  errImgData=null;$('err-img').value='';$('err-img-preview').style.display='none';
+  toast('Question added ✓ — save log to sync to Error Bank');
+  scheduleDraftSave();
+});
+
+/* ─── Save log ─── */
 $('lpSave').addEventListener('click',()=>{
   const btn=$('lpSave');btn.textContent='Saving…';btn.disabled=true;
   const subtests=SUBTESTS.filter(s=>$(`cb-${s.id}`)?.checked).map(s=>s.id);
-  // NEW: collect per-category accuracy (only if value entered)
   const catAcc={};
-  CATS.forEach(c=>{
-    const v=parseInt($('pl-ca-'+c.id)?.value);
-    if(!isNaN(v)&&v>=0&&v<=100)catAcc[c.id]=v;
-  });
+  CATS.forEach(c=>{const v=parseInt($('pl-ca-'+c.id)?.value);if(!isNaN(v)&&v>=0&&v<=100)catAcc[c.id]=v;});
+  const logId=Date.now().toString();
   const p={
-    id:Date.now().toString(),
-    savedAt:Date.now(),
+    id:logId,savedAt:Date.now(),
     date:$('pl-date').value||new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'}),
     questions:parseInt($('pl-qs').value)||0,
-    subtests,
-    timing:tmMode||'not recorded',
-    rating:ratingVal||null,
-    categoryAccuracy:Object.keys(catAcc).length?catAcc:null, // NEW
-    wentWell:$('pl-well').value,
-    wentHard:$('pl-hard').value,
-    nextFocus:$('pl-next').value,
-    accuracy:parseInt($('pl-acc').value)||null
+    subtests,timing:tmMode||'not recorded',rating:ratingVal||null,
+    categoryAccuracy:Object.keys(catAcc).length?catAcc:null,
+    wentWell:$('pl-well').value,wentHard:$('pl-hard').value,
+    nextFocus:$('pl-next').value,accuracy:parseInt($('pl-acc').value)||null
   };
+  // Save pending errors to error bank
+  if(pendingErrors.length){
+    pendingErrors.forEach(e=>{
+      addErrEntry({...e,sourceLogId:logId,date:p.date});
+    });
+    pendingErrors=[];
+  }
   practLogs.unshift(p);
-  if(lsSet(LS_LOGS,practLogs)){toast('Session saved ✓');sv('pl');}else{practLogs.shift();}
+  if(lsSet(LS_LOGS,practLogs)){
+    clearDraft();
+    toast('Session saved ✓');sv('pl');
+  }else{practLogs.shift();}
   btn.textContent='Save session ✓';btn.disabled=false;
+});
+
+/* ─── Error Bank (NEW) ─── */
+function addErrEntry(entry){
+  errorLog.unshift(entry);
+  lsSet(LS_ERRORS,errorLog);
+}
+function deleteErrEntry(id){
+  errorLog=errorLog.filter(e=>e.id!==id);
+  lsSet(LS_ERRORS,errorLog);
+}
+
+function rErrorBank(){
+  buildEbFilter();
+  renderEbCards();
+}
+
+function buildEbFilter(){
+  const el=$('eb-filter');if(!el)return;
+  el.innerHTML=[
+    `<button class="eb-tab${ebFilterCat==='all'?' active':''}" data-cat="all">All (${errorLog.length})</button>`,
+    ...CATS.map(c=>{
+      const n=errorLog.filter(e=>e.category===c.id).length;
+      const active=ebFilterCat===c.id;
+      return`<button class="eb-tab${active?' active':''}" data-cat="${c.id}"${active?` style="border-color:${c.color};background:${c.color}12;color:${c.color}"`:''}>${c.label} (${n})</button>`;
+    })
+  ].join('');
+  el.querySelectorAll('.eb-tab').forEach(btn=>btn.addEventListener('click',()=>{ebFilterCat=btn.dataset.cat;rErrorBank();}));
+  const countEl=$('eb-count');
+  if(countEl){const n=ebFilterCat==='all'?errorLog.length:errorLog.filter(e=>e.category===ebFilterCat).length;countEl.textContent=n+' entr'+(n===1?'y':'ies');}
+}
+
+function buildEbAddPanel(){
+  const panel=$('eb-add-panel');if(!panel)return;
+  let standaloneImg=null;
+  panel.innerHTML=`
+    <div class="sec-hdr" style="margin-bottom:16px">
+      <div style="font-family:var(--display);font-size:15px;font-weight:600;color:var(--red)">⚡ Add to Error Bank</div>
+      <button class="btn btn-s btn-sm" id="ebAddClose">✕ Close</button>
+    </div>
+    <div class="fr">
+      <div class="field"><label>Category</label><select id="eb-add-cat">${CATS.map(c=>`<option value="${c.id}">${c.label}</option>`).join('')}</select></div>
+      <div class="field"><label>Date</label><input type="text" id="eb-add-date" value="${new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'})}"/></div>
+    </div>
+    <div class="field"><label>Question / pattern description</label><textarea id="eb-add-desc" rows="3" placeholder="Describe the question or the concept that tripped you up..."></textarea></div>
+    <div class="field"><label>What went wrong &amp; the fix</label><textarea id="eb-add-notes" rows="2" placeholder="e.g. I need to draw Euler diagrams every time for syllogisms..."></textarea></div>
+    <div class="field"><label>Photo of question (optional)</label>
+      <input type="file" id="eb-add-img" accept="image/*"/>
+      <div id="eb-img-prev" style="display:none;margin-top:10px">
+        <img id="eb-img-thumb" style="max-height:130px;border-radius:var(--radius);border:1px solid var(--border);display:block;object-fit:contain;background:var(--bg4)"/>
+        <button class="btn btn-d btn-sm" id="ebImgClear" style="margin-top:8px;display:block">Remove image</button>
+      </div>
+    </div>
+    <div class="br"><span></span><button class="btn btn-d btn-sm" id="eb-add-save" style="background:rgba(244,96,122,.1);border-color:rgba(244,96,122,.3)">Save to Error Bank ✓</button></div>`;
+  $('ebAddClose').addEventListener('click',()=>panel.classList.remove('open'));
+  $('eb-add-img').addEventListener('change',async e=>{
+    const file=e.target.files[0];if(!file)return;
+    standaloneImg=await resizeImage(file);
+    $('eb-img-thumb').src=standaloneImg;$('eb-img-prev').style.display='block';
+  });
+  $('ebImgClear').addEventListener('click',()=>{
+    standaloneImg=null;$('eb-add-img').value='';$('eb-img-prev').style.display='none';
+  });
+  $('eb-add-save').addEventListener('click',()=>{
+    const desc=($('eb-add-desc')?.value||'').trim();
+    if(!desc){toast('Add a description first','err');return;}
+    addErrEntry({
+      id:Date.now().toString()+Math.random().toString(36).slice(2,5),
+      savedAt:Date.now(),
+      date:$('eb-add-date')?.value||new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'}),
+      category:$('eb-add-cat')?.value||CATS[0].id,
+      description:desc,
+      notes:($('eb-add-notes')?.value||'').trim(),
+      imageData:standaloneImg||null,
+      source:'manual',sourceLogId:null
+    });
+    toast('Added to Error Bank ✓');
+    panel.classList.remove('open');
+    rErrorBank();
+  });
+}
+
+function renderEbCards(){
+  const filtered=ebFilterCat==='all'?[...errorLog]:errorLog.filter(e=>e.category===ebFilterCat);
+  const sorted=[...filtered].sort((a,b)=>b.savedAt-a.savedAt);
+  const cardsEl=$('eb-cards');if(!cardsEl)return;
+  if(!sorted.length){
+    cardsEl.innerHTML=`<div class="empty"><div class="ei">⚡</div><div class="et">${ebFilterCat==='all'?'No error entries yet.<br>Add questions from practice logs or click ⚡ Add question above.':'No entries for this category yet.'}</div></div>`;
+    return;
+  }
+  cardsEl.innerHTML=`<div class="err-grid">${sorted.map(e=>{
+    const cat=CATS.find(c=>c.id===e.category);
+    const cc=cat?.color||'var(--text3)';
+    return`<div class="err-card" style="--ec:${cc}">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+        <span class="err-card-cat" style="color:${cc};border-color:${cc}35;background:${cc}10">${cat?.label||'Unknown'}</span>
+        <button class="err-del" data-id="${e.id}" title="Delete entry">✕</button>
+      </div>
+      <div class="err-card-desc">${e.description||'—'}</div>
+      ${e.notes?`<div class="err-card-notes">${e.notes}</div>`:''}
+      ${e.imageData?`<img class="err-card-img" src="${e.imageData}" data-src="${e.imageData}" alt="question photo"/>`:''}
+      <div class="err-card-foot">
+        <span class="err-card-date">${e.date||'—'}</span>
+        <span class="err-src ${e.source==='manual'?'manual':'log'}">${e.source==='manual'?'standalone':'from log'}</span>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+  cardsEl.querySelectorAll('.err-del').forEach(btn=>btn.addEventListener('click',()=>{
+    if(!confirm('Delete this error entry? Cannot be undone.'))return;
+    deleteErrEntry(btn.dataset.id);
+    rErrorBank();
+    toast('Entry deleted');
+  }));
+  cardsEl.querySelectorAll('.err-card-img').forEach(img=>img.addEventListener('click',()=>openLightbox(img.dataset.src)));
+}
+
+$('addErrStandaloneBtn')?.addEventListener('click',()=>{
+  const panel=$('eb-add-panel');
+  if(panel.classList.contains('open')){panel.classList.remove('open');}
+  else{buildEbAddPanel();panel.classList.add('open');}
 });
 
 /* ─── Mock detail ─── */
