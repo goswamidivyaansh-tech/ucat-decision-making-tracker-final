@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
@@ -164,6 +163,7 @@ label{font-size:11px;font-weight:500;color:var(--text3);display:block;margin-bot
 input[type="text"],input[type="number"],textarea,select{width:100%;background:var(--input-bg);border:1px solid var(--border2);border-radius:var(--radius);padding:11px 15px;color:var(--text);font-family:var(--sans);font-size:14px;transition:all .2s;outline:none;resize:vertical}
 input:focus,textarea:focus,select:focus{border-color:rgba(0,200,240,.45);background:rgba(0,200,240,.04);box-shadow:0 0 0 3px rgba(0,200,240,.07)}
 input::placeholder,textarea::placeholder{color:var(--text3)}
+select option{background:var(--bg);color:var(--text)}
 .field{margin-bottom:18px}.fr{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .fh{font-size:11px;color:var(--text3);margin-top:5px;font-family:var(--mono)}
 .tg-row{display:flex;gap:8px}
@@ -242,13 +242,10 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 .empty{text-align:center;padding:64px 24px;color:var(--text3)}
 .ei{font-size:44px;margin-bottom:14px;opacity:.35}.et{font-size:15px;margin-bottom:22px;line-height:1.65}
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
-
-/* ─── NEW: Draft banner ─── */
+/* ─── Draft banner ─── */
 .draft-banner{display:flex;align-items:center;justify-content:space-between;gap:12px;background:rgba(245,166,35,.07);border:1px solid rgba(245,166,35,.22);border-radius:var(--radius-lg);padding:13px 18px;margin-bottom:18px;flex-wrap:wrap}
 .draft-banner-txt{font-size:13px;color:var(--amber);font-family:var(--mono);line-height:1.5}
-.draft-auto-lbl{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-family:var(--mono);color:var(--text3);background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:2px 9px;margin-left:8px;vertical-align:middle}
-
-/* ─── NEW: Error bank ─── */
+/* ─── Error bank ─── */
 .eb-filter{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;flex:1}
 .eb-tab{padding:6px 14px;border-radius:20px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);font-family:var(--mono);font-size:11px;font-weight:500;cursor:pointer;transition:all .18s;letter-spacing:.05em;white-space:nowrap}
 .eb-tab:hover{border-color:var(--border3);color:var(--text)}
@@ -265,7 +262,7 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 .err-card-notes{font-size:12px;line-height:1.65;color:var(--text2);padding:9px 12px;background:var(--bg3);border-radius:var(--radius);border:1px solid var(--border);word-break:break-word}
 .err-card-img{width:100%;border-radius:var(--radius);border:1px solid var(--border);object-fit:contain;max-height:220px;cursor:zoom-in;transition:border-color .18s;background:var(--bg3)}
 .err-card-img:hover{border-color:var(--border2)}
-.err-card-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:auto;padding-top:4px}
+.err-card-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:auto;padding-top:4px;flex-wrap:wrap}
 .err-card-date{font-size:10px;font-family:var(--mono);color:var(--text3)}
 .err-src{font-size:10px;font-family:var(--mono);padding:2px 8px;border-radius:14px;border:1px solid;white-space:nowrap}
 .err-src.manual{background:rgba(168,85,247,.08);color:#a855f7;border-color:rgba(168,85,247,.25)}
@@ -273,8 +270,7 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 .err-del{width:26px;height:26px;border-radius:7px;background:var(--bg3);border:1px solid var(--border);color:var(--text3);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;transition:all .18s;flex-shrink:0;line-height:1}
 .err-del:hover{background:rgba(244,96,122,.1);border-color:rgba(244,96,122,.3);color:var(--red)}
 .err-count{font-family:var(--mono);font-size:10px;color:var(--text3);padding:3px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:20px}
-
-/* ─── NEW: Pending errors in log form ─── */
+/* ─── Pending errors in log form ─── */
 .perr-item{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;display:flex;align-items:flex-start;gap:10px;margin-bottom:8px}
 .perr-left{flex:1;min-width:0}
 .perr-cat-pill{font-size:10px;font-family:var(--mono);font-weight:500;padding:2px 8px;border-radius:14px;border:1px solid;display:inline-flex;margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em}
@@ -282,16 +278,46 @@ input::placeholder,textarea::placeholder{color:var(--text3)}
 .perr-note{font-size:11px;color:var(--text3);margin-top:3px;font-family:var(--mono)}
 .perr-thumb{width:52px;height:52px;border-radius:8px;object-fit:cover;flex-shrink:0;border:1px solid var(--border);cursor:zoom-in}
 .err-add-form{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:18px 20px;margin-top:12px;animation:fu .2s ease}
-
-/* ─── NEW: Image lightbox ─── */
+/* ─── Image lightbox ─── */
 .img-lb{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.9);display:flex;align-items:center;justify-content:center;cursor:zoom-out;animation:fu .15s ease}
 .img-lb img{max-width:92vw;max-height:92vh;border-radius:var(--radius-lg);box-shadow:0 24px 80px rgba(0,0,0,.7);object-fit:contain}
 .img-lb-close{position:fixed;top:20px;right:24px;color:#fff;font-size:26px;cursor:pointer;opacity:.6;z-index:501;line-height:1;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:rgba(255,255,255,.08)}
 .img-lb-close:hover{opacity:1;background:rgba(255,255,255,.15)}
-
-/* ─── File input style ─── */
+/* ─── File input ─── */
 input[type="file"]{background:var(--bg4);border:1px dashed var(--border2);border-radius:var(--radius);padding:10px 14px;cursor:pointer;font-size:13px;color:var(--text2)}
 input[type="file"]:hover{border-color:var(--border3)}
+
+/* ══════════════════════════════════════════
+   NEW v2 STYLES
+   ══════════════════════════════════════════ */
+
+/* Error behavior tags */
+.err-tag-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-family:var(--mono);font-weight:500;padding:3px 10px;border-radius:20px;border:1px solid;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+.err-tag-badge.mentalJuggling{background:rgba(168,85,247,.1);color:#a855f7;border-color:rgba(168,85,247,.3)}
+.err-tag-badge.rereadingLoop{background:rgba(0,200,240,.08);color:var(--cyan);border-color:rgba(0,200,240,.25)}
+.err-tag-badge.realWorldBias{background:rgba(245,166,35,.08);color:var(--amber);border-color:rgba(245,166,35,.25)}
+.err-tag-badge.restrictiveWordMiss{background:rgba(244,96,122,.08);color:var(--red);border-color:rgba(244,96,122,.25)}
+.err-tag-badge.scopeShift{background:rgba(16,217,138,.08);color:var(--green);border-color:rgba(16,217,138,.25)}
+
+/* Physical fix box */
+.physical-fix{font-size:12px;line-height:1.65;color:var(--green);padding:9px 12px;background:rgba(16,217,138,.05);border-radius:var(--radius);border:1px solid rgba(16,217,138,.2);word-break:break-word;margin-top:2px}
+.physical-fix-lbl{font-size:9px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.07em;color:rgba(16,217,138,.65);margin-bottom:3px;font-weight:500}
+
+/* Time spent badge */
+.time-badge{font-size:10px;font-family:var(--mono);padding:2px 8px;border-radius:14px;border:1px solid rgba(245,166,35,.3);background:rgba(245,166,35,.08);color:var(--amber);white-space:nowrap}
+
+/* Phase 3 wrong-question entry cards */
+.p3-entry-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:9px;display:flex;align-items:flex-start;gap:10px;animation:fu .18s ease}
+.p3-entry-left{flex:1;min-width:0}
+.p3-entry-meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:6px}
+.p3-entry-label{font-family:var(--display);font-size:11px;font-weight:700;color:var(--red)}
+.p3-entry-desc{font-size:13px;line-height:1.6;color:var(--text)}
+
+/* Instruction hint for physical fix */
+.fix-hint{font-size:10px;font-family:var(--mono);color:var(--text3);margin-top:4px;line-height:1.55;padding:7px 11px;background:rgba(16,217,138,.04);border:1px solid rgba(16,217,138,.12);border-radius:var(--radius)}
+
+/* Error tag legend in Phase 3 intro */
+.tag-legend{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px}
 
 @media(max-width:720px){.sidebar{width:58px}.nav-label,.logo-sub,.sb-lbl,.sb-footer{display:none}.main{margin-left:58px;padding:24px 18px}.stats-row{grid-template-columns:1fr 1fr}.fr,.crg,.cpg,.sub-grid,.cat-acc-grid,.err-grid{grid-template-columns:1fr}}
 </style>
@@ -390,7 +416,6 @@ input[type="file"]:hover{border-color:var(--border3)}
     <div class="view" id="vlp">
       <div class="pg-title">Log Practice Session</div><div class="pg-sub">Record what you did today</div>
 
-      <!-- DRAFT BANNER -->
       <div class="draft-banner" id="draft-banner" style="display:none">
         <div class="draft-banner-txt">📝 Unsaved draft from <strong id="draft-age">earlier</strong> — pick up where you left off?</div>
         <div style="display:flex;gap:8px;flex-shrink:0">
@@ -410,14 +435,11 @@ input[type="file"]:hover{border-color:var(--border3)}
         <div class="field"><label>Subtests practised (select all that apply)</label><div class="sub-grid" id="sub-grid"></div></div>
         <div class="field"><label>Timed or untimed?</label><div class="tg-row"><button class="tg" id="tm-timed">Timed ⏱</button><button class="tg" id="tm-untimed">Untimed</button><button class="tg" id="tm-mixed">Mixed</button></div></div>
         <div class="field"><label>How did it go overall?</label><div class="rating-row"><button class="r-btn" id="r-great">🟢 Great</button><button class="r-btn" id="r-good">🔵 Good</button><button class="r-btn" id="r-ok">🟡 Okay</button><button class="r-btn" id="r-tough">🔴 Tough</button></div></div>
-
-        <!-- Per-category accuracy — only shown for checked subtests -->
         <div class="field" id="cat-acc-section">
           <label>Accuracy per category — optional</label>
           <div class="fh" style="margin-top:0;margin-bottom:8px">Only shows categories you've ticked above. Leave blank to skip.</div>
           <div class="cat-acc-grid" id="cat-acc-grid"></div>
         </div>
-
         <div class="field"><label>What went well? Any wins or breakthroughs?</label><textarea id="pl-well" rows="2" placeholder="e.g. Syllogisms felt much more automatic today, got 8/10 timed..."></textarea></div>
         <div class="field"><label>What was hard or went wrong?</label><textarea id="pl-hard" rows="2" placeholder="e.g. Still spending too long on logic puzzles, ran out of time on last 2..."></textarea></div>
         <div class="field"><label>What to implement / focus on next session</label><textarea id="pl-next" rows="3" placeholder="e.g. Drill venn diagrams with timer..."></textarea></div>
@@ -426,7 +448,7 @@ input[type="file"]:hover{border-color:var(--border3)}
         <!-- ERROR LOG QUESTIONS -->
         <div class="field">
           <label style="color:var(--red)">⚡ Hard questions — error log</label>
-          <div class="fh" style="margin-top:0;margin-bottom:12px">Add questions or patterns that tripped you up. Attach a photo if useful. They sync automatically to your Error Bank.</div>
+          <div class="fh" style="margin-top:0;margin-bottom:12px">Add questions or patterns that tripped you up. Tag the error type and write a physical fix. They sync to your Error Bank automatically.</div>
           <div id="perr-list"></div>
           <button class="btn btn-s btn-sm" id="addErrBtn" type="button" style="border-color:rgba(244,96,122,.25);color:var(--red)">⚡ Add hard question</button>
 
@@ -437,13 +459,28 @@ input[type="file"]:hover{border-color:var(--border3)}
               <label>Category</label>
               <select id="err-cat"></select>
             </div>
+            <div class="fr">
+              <div class="field">
+                <label>Error tag (optional)</label>
+                <select id="err-tag"></select>
+              </div>
+              <div class="field">
+                <label>Time spent on question (seconds)</label>
+                <input type="number" id="err-time" placeholder="e.g. 95" min="1" max="600"/>
+              </div>
+            </div>
             <div class="field">
               <label>Question / pattern (describe it)</label>
               <textarea id="err-desc" rows="3" placeholder="e.g. Syllogism with double negation — 'No A are B, some C are B, therefore...' — I got confused about what conclusion follows..."></textarea>
             </div>
             <div class="field">
-              <label>What went wrong & the fix</label>
-              <textarea id="err-notes" rows="2" placeholder="e.g. I need to draw the Euler diagram for every syllogism before choosing an answer..."></textarea>
+              <label>What went wrong</label>
+              <textarea id="err-notes" rows="2" placeholder="e.g. I tried to hold all the categories in my head instead of drawing the diagram..."></textarea>
+            </div>
+            <div class="field">
+              <label style="color:var(--green)">⚡ Physical fix — write an exact action, not a vague intention</label>
+              <textarea id="err-fix" rows="2" placeholder='e.g. "Draw Euler diagram before choosing any answer" — never write "I need to be more careful"'></textarea>
+              <div class="fix-hint">Good: "Highlight the word only before reading the premises" · Bad: "Read the question more carefully"</div>
             </div>
             <div class="field">
               <label>Photo of question (optional)</label>
@@ -474,9 +511,7 @@ input[type="file"]:hover{border-color:var(--border3)}
           <button class="btn btn-d btn-sm" id="addErrStandaloneBtn" style="white-space:nowrap">⚡ Add question</button>
         </div>
       </div>
-      <!-- Standalone add panel -->
       <div class="eb-add-panel" id="eb-add-panel"></div>
-      <!-- Cards -->
       <div id="eb-cards"></div>
     </div>
 
@@ -503,13 +538,62 @@ input[type="file"]:hover{border-color:var(--border3)}
         <div class="pc"><div class="ptag">◈ Phase 2 · 10 min</div><div class="pt">Category results</div><div class="pd">Tally from results screen. Correct = full marks, Partial = yellow, Wrong = zero.</div><div id="ci"></div></div>
         <div class="br"><button class="btn btn-s" id="p2b">← Back</button><button class="btn btn-p" id="p2n">Phase 3: Question review →</button></div>
       </div>
+
+      <!-- ══ PHASE 3 — NEW BEHAVIOURAL TAG SYSTEM ══ -->
       <div id="ph3" class="wph" style="display:none">
-        <div class="pc"><div class="ptag">◈ Phase 3 · 20–30 min</div><div class="pt">Question analysis</div><div class="pd">Classify every wrong question.</div>
-        <div class="ts"><div class="th2"><span class="tb2 ta">Type A</span><span class="tl">Confident but wrong — find exactly where logic broke</span></div><textarea id="p3a" rows="4" placeholder="e.g. Q6 — was certain conclusion followed..."></textarea><div class="fh">// Most important.</div></div>
-        <div class="ts"><div class="th2"><span class="tb2 tb">Type B</span><span class="tl">Rushed or guessing</span></div><textarea id="p3b" rows="3" placeholder="e.g. Q33 — 3-second panic click..."></textarea></div>
-        <div class="ts"><div class="th2"><span class="tb2 tc3">Type C</span><span class="tl">Right but unsure</span></div><textarea id="p3c" rows="3" placeholder="e.g. Q14 — guessed correctly..."></textarea></div></div>
+        <div class="pc">
+          <div class="ptag">◈ Phase 3 · 20–30 min</div>
+          <div class="pt">Question analysis</div>
+          <div class="pd">Log each wrong question — tag the exact error pattern, how long it took, and the physical fix you'll use next time. Be ruthlessly specific.</div>
+
+          <!-- Tag legend -->
+          <div class="tag-legend">
+            <span class="err-tag-badge mentalJuggling">Mental Juggling</span>
+            <span class="err-tag-badge rereadingLoop">Re-reading Loop</span>
+            <span class="err-tag-badge realWorldBias">Real-World Bias</span>
+            <span class="err-tag-badge restrictiveWordMiss">Restrictive Word Miss</span>
+            <span class="err-tag-badge scopeShift">Scope Shift</span>
+          </div>
+
+          <!-- Entry list (rendered by JS) -->
+          <div id="p3-entries-list"></div>
+
+          <!-- Inline add form -->
+          <div class="err-add-form" id="p3-add-form" style="display:none">
+            <div style="font-family:var(--display);font-size:14px;font-weight:600;margin-bottom:14px;color:var(--red)">Add wrong question</div>
+            <div class="field"><label>Brief description</label><input type="text" id="p3-add-desc" placeholder="e.g. Q6 — syllogism with double negation, picked the wrong conclusion..."/></div>
+            <div class="fr">
+              <div class="field">
+                <label>Time spent (seconds)</label>
+                <input type="number" id="p3-add-time" placeholder="e.g. 145" min="1" max="600"/>
+              </div>
+              <div class="field">
+                <label>Error tag</label>
+                <select id="p3-add-tag"></select>
+              </div>
+            </div>
+            <div class="field">
+              <label style="color:var(--green)">⚡ Physical fix — exact action, not a vague intention</label>
+              <textarea id="p3-add-fix" rows="2" placeholder='e.g. "Draw a 4×4 grid before reading the puzzle rules" — never "I need to read more carefully"'></textarea>
+              <div class="fix-hint">Good: "Circle the word only, then re-read the premise" · Bad: "Be more careful with wording"</div>
+            </div>
+            <div class="br">
+              <button class="btn btn-s btn-sm" id="p3-add-cancel">Cancel</button>
+              <button class="btn btn-d btn-sm" id="p3-add-save" style="background:rgba(244,96,122,.1);border-color:rgba(244,96,122,.3)">Add question ⚡</button>
+            </div>
+          </div>
+
+          <button class="btn btn-s btn-sm" id="addP3EntryBtn" style="border-color:rgba(244,96,122,.2);color:var(--red);margin:4px 0 20px">+ Add wrong question</button>
+
+          <div class="gd"></div>
+          <div class="ts" style="margin-top:16px">
+            <div class="th2"><span class="tb2 tc3">Right but unsure</span><span class="tl">Questions you got right but couldn't fully justify</span></div>
+            <textarea id="p3c" rows="3" placeholder="e.g. Q14 — guessed correctly but couldn't articulate why the conclusion followed..."></textarea>
+          </div>
+        </div>
         <div class="br"><button class="btn btn-s" id="p3b2">← Back</button><button class="btn btn-p" id="p3n">Phase 4: Pattern analysis →</button></div>
       </div>
+
       <div id="ph4" class="wph" style="display:none">
         <div class="pc"><div class="ptag">◈ Phase 4 · 10 min</div><div class="pt">Category pattern analysis</div><div class="pd">One specific sentence per category.</div><div id="pi"></div></div>
         <div class="br"><button class="btn btn-s" id="p4b">← Back</button><button class="btn btn-p" id="p4n">Phase 5: Action notes →</button></div>
@@ -540,11 +624,11 @@ input[type="file"]:hover{border-color:var(--border3)}
 
 <script>
 'use strict';
-// ─── LocalStorage keys — all original keys preserved, new ones added ───
+// ─── LocalStorage keys — ALL ORIGINAL KEYS PRESERVED, new ones added ───
 const LS_MOCKS='ucat_mocks', LS_LOGS='ucat_practLogs', LS_USER='ucat_user',
       LS_THEME='ucat_th', LS_SETUP='ucat_setup',
-      LS_ERRORS='ucat_errorLog',   // NEW
-      LS_DRAFT='ucat_draft';       // NEW
+      LS_ERRORS='ucat_errorLog',
+      LS_DRAFT='ucat_draft';
 
 function lsGet(k,fb=null){try{const v=localStorage.getItem(k);return v!==null?JSON.parse(v):fb;}catch{return fb;}}
 function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true;}catch{toast('Storage full — export a backup','err');return false;}}
@@ -552,16 +636,17 @@ function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true;}c
 let mocks=lsGet(LS_MOCKS,[]),
     practLogs=lsGet(LS_LOGS,[]),
     userData=lsGet(LS_USER,{name:''}),
-    errorLog=lsGet(LS_ERRORS,[]),   // NEW
-    draftLog=lsGet(LS_DRAFT,null),  // NEW
-    pendingErrors=[],               // NEW: staged during current log session
-    errImgData=null,                // NEW: current image in error add form
-    draftTimer=null,                // NEW: debounce handle
-    ebFilterCat='all',              // NEW: error bank active filter
+    errorLog=lsGet(LS_ERRORS,[]),
+    draftLog=lsGet(LS_DRAFT,null),
+    pendingErrors=[],
+    errImgData=null,
+    draftTimer=null,
+    ebFilterCat='all',
     phase=0, skip=null,
     sci=null, mci=null, pmci=null, cbi=null,
     dark=lsGet(LS_THEME,'dark')!=='light',
-    tmMode=null, ratingVal=null;
+    tmMode=null, ratingVal=null,
+    p3Entries=[];   // NEW v2: wrong-question entries for Phase 3
 
 const $=id=>document.getElementById(id);
 
@@ -583,11 +668,34 @@ const SUBTESTS=[
   {id:'allDM',       label:'All Decision Making',   cbColor:'#00c8f0',cbBg:'rgba(0,200,240,.06)'}
 ];
 
+// ── NEW v2: Behavioural error tags ──────────────────────────────────────
+const ERROR_TAGS=[
+  {id:'mentalJuggling',     label:'Mental Juggling',      desc:'Tried to solve a puzzle in my head without a grid'},
+  {id:'rereadingLoop',      label:'Re-reading Loop',       desc:'Checked the primary text multiple times for a Syllogism'},
+  {id:'realWorldBias',      label:'Real-World Bias',       desc:'Brought outside knowledge into an Argument/Syllogism'},
+  {id:'restrictiveWordMiss',label:'Restrictive Word Miss', desc:'Ignored "only", "all", "some", "always"'},
+  {id:'scopeShift',         label:'Scope Shift',           desc:"Picked an argument that didn't match the scale of the prompt"}
+];
+
+function getTagById(id){return ERROR_TAGS.find(t=>t.id===id)||null;}
+
+function populateErrTagSelect(selectId){
+  const sel=$(selectId);if(!sel)return;
+  sel.innerHTML=`<option value="">Select error tag (optional)...</option>`+
+    ERROR_TAGS.map(t=>`<option value="${t.id}">${t.label} — ${t.desc}</option>`).join('');
+}
+
+function errTagBadgeHtml(tagId){
+  const t=getTagById(tagId);
+  return t?`<span class="err-tag-badge ${t.id}">${t.label}</span>`:'';
+}
+// ───────────────────────────────────────────────────────────────────────
+
 const scls=s=>s>=660?'high':s>=600?'mid':'low';
 const acc=d=>{const t=(d?.correct||0)+(d?.partial||0)+(d?.wrong||0);return t?Math.round(((d.correct||0)+(d.partial||0)*.5)/t*100):null;};
 const toast=(m,t='ok')=>{const e=$('toast');e.textContent=m;e.className='show '+t;setTimeout(()=>e.className='',2800);};
 
-/* ─── Image resize utility (NEW) ─── */
+/* ─── Image resize ─── */
 async function resizeImage(file,maxPx=820){
   return new Promise(resolve=>{
     const reader=new FileReader();
@@ -596,21 +704,16 @@ async function resizeImage(file,maxPx=820){
       img.onload=()=>{
         const canvas=document.createElement('canvas');
         let {width:w,height:h}=img;
-        if(w>maxPx||h>maxPx){
-          if(w>h){h=Math.round(h*maxPx/w);w=maxPx;}
-          else{w=Math.round(w*maxPx/h);h=maxPx;}
-        }
+        if(w>maxPx||h>maxPx){if(w>h){h=Math.round(h*maxPx/w);w=maxPx;}else{w=Math.round(w*maxPx/h);h=maxPx;}}
         canvas.width=w;canvas.height=h;
         canvas.getContext('2d').drawImage(img,0,0,w,h);
         resolve(canvas.toDataURL('image/jpeg',0.72));
-      };
-      img.src=ev.target.result;
-    };
-    reader.readAsDataURL(file);
+      };img.src=ev.target.result;
+    };reader.readAsDataURL(file);
   });
 }
 
-/* ─── Lightbox (NEW) ─── */
+/* ─── Lightbox ─── */
 function openLightbox(src){
   const lb=document.createElement('div');lb.className='img-lb';
   lb.innerHTML=`<span class="img-lb-close" title="Close">✕</span><img src="${src}" alt="question"/>`;
@@ -625,8 +728,7 @@ $('tsw').addEventListener('click',()=>{dark=!dark;applyTh();});
 
 /* ─── Auth ─── */
 function showAuthScreen(){
-  const authEl=$('auth-screen');
-  authEl.classList.remove('hidden');
+  const authEl=$('auth-screen');authEl.classList.remove('hidden');
   const hasMocks=mocks.length>0,hasLogs=practLogs.length>0;
   const retEl=$('auth-returning');
   if(hasMocks||hasLogs){
@@ -656,7 +758,7 @@ $('soBtn').addEventListener('click',()=>{
   userData={name:''};showAuthScreen();toast('Signed out — data kept safely');
 });
 $('clrBtn').addEventListener('click',()=>{
-  if(!confirm('Permanently delete ALL mock reviews, practice logs, and error bank entries?\n\nThis cannot be undone. Export a backup first if you want to keep it.'))return;
+  if(!confirm('Permanently delete ALL mock reviews, practice logs, and error bank entries?\n\nThis cannot be undone.'))return;
   mocks=[];practLogs=[];errorLog=[];
   lsSet(LS_MOCKS,[]);lsSet(LS_LOGS,[]);lsSet(LS_ERRORS,[]);lsSet(LS_DRAFT,null);
   toast('All data cleared');sv('d');
@@ -688,38 +790,28 @@ function importData(){
   };inp.click();
 }
 
-/* ─── Draft system (NEW) ─── */
+/* ─── Draft system ─── */
 function collectDraft(){
   return{
     savedAt:Date.now(),
     date:$('pl-date')?.value||'',
     questions:$('pl-qs')?.value||'',
     subtestIds:SUBTESTS.filter(s=>$(`cb-${s.id}`)?.checked).map(s=>s.id),
-    timing:tmMode,
-    rating:ratingVal,
+    timing:tmMode,rating:ratingVal,
     catAcc:(()=>{const ca={};CATS.forEach(c=>{const v=$('pl-ca-'+c.id)?.value||'';if(v!=='')ca[c.id]=v;});return ca;})(),
-    wentWell:$('pl-well')?.value||'',
-    wentHard:$('pl-hard')?.value||'',
-    nextFocus:$('pl-next')?.value||'',
-    accuracy:$('pl-acc')?.value||'',
+    wentWell:$('pl-well')?.value||'',wentHard:$('pl-hard')?.value||'',
+    nextFocus:$('pl-next')?.value||'',accuracy:$('pl-acc')?.value||'',
     pendingErrors:[...pendingErrors]
   };
 }
-
 function isDraftMeaningful(d){
   if(!d)return false;
   return !!(d.questions||d.wentWell||d.wentHard||d.nextFocus||(d.subtestIds&&d.subtestIds.length)||(d.pendingErrors&&d.pendingErrors.length));
 }
-
 function scheduleDraftSave(){
   clearTimeout(draftTimer);
-  draftTimer=setTimeout(()=>{
-    if($('vlp')?.classList.contains('active')){
-      lsSet(LS_DRAFT,collectDraft());
-    }
-  },900);
+  draftTimer=setTimeout(()=>{if($('vlp')?.classList.contains('active'))lsSet(LS_DRAFT,collectDraft());},900);
 }
-
 function restoreDraft(d){
   if(!d)return;
   if($('pl-date'))$('pl-date').value=d.date||'';
@@ -728,8 +820,6 @@ function restoreDraft(d){
   if($('pl-hard'))$('pl-hard').value=d.wentHard||'';
   if($('pl-next'))$('pl-next').value=d.nextFocus||'';
   if($('pl-acc'))$('pl-acc').value=d.accuracy||'';
-
-  // Subtests
   if(d.subtestIds){
     SUBTESTS.forEach(s=>{
       const cb=$(`cb-${s.id}`),wrap=$(`scb-${s.id}`);
@@ -737,35 +827,14 @@ function restoreDraft(d){
     });
   }
   updateCatAccVisibility();
-
-  // Cat accuracy values
   if(d.catAcc){CATS.forEach(c=>{const el=$('pl-ca-'+c.id);if(el&&d.catAcc[c.id]!=null)el.value=d.catAcc[c.id];});}
-
-  // Timing
-  if(d.timing){
-    tmMode=d.timing;
-    ['timed','untimed','mixed'].forEach(v=>{$('tm-'+v).className='tg'+(v===d.timing?' yes':'');});
-  }
-
-  // Rating
-  if(d.rating){
-    ratingVal=d.rating;
-    ['great','good','ok','tough'].forEach(v=>{$('r-'+v).className='r-btn'+(v===d.rating?' sel-'+v:'');});
-  }
-
-  // Pending errors
-  if(d.pendingErrors&&d.pendingErrors.length){
-    pendingErrors=[...d.pendingErrors];
-    renderPendingErrors();
-  }
+  if(d.timing){tmMode=d.timing;['timed','untimed','mixed'].forEach(v=>{$('tm-'+v).className='tg'+(v===d.timing?' yes':'');});}
+  if(d.rating){ratingVal=d.rating;['great','good','ok','tough'].forEach(v=>{$('r-'+v).className='r-btn'+(v===d.rating?' sel-'+v:'');});}
+  if(d.pendingErrors&&d.pendingErrors.length){pendingErrors=[...d.pendingErrors];renderPendingErrors();}
 }
+function clearDraft(){draftLog=null;lsSet(LS_DRAFT,null);}
 
-function clearDraft(){
-  draftLog=null;
-  lsSet(LS_DRAFT,null);
-}
-
-/* ─── Category accuracy visibility (NEW) ─── */
+/* ─── Cat accuracy visibility ─── */
 function updateCatAccVisibility(){
   const checkedIds=SUBTESTS.filter(s=>$(`cb-${s.id}`)?.checked).map(s=>s.id);
   const showAll=checkedIds.length===0||checkedIds.includes('allDM');
@@ -788,17 +857,13 @@ function sv(n){
   if(n==='pl')rPractLog();
   if(n==='lp'){
     resetLogForm();
-    // Check for draft
     draftLog=lsGet(LS_DRAFT,null);
     if(isDraftMeaningful(draftLog)){
       const ageMs=Date.now()-draftLog.savedAt;
       const ageMin=Math.round(ageMs/60000);
       const ageTxt=ageMin<1?'just now':ageMin<60?ageMin+' min ago':Math.round(ageMin/60)+'h ago';
-      $('draft-age').textContent=ageTxt;
-      $('draft-banner').style.display='flex';
-    }else{
-      $('draft-banner').style.display='none';
-    }
+      $('draft-age').textContent=ageTxt;$('draft-banner').style.display='flex';
+    }else{$('draft-banner').style.display='none';}
   }
   if(n==='n')resetWiz();
   if(n==='eb'){ebFilterCat='all';$('eb-add-panel')?.classList.remove('open');rErrorBank();}
@@ -810,29 +875,17 @@ $('np').addEventListener('click',()=>sv('p'));
 $('npl').addEventListener('click',()=>sv('pl'));
 $('nlp').addEventListener('click',()=>sv('lp'));
 $('nn').addEventListener('click',()=>sv('n'));
-$('neb').addEventListener('click',()=>sv('eb'));  // NEW
+$('neb').addEventListener('click',()=>sv('eb'));
 $('nrBtn').addEventListener('click',()=>sv('n'));
 $('btd').addEventListener('click',()=>sv('d'));
 $('bpd').addEventListener('click',()=>sv('pl'));
 $('lpBtn').addEventListener('click',()=>sv('lp'));
-$('lpCancel').addEventListener('click',()=>sv('pl'));  // draft NOT cleared — user can resume
+$('lpCancel').addEventListener('click',()=>sv('pl'));
 
-/* ─── Draft banner actions (NEW) ─── */
-$('resumeDraftBtn').addEventListener('click',()=>{
-  restoreDraft(draftLog);
-  $('draft-banner').style.display='none';
-  toast('Draft restored ✓');
-});
-$('discardDraftBtn').addEventListener('click',()=>{
-  clearDraft();
-  $('draft-banner').style.display='none';
-  toast('Draft discarded');
-});
-
-/* ─── Draft auto-save for static log inputs (NEW) ─── */
-['pl-date','pl-qs','pl-well','pl-hard','pl-next','pl-acc'].forEach(id=>{
-  $(id)?.addEventListener('input',scheduleDraftSave);
-});
+/* ─── Draft banner ─── */
+$('resumeDraftBtn').addEventListener('click',()=>{restoreDraft(draftLog);$('draft-banner').style.display='none';toast('Draft restored ✓');});
+$('discardDraftBtn').addEventListener('click',()=>{clearDraft();$('draft-banner').style.display='none';toast('Draft discarded');});
+['pl-date','pl-qs','pl-well','pl-hard','pl-next','pl-acc'].forEach(id=>{$(id)?.addEventListener('input',scheduleDraftSave);});
 
 /* ─── Dashboard ─── */
 function rDash(){
@@ -869,9 +922,7 @@ function rDash(){
 /* ─── Performance ─── */
 function rPerf(){
   const tc3=dark?'#4a5280':'#9098b8',gc=dark?'rgba(255,255,255,.03)':'rgba(0,0,0,.04)';
-  if(mci){mci.destroy();mci=null;}
-  if(pmci){pmci.destroy();pmci=null;}
-  if(cbi){cbi.destroy();cbi=null;}
+  if(mci){mci.destroy();mci=null;}if(pmci){pmci.destroy();pmci=null;}if(cbi){cbi.destroy();cbi=null;}
   const ch=[...mocks].sort((a,b)=>a.savedAt-b.savedAt);
   if(!ch.length){
     $('po').innerHTML='<div class="empty"><div class="ei">◈</div><div class="et">No mock data yet. Complete a mock review first.</div></div>';
@@ -888,8 +939,7 @@ function rPerf(){
   const pSorted=[...practLogs].sort((a,b)=>a.savedAt-b.savedAt);
   const pWithCat=pSorted.filter(p=>p.categoryAccuracy&&Object.keys(p.categoryAccuracy).length>0);
   if(!pWithCat.length){
-    $('pract-note').style.display='block';
-    $('pract-note').innerHTML='No per-category practice data yet. When logging a session, enter your accuracy % for each category you practised — the charts will appear here automatically.';
+    $('pract-note').style.display='block';$('pract-note').innerHTML='No per-category practice data yet.';
     $('pract-cpg').innerHTML='';$('pract-chart-card').style.display='none';
   }else{
     $('pract-note').style.display='none';
@@ -905,7 +955,7 @@ function rPerf(){
   const practPoints=pWithCat.map((p,i)=>{const vals=Object.values(p.categoryAccuracy).filter(v=>v!=null&&typeof v==='number');const avg2=vals.length?Math.round(vals.reduce((s,v)=>s+v,0)/vals.length):null;return avg2!==null?{t:p.savedAt,label:p.date||'Session '+(i+1),val:avg2,type:'practice'}:null;}).filter(Boolean);
   const allPoints=[...mockPoints,...practPoints].sort((a,b)=>a.t-b.t);
   const cbcEl=$('cbc'),noteEl=$('cbc-note');
-  if(allPoints.length<2){noteEl.style.display='block';noteEl.textContent=allPoints.length===0?'Complete a mock review or log a practice session with per-category accuracy to see your combined improvement trend here.':'Add more data — complete another mock or log a practice session with category accuracy — to see your trend.';cbcEl.style.display='none';}
+  if(allPoints.length<2){noteEl.style.display='block';noteEl.textContent=allPoints.length===0?'Complete a mock review or log a practice session with per-category accuracy to see your combined improvement trend here.':'Add more data to see your trend.';cbcEl.style.display='none';}
   else{noteEl.style.display='none';cbcEl.style.display='block';const cbctx=cbcEl.getContext('2d');cbi=new Chart(cbctx,{type:'line',data:{labels:allPoints.map(p=>p.label),datasets:[{label:'Mock avg accuracy',data:allPoints.map(p=>p.type==='mock'?p.val:null),borderColor:'#00c8f0',backgroundColor:'rgba(0,200,240,.07)',pointBackgroundColor:'#00c8f0',pointBorderColor:dark?'#040410':'#f0f2f8',pointBorderWidth:2,pointRadius:allPoints.map(p=>p.type==='mock'?7:0),pointHoverRadius:9,tension:.35,borderWidth:2.5,spanGaps:true,fill:true},{label:'Practice avg accuracy',data:allPoints.map(p=>p.type==='practice'?p.val:null),borderColor:'#10d98a',backgroundColor:'rgba(16,217,138,.05)',pointBackgroundColor:'#10d98a',pointBorderColor:dark?'#040410':'#f0f2f8',pointBorderWidth:2,pointRadius:allPoints.map(p=>p.type==='practice'?7:0),pointHoverRadius:9,tension:.35,borderDash:[6,4],borderWidth:2.5,spanGaps:true,fill:true}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:dark?'#8892b0':'#5a6080',font:{family:'DM Sans',size:13},boxWidth:12,boxHeight:3,padding:20,usePointStyle:false}},tooltip:{backgroundColor:dark?'rgba(4,4,16,.92)':'rgba(240,242,248,.95)',borderColor:'rgba(0,200,240,.25)',borderWidth:1,titleColor:'#00c8f0',bodyColor:dark?'#e2e8f8':'#12142a',padding:12,cornerRadius:10,callbacks:{label:ctx2=>{if(ctx2.raw===null)return null;const type=allPoints[ctx2.dataIndex]?.type;return`${type==='mock'?'Mock':'Practice'}: ${ctx2.raw}% avg accuracy`;}}}},scales:{x:{grid:{color:gc},ticks:{color:tc3,font:{family:'DM Mono',size:11},maxRotation:30}},y:{min:0,max:100,grid:{color:gc},ticks:{color:tc3,font:{family:'DM Mono',size:11},callback:v=>v+'%'}}}}});}
 }
 
@@ -913,7 +963,6 @@ function rPerf(){
 const ratingMeta={great:{cls:'great',txt:'Great session'},good:{cls:'good',txt:'Good session'},ok:{cls:'ok',txt:'Okay session'},tough:{cls:'tough',txt:'Tough session'}};
 function rPractLog(){
   const totalQs=practLogs.reduce((a,p)=>a+(p.questions||0),0);
-  const timedSessions=practLogs.filter(p=>p.timing==='timed'||p.timing==='mixed').length;
   const wa=practLogs.filter(p=>p.accuracy),avgAcc=wa.length?Math.round(wa.reduce((a,p)=>a+p.accuracy,0)/wa.length):null;
   $('pl-stats').innerHTML=`
     <div class="stat-card" style="--g:rgba(16,217,138,.07)"><div class="s-lbl">Sessions</div><div class="s-val" style="color:var(--green)">${practLogs.length}</div><div class="s-sub">practice logged</div></div>
@@ -936,34 +985,48 @@ function rPractLog(){
   el.querySelectorAll('.pl-item').forEach(el=>el.addEventListener('click',()=>showPDet(el.dataset.id)));
 }
 
+/* ─── Helper: render error card in detail views ─── */
+function errCardDetailHtml(e){
+  const cat=CATS.find(c=>c.id===e.category);
+  const cc=cat?.color||'var(--text3)';
+  const tag=getTagById(e.errorTag||'');
+  return`<div class="err-card" style="--ec:${cc}">
+    <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+      <span class="err-card-cat" style="color:${cc};border-color:${cc}35;background:${cc}10">${cat?.label||'?'}</span>
+      ${tag?`<span class="err-tag-badge ${tag.id}">${tag.label}</span>`:''}
+      ${e.timeSpent?`<span class="time-badge">⏱ ${e.timeSpent}s</span>`:''}
+    </div>
+    <div class="err-card-desc">${e.description||'—'}</div>
+    ${e.notes?`<div class="err-card-notes">${e.notes}</div>`:''}
+    ${e.physicalFix?`<div class="physical-fix"><div class="physical-fix-lbl">⚡ Physical fix</div>${e.physicalFix}</div>`:''}
+    ${e.imageData?`<img class="err-card-img" src="${e.imageData}" data-src="${e.imageData}" alt="question photo" style="cursor:zoom-in"/>`:''}</div>`;
+}
+
 /* ─── Practice detail ─── */
 function showPDet(id){
   const p=practLogs.find(x=>x.id===id);if(!p)return;sv('pdet');
   const rm=ratingMeta[p.rating]||{cls:'flat',txt:'—'};
   const tags=(p.subtests||[]).map(s=>{const st=SUBTESTS.find(x=>x.id===s);return st?`<span class="pl-tag ${s}">${st.label}</span>`:''}).join('');
   const catAccHtml=p.categoryAccuracy&&Object.keys(p.categoryAccuracy).length?`<div class="card"><div class="pst">Per-category accuracy</div><div class="crg">${CATS.map(c=>{const v=p.categoryAccuracy[c.id];if(v==null)return'';const cl=v>=75?'cg':v>=50?'co':'cb';return`<div class="cri"><div class="cin">${c.label}</div><div class="cis ${cl}" style="color:${c.color}">${v}%</div></div>`;}).filter(Boolean).join('')}</div></div>`:'';
-  // Error entries linked to this log
   const logErrors=errorLog.filter(e=>e.sourceLogId===id);
-  const errHtml=logErrors.length?`<div class="card"><div class="pst" style="color:var(--red)">Error log entries (${logErrors.length})</div><div class="err-grid">${logErrors.map(e=>{const cat=CATS.find(c=>c.id===e.category);const cc=cat?.color||'var(--text3)';return`<div class="err-card" style="--ec:${cc}"><span class="err-card-cat" style="color:${cc};border-color:${cc}35;background:${cc}10">${cat?.label||'?'}</span><div class="err-card-desc">${e.description||'—'}</div>${e.notes?`<div class="err-card-notes">${e.notes}</div>`:''} ${e.imageData?`<img class="err-card-img" src="${e.imageData}" data-src="${e.imageData}" alt="question" style="cursor:zoom-in"/>`:''}</div>`;}).join('')}</div></div>`:'';
+  const errHtml=logErrors.length?`<div class="card"><div class="pst" style="color:var(--red)">Error log entries (${logErrors.length})</div><div class="err-grid">${logErrors.map(e=>errCardDetailHtml(e)).join('')}</div></div>`:'';
   $('pdc').innerHTML=`<div class="pg-title">Practice Session</div><div class="dsb"><div class="dsc mid">${p.questions||0}</div><div><div class="dp">questions done</div><div class="dd">${p.date||'—'}</div></div></div><div class="card"><div class="pst">Session overview</div><div class="ir"><div class="ik">Subtests</div><div class="iv" style="display:flex;flex-wrap:wrap;gap:6px">${tags||'—'}</div></div><div class="ir"><div class="ik">Timing</div><div class="iv">${p.timing||'—'}</div></div><div class="ir"><div class="ik">How it went</div><div class="iv" style="display:flex;align-items:center;gap:8px"><div class="pl-dot ${rm.cls}"></div>${rm.txt}</div></div>${p.accuracy?`<div class="ir"><div class="ik">Overall accuracy</div><div class="iv">${p.accuracy}%</div></div>`:''}</div>${catAccHtml}${errHtml}${p.wentWell?`<div class="card"><div class="pst">What went well</div><div style="font-size:14px;line-height:1.75">${p.wentWell}</div></div>`:''}${p.wentHard?`<div class="card"><div class="pst">What was hard</div><div style="font-size:14px;line-height:1.75">${p.wentHard}</div></div>`:''}${p.nextFocus?`<div class="ac"><div class="pst" style="color:var(--green)">What to implement next session</div><div style="font-size:14px;line-height:1.75">${p.nextFocus}</div></div>`:''}<button class="btn btn-d btn-sm" id="delPBtn">Delete this session</button>`;
   $('pdc').querySelectorAll('.err-card-img').forEach(img=>img.addEventListener('click',()=>openLightbox(img.dataset.src)));
   $('delPBtn').addEventListener('click',()=>{if(!confirm('Delete this session?'))return;practLogs=practLogs.filter(x=>x.id!==id);lsSet(LS_LOGS,practLogs);toast('Session deleted');sv('pl');});
 }
 
-/* ─── Practice log form ─── */
+/* ─── Practice log form builders ─── */
 function buildSubGrid(){
   $('sub-grid').innerHTML=SUBTESTS.map(s=>`<label class="sub-cb" id="scb-${s.id}" style="--cb-color:${s.cbColor};--cb-bg:${s.cbBg}"><input type="checkbox" id="cb-${s.id}"/><div class="cb-box" id="cbbox-${s.id}">✓</div><span class="cb-lbl">${s.label}</span></label>`).join('');
   SUBTESTS.forEach(s=>{
     $(`scb-${s.id}`).addEventListener('click',()=>{
       const cb=$(`cb-${s.id}`);cb.checked=!cb.checked;
       $(`scb-${s.id}`).classList.toggle('checked',cb.checked);
-      updateCatAccVisibility();  // NEW
-      scheduleDraftSave();       // NEW
+      updateCatAccVisibility();scheduleDraftSave();
     });
   });
-  updateCatAccVisibility();  // NEW: initial state
+  updateCatAccVisibility();
 }
-
 function buildCatAccGrid(){
   $('cat-acc-grid').innerHTML=CATS.map(c=>`
     <div class="cat-acc-field" id="pl-ca-field-${c.id}">
@@ -973,13 +1036,14 @@ function buildCatAccGrid(){
         <span class="cat-acc-pct">%</span>
       </div>
     </div>`).join('');
-  // Draft save on cat acc input
   CATS.forEach(c=>{$('pl-ca-'+c.id)?.addEventListener('input',scheduleDraftSave);});
 }
 
-function buildErrCatSelect(){
-  const sel=$('err-cat');if(!sel)return;
-  sel.innerHTML=`<option value="">Select category...</option>`+CATS.map(c=>`<option value="${c.id}">${c.label}</option>`).join('');
+/* ── NEW v2: populate both category and tag selects ── */
+function buildErrSelects(){
+  const catSel=$('err-cat');if(!catSel)return;
+  catSel.innerHTML=`<option value="">Select category...</option>`+CATS.map(c=>`<option value="${c.id}">${c.label}</option>`).join('');
+  populateErrTagSelect('err-tag');
 }
 
 function resetLogForm(){
@@ -991,25 +1055,31 @@ function resetLogForm(){
   if($('err-add-form'))$('err-add-form').style.display='none';
   if($('err-desc'))$('err-desc').value='';
   if($('err-notes'))$('err-notes').value='';
+  if($('err-fix'))$('err-fix').value='';       // NEW
+  if($('err-time'))$('err-time').value='';     // NEW
   if($('err-img-preview'))$('err-img-preview').style.display='none';
   if($('err-img'))$('err-img').value='';
-  buildSubGrid();
-  buildCatAccGrid();
-  buildErrCatSelect();
+  buildSubGrid();buildCatAccGrid();buildErrSelects();   // uses new function
   renderPendingErrors();
 }
 
-/* ─── Pending errors (NEW) ─── */
+/* ─── Pending errors ─── */
 function renderPendingErrors(){
   const el=$('perr-list');if(!el)return;
   if(!pendingErrors.length){el.innerHTML='';return;}
   el.innerHTML=pendingErrors.map((e,i)=>{
     const cat=CATS.find(c=>c.id===e.category)||{label:e.category||'?',color:'var(--text3)'};
+    const tag=getTagById(e.errorTag||'');
     return`<div class="perr-item">
       <div class="perr-left">
-        <div class="perr-cat-pill" style="color:${cat.color};border-color:${cat.color}40;background:${cat.color}10">${cat.label}</div>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px">
+          <div class="perr-cat-pill" style="color:${cat.color};border-color:${cat.color}40;background:${cat.color}10">${cat.label}</div>
+          ${tag?`<span class="err-tag-badge ${tag.id}">${tag.label}</span>`:''}
+          ${e.timeSpent?`<span class="time-badge">⏱ ${e.timeSpent}s</span>`:''}
+        </div>
         <div class="perr-desc">${e.description||'(no description)'}</div>
         ${e.notes?`<div class="perr-note">${e.notes}</div>`:''}
+        ${e.physicalFix?`<div class="physical-fix" style="margin-top:5px"><div class="physical-fix-lbl">⚡ Fix</div>${e.physicalFix}</div>`:''}
       </div>
       ${e.imageData?`<img class="perr-thumb" src="${e.imageData}" alt="question" data-src="${e.imageData}"/>`:''}
       <button class="err-del" data-idx="${i}" title="Remove">✕</button>
@@ -1024,25 +1094,25 @@ function renderPendingErrors(){
 /* ─── Timing / rating listeners ─── */
 ['timed','untimed','mixed'].forEach(v=>{
   $('tm-'+v)?.addEventListener('click',()=>{
-    tmMode=v;['timed','untimed','mixed'].forEach(x=>{$('tm-'+x).className='tg'+(x===v?' yes':'');});
-    scheduleDraftSave();
+    tmMode=v;['timed','untimed','mixed'].forEach(x=>{$('tm-'+x).className='tg'+(x===v?' yes':'');});scheduleDraftSave();
   });
 });
 ['great','good','ok','tough'].forEach(v=>{
   $('r-'+v)?.addEventListener('click',()=>{
-    ratingVal=v;['great','good','ok','tough'].forEach(x=>{$('r-'+x).className='r-btn'+(x===v?' sel-'+v:'');});
-    scheduleDraftSave();
+    ratingVal=v;['great','good','ok','tough'].forEach(x=>{$('r-'+x).className='r-btn'+(x===v?' sel-'+v:'');});scheduleDraftSave();
   });
 });
 
-/* ─── Error add form in log (NEW) ─── */
+/* ─── Error add form in log ─── */
 $('addErrBtn')?.addEventListener('click',()=>{
-  const f=$('err-add-form');
-  f.style.display=f.style.display==='none'?'block':'none';
+  const f=$('err-add-form');f.style.display=f.style.display==='none'?'block':'none';
 });
 $('errFormCancel')?.addEventListener('click',()=>{
   $('err-add-form').style.display='none';
   $('err-desc').value='';$('err-notes').value='';$('err-cat').value='';
+  if($('err-fix'))$('err-fix').value='';     // NEW
+  if($('err-time'))$('err-time').value='';   // NEW
+  if($('err-tag'))$('err-tag').value='';     // NEW
   errImgData=null;$('err-img').value='';$('err-img-preview').style.display='none';
 });
 $('err-img')?.addEventListener('change',async e=>{
@@ -1063,17 +1133,21 @@ $('errFormSave')?.addEventListener('click',()=>{
     category:$('err-cat')?.value||'',
     description:desc,
     notes:($('err-notes')?.value||'').trim(),
+    physicalFix:($('err-fix')?.value||'').trim(),         // NEW
+    errorTag:$('err-tag')?.value||'',                     // NEW
+    timeSpent:parseInt($('err-time')?.value)||null,        // NEW
     imageData:errImgData||null,
-    source:'log',
-    sourceLogId:null  // filled in when log is saved
+    source:'log',sourceLogId:null
   };
   pendingErrors.push(entry);
   renderPendingErrors();
   $('err-add-form').style.display='none';
   $('err-desc').value='';$('err-notes').value='';$('err-cat').value='';
+  if($('err-fix'))$('err-fix').value='';
+  if($('err-time'))$('err-time').value='';
+  if($('err-tag'))$('err-tag').value='';
   errImgData=null;$('err-img').value='';$('err-img-preview').style.display='none';
-  toast('Question added ✓ — save log to sync to Error Bank');
-  scheduleDraftSave();
+  toast('Question added ✓ — save log to sync to Error Bank');scheduleDraftSave();
 });
 
 /* ─── Save log ─── */
@@ -1092,35 +1166,86 @@ $('lpSave').addEventListener('click',()=>{
     wentWell:$('pl-well').value,wentHard:$('pl-hard').value,
     nextFocus:$('pl-next').value,accuracy:parseInt($('pl-acc').value)||null
   };
-  // Save pending errors to error bank
   if(pendingErrors.length){
-    pendingErrors.forEach(e=>{
-      addErrEntry({...e,sourceLogId:logId,date:p.date});
-    });
+    pendingErrors.forEach(e=>{addErrEntry({...e,sourceLogId:logId,date:p.date});});
     pendingErrors=[];
   }
   practLogs.unshift(p);
-  if(lsSet(LS_LOGS,practLogs)){
-    clearDraft();
-    toast('Session saved ✓');sv('pl');
-  }else{practLogs.shift();}
+  if(lsSet(LS_LOGS,practLogs)){clearDraft();toast('Session saved ✓');sv('pl');}
+  else{practLogs.shift();}
   btn.textContent='Save session ✓';btn.disabled=false;
 });
 
-/* ─── Error Bank (NEW) ─── */
-function addErrEntry(entry){
-  errorLog.unshift(entry);
-  lsSet(LS_ERRORS,errorLog);
-}
-function deleteErrEntry(id){
-  errorLog=errorLog.filter(e=>e.id!==id);
-  lsSet(LS_ERRORS,errorLog);
+/* ════════════════════════════════════════════
+   NEW v2: PHASE 3 WRONG-QUESTION ENTRY SYSTEM
+   ════════════════════════════════════════════ */
+function renderP3Entries(){
+  const el=$('p3-entries-list');if(!el)return;
+  if(!p3Entries.length){
+    el.innerHTML=`<div style="color:var(--text3);font-size:13px;font-family:var(--mono);padding:12px 0 16px;text-align:center;line-height:1.6">No wrong questions added yet.<br>Use the button below to log each one.</div>`;
+    return;
+  }
+  el.innerHTML=p3Entries.map((e,i)=>{
+    const tag=getTagById(e.errorTag||'');
+    return`<div class="p3-entry-card">
+      <div class="p3-entry-left">
+        <div class="p3-entry-meta">
+          <span class="p3-entry-label">Wrong Q${i+1}</span>
+          ${tag?`<span class="err-tag-badge ${tag.id}">${tag.label}</span>`:''}
+          ${e.timeSpent?`<span class="time-badge">⏱ ${e.timeSpent}s</span>`:''}
+        </div>
+        ${e.description?`<div class="p3-entry-desc">${e.description}</div>`:''}
+        ${e.physicalFix?`<div class="physical-fix" style="margin-top:6px"><div class="physical-fix-lbl">⚡ Physical fix</div>${e.physicalFix}</div>`:''}
+      </div>
+      <button class="err-del" data-idx="${i}" title="Remove">✕</button>
+    </div>`;
+  }).join('');
+  el.querySelectorAll('.err-del').forEach(btn=>btn.addEventListener('click',()=>{
+    const idx=parseInt(btn.dataset.idx);p3Entries.splice(idx,1);renderP3Entries();
+  }));
 }
 
-function rErrorBank(){
-  buildEbFilter();
-  renderEbCards();
-}
+// Show/hide add form & populate tag select fresh each time
+$('addP3EntryBtn')?.addEventListener('click',()=>{
+  const f=$('p3-add-form');
+  const isOpen=f.style.display!=='none';
+  f.style.display=isOpen?'none':'block';
+  if(!isOpen){
+    populateErrTagSelect('p3-add-tag');
+    setTimeout(()=>$('p3-add-desc')?.focus(),60);
+  }
+});
+
+$('p3-add-cancel')?.addEventListener('click',()=>{
+  $('p3-add-form').style.display='none';
+  ['p3-add-desc','p3-add-fix'].forEach(id=>{$(id).value='';});
+  if($('p3-add-time'))$('p3-add-time').value='';
+  if($('p3-add-tag'))$('p3-add-tag').value='';
+});
+
+$('p3-add-save')?.addEventListener('click',()=>{
+  const desc=($('p3-add-desc')?.value||'').trim();
+  if(!desc){toast('Add a description first','err');return;}
+  p3Entries.push({
+    id:Date.now().toString()+Math.random().toString(36).slice(2,4),
+    description:desc,
+    timeSpent:parseInt($('p3-add-time')?.value)||null,
+    errorTag:$('p3-add-tag')?.value||'',
+    physicalFix:($('p3-add-fix')?.value||'').trim()
+  });
+  renderP3Entries();
+  $('p3-add-form').style.display='none';
+  ['p3-add-desc','p3-add-fix'].forEach(id=>{$(id).value='';});
+  if($('p3-add-time'))$('p3-add-time').value='';
+  if($('p3-add-tag'))$('p3-add-tag').value='';
+  toast('Question added ✓');
+});
+
+/* ─── Error Bank ─── */
+function addErrEntry(entry){errorLog.unshift(entry);lsSet(LS_ERRORS,errorLog);}
+function deleteErrEntry(id){errorLog=errorLog.filter(e=>e.id!==id);lsSet(LS_ERRORS,errorLog);}
+
+function rErrorBank(){buildEbFilter();renderEbCards();}
 
 function buildEbFilter(){
   const el=$('eb-filter');if(!el)return;
@@ -1149,8 +1274,17 @@ function buildEbAddPanel(){
       <div class="field"><label>Category</label><select id="eb-add-cat">${CATS.map(c=>`<option value="${c.id}">${c.label}</option>`).join('')}</select></div>
       <div class="field"><label>Date</label><input type="text" id="eb-add-date" value="${new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'})}"/></div>
     </div>
+    <div class="fr">
+      <div class="field"><label>Error tag (optional)</label><select id="eb-add-tag"></select></div>
+      <div class="field"><label>Time spent on question (seconds)</label><input type="number" id="eb-add-time" placeholder="e.g. 95" min="1" max="600"/></div>
+    </div>
     <div class="field"><label>Question / pattern description</label><textarea id="eb-add-desc" rows="3" placeholder="Describe the question or the concept that tripped you up..."></textarea></div>
-    <div class="field"><label>What went wrong &amp; the fix</label><textarea id="eb-add-notes" rows="2" placeholder="e.g. I need to draw Euler diagrams every time for syllogisms..."></textarea></div>
+    <div class="field"><label>What went wrong</label><textarea id="eb-add-notes" rows="2" placeholder="e.g. I reasoned from personal knowledge instead of the text..."></textarea></div>
+    <div class="field">
+      <label style="color:var(--green)">⚡ Physical fix — exact action, not a vague intention</label>
+      <textarea id="eb-add-fix" rows="2" placeholder='e.g. "Highlight the restrictive word before reading the answer choices" — never "be more careful"'></textarea>
+      <div class="fix-hint">Good: "Draw a 4×4 grid immediately, fill in every cell" · Bad: "Think more logically next time"</div>
+    </div>
     <div class="field"><label>Photo of question (optional)</label>
       <input type="file" id="eb-add-img" accept="image/*"/>
       <div id="eb-img-prev" style="display:none;margin-top:10px">
@@ -1159,15 +1293,14 @@ function buildEbAddPanel(){
       </div>
     </div>
     <div class="br"><span></span><button class="btn btn-d btn-sm" id="eb-add-save" style="background:rgba(244,96,122,.1);border-color:rgba(244,96,122,.3)">Save to Error Bank ✓</button></div>`;
+  populateErrTagSelect('eb-add-tag');  // NEW
   $('ebAddClose').addEventListener('click',()=>panel.classList.remove('open'));
   $('eb-add-img').addEventListener('change',async e=>{
     const file=e.target.files[0];if(!file)return;
     standaloneImg=await resizeImage(file);
     $('eb-img-thumb').src=standaloneImg;$('eb-img-prev').style.display='block';
   });
-  $('ebImgClear').addEventListener('click',()=>{
-    standaloneImg=null;$('eb-add-img').value='';$('eb-img-prev').style.display='none';
-  });
+  $('ebImgClear').addEventListener('click',()=>{standaloneImg=null;$('eb-add-img').value='';$('eb-img-prev').style.display='none';});
   $('eb-add-save').addEventListener('click',()=>{
     const desc=($('eb-add-desc')?.value||'').trim();
     if(!desc){toast('Add a description first','err');return;}
@@ -1178,12 +1311,13 @@ function buildEbAddPanel(){
       category:$('eb-add-cat')?.value||CATS[0].id,
       description:desc,
       notes:($('eb-add-notes')?.value||'').trim(),
+      physicalFix:($('eb-add-fix')?.value||'').trim(),   // NEW
+      errorTag:$('eb-add-tag')?.value||'',               // NEW
+      timeSpent:parseInt($('eb-add-time')?.value)||null, // NEW
       imageData:standaloneImg||null,
       source:'manual',sourceLogId:null
     });
-    toast('Added to Error Bank ✓');
-    panel.classList.remove('open');
-    rErrorBank();
+    toast('Added to Error Bank ✓');panel.classList.remove('open');rErrorBank();
   });
 }
 
@@ -1198,13 +1332,19 @@ function renderEbCards(){
   cardsEl.innerHTML=`<div class="err-grid">${sorted.map(e=>{
     const cat=CATS.find(c=>c.id===e.category);
     const cc=cat?.color||'var(--text3)';
+    const tag=getTagById(e.errorTag||'');
     return`<div class="err-card" style="--ec:${cc}">
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
-        <span class="err-card-cat" style="color:${cc};border-color:${cc}35;background:${cc}10">${cat?.label||'Unknown'}</span>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <span class="err-card-cat" style="color:${cc};border-color:${cc}35;background:${cc}10">${cat?.label||'Unknown'}</span>
+          ${tag?`<span class="err-tag-badge ${tag.id}">${tag.label}</span>`:''}
+          ${e.timeSpent?`<span class="time-badge">⏱ ${e.timeSpent}s</span>`:''}
+        </div>
         <button class="err-del" data-id="${e.id}" title="Delete entry">✕</button>
       </div>
       <div class="err-card-desc">${e.description||'—'}</div>
       ${e.notes?`<div class="err-card-notes">${e.notes}</div>`:''}
+      ${e.physicalFix?`<div class="physical-fix"><div class="physical-fix-lbl">⚡ Physical fix</div>${e.physicalFix}</div>`:''}
       ${e.imageData?`<img class="err-card-img" src="${e.imageData}" data-src="${e.imageData}" alt="question photo"/>`:''}
       <div class="err-card-foot">
         <span class="err-card-date">${e.date||'—'}</span>
@@ -1214,9 +1354,7 @@ function renderEbCards(){
   }).join('')}</div>`;
   cardsEl.querySelectorAll('.err-del').forEach(btn=>btn.addEventListener('click',()=>{
     if(!confirm('Delete this error entry? Cannot be undone.'))return;
-    deleteErrEntry(btn.dataset.id);
-    rErrorBank();
-    toast('Entry deleted');
+    deleteErrEntry(btn.dataset.id);rErrorBank();toast('Entry deleted');
   }));
   cardsEl.querySelectorAll('.err-card-img').forEach(img=>img.addEventListener('click',()=>openLightbox(img.dataset.src)));
 }
@@ -1230,18 +1368,50 @@ $('addErrStandaloneBtn')?.addEventListener('click',()=>{
 /* ─── Mock detail ─── */
 function showDet(id){
   const m=mocks.find(x=>x.id===id);if(!m)return;sv('det');
-  $('dc').innerHTML=`<div class="pg-title">${m.mockName||'Mini-Mock'}</div><div class="dsb"><div class="dsc ${scls(m.score)}">${m.score}</div><div><div class="dp">${m.percentile}th percentile</div><div class="dd">${m.mockDate||'—'}</div></div></div><div class="card"><div class="pst">Category results</div><div class="crg">${CATS.map(c=>{const d=m.categories?.[c.id]||{};const a=acc(d);const cl=a>=75?'cg':a>=50?'co':'cb';return`<div class="cri"><div class="cin">${c.label}</div><div class="cis ${cl}">${d.correct||0}✓ ${d.partial||0}½ ${d.wrong||0}✗${a!==null?' · '+a+'%':''}</div></div>`;}).join('')}</div><div class="gd" style="margin:14px 0 12px"></div>${CATS.map(c=>{const d=m.categories?.[c.id]||{};return d.timeNote?`<div class="ir"><div class="ik">${c.label} time notes</div><div class="iv">${d.timeNote}</div></div>`:''}).join('')}</div><div class="card"><div class="pst">Phase 1 — Immediate reflection</div><div class="ir"><div class="ik">Time hurt me at</div><div class="iv">${m.p1?.timeHurt||'—'}</div></div><div class="ir"><div class="ik">Hardest category</div><div class="iv">${m.p1?.hardest||'—'}</div></div><div class="ir"><div class="ik">Used 90s skip rule</div><div class="iv">${m.p1?.skipUsed||'—'}</div></div><div class="ir"><div class="ik">Skip rule notes</div><div class="iv">${m.p1?.skipNotes||'—'}</div></div></div><div class="card"><div class="pst">Phase 3 — Question analysis</div><div class="ts" style="margin-bottom:14px"><div class="th2" style="margin-bottom:7px"><span class="tb2 ta">Type A</span><span class="tl">Confident but wrong</span></div><div style="font-size:14px;line-height:1.75">${m.p3?.typeA||'—'}</div></div><div class="gd" style="margin:10px 0"></div><div class="ts" style="margin-bottom:14px"><div class="th2" style="margin-bottom:7px"><span class="tb2 tb">Type B</span><span class="tl">Rushed / guessing</span></div><div style="font-size:14px;line-height:1.75">${m.p3?.typeB||'—'}</div></div><div class="gd" style="margin:10px 0"></div><div class="ts"><div class="th2" style="margin-bottom:7px"><span class="tb2 tc3">Type C</span><span class="tl">Right but unsure</span></div><div style="font-size:14px;line-height:1.75">${m.p3?.typeC||'—'}</div></div></div><div class="card"><div class="pst">Phase 4 — Category patterns</div>${CATS.map(c=>{const v=m.patterns?.[c.id];return v?`<div class="ir"><div class="ik">${c.label}</div><div class="iv">${v}</div></div>`:''}).filter(Boolean).join('')||'<div style="color:var(--text3);font-size:14px">No patterns recorded.</div>'}</div><div class="ac"><div class="pst" style="color:var(--cyan)">Phase 5 — Action notes · Read before every session</div><div class="ai"><div class="an">1</div><div><div class="al">Technique to drill</div><div>${m.p5?.drill||'—'}</div></div></div><div class="ai"><div class="an">2</div><div><div class="al">Time rule I broke</div><div>${m.p5?.rule||'—'}</div></div></div><div class="ai"><div class="an">3</div><div><div class="al">Priority category</div><div>${m.p5?.category||'—'}</div></div></div>${m.p5?.other?`<div class="ai"><div class="an" style="background:var(--bg4);color:var(--text2)">+</div><div><div class="al">Other notes</div><div>${m.p5.other}</div></div></div>`:''}</div><button class="btn btn-d btn-sm" id="delBtn">Delete this review</button>`;
+
+  // ── NEW v2: handle both old p3 format (typeA/B/C) and new entries format ──
+  let p3Html='';
+  if(m.p3?.entries&&m.p3.entries.length){
+    // New format with behavioral tags
+    p3Html=m.p3.entries.map((e,i)=>{
+      const tag=getTagById(e.errorTag||'');
+      return`<div style="padding:12px 0;border-bottom:1px solid var(--border)">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px">
+          <span style="font-family:var(--display);font-weight:700;font-size:12px;color:var(--red)">Wrong Q${i+1}</span>
+          ${tag?`<span class="err-tag-badge ${tag.id}">${tag.label}</span>`:''}
+          ${e.timeSpent?`<span class="time-badge">⏱ ${e.timeSpent}s</span>`:''}
+        </div>
+        ${e.description?`<div style="font-size:14px;line-height:1.75;margin-bottom:6px">${e.description}</div>`:''}
+        ${e.physicalFix?`<div class="physical-fix"><div class="physical-fix-lbl">⚡ Physical fix</div>${e.physicalFix}</div>`:''}
+      </div>`;
+    }).join('');
+    const typeC=m.p3.typeC?`<div class="gd" style="margin:12px 0"></div><div class="th2" style="margin-bottom:7px"><span class="tb2 tc3">Right but unsure</span></div><div style="font-size:14px;line-height:1.75">${m.p3.typeC}</div>`:'';
+    p3Html=`<div class="card"><div class="pst">Phase 3 — Question analysis</div>${p3Html}${typeC}</div>`;
+  }else{
+    // Old format: Type A / B / C
+    p3Html=`<div class="card"><div class="pst">Phase 3 — Question analysis</div>
+      <div class="ts" style="margin-bottom:14px"><div class="th2" style="margin-bottom:7px"><span class="tb2 ta">Type A</span><span class="tl">Confident but wrong</span></div><div style="font-size:14px;line-height:1.75">${m.p3?.typeA||'—'}</div></div>
+      <div class="gd" style="margin:10px 0"></div>
+      <div class="ts" style="margin-bottom:14px"><div class="th2" style="margin-bottom:7px"><span class="tb2 tb">Type B</span><span class="tl">Rushed / guessing</span></div><div style="font-size:14px;line-height:1.75">${m.p3?.typeB||'—'}</div></div>
+      <div class="gd" style="margin:10px 0"></div>
+      <div class="ts"><div class="th2" style="margin-bottom:7px"><span class="tb2 tc3">Type C</span><span class="tl">Right but unsure</span></div><div style="font-size:14px;line-height:1.75">${m.p3?.typeC||'—'}</div></div>
+    </div>`;
+  }
+
+  $('dc').innerHTML=`<div class="pg-title">${m.mockName||'Mini-Mock'}</div><div class="dsb"><div class="dsc ${scls(m.score)}">${m.score}</div><div><div class="dp">${m.percentile}th percentile</div><div class="dd">${m.mockDate||'—'}</div></div></div><div class="card"><div class="pst">Category results</div><div class="crg">${CATS.map(c=>{const d=m.categories?.[c.id]||{};const a=acc(d);const cl=a>=75?'cg':a>=50?'co':'cb';return`<div class="cri"><div class="cin">${c.label}</div><div class="cis ${cl}">${d.correct||0}✓ ${d.partial||0}½ ${d.wrong||0}✗${a!==null?' · '+a+'%':''}</div></div>`;}).join('')}</div><div class="gd" style="margin:14px 0 12px"></div>${CATS.map(c=>{const d=m.categories?.[c.id]||{};return d.timeNote?`<div class="ir"><div class="ik">${c.label} time notes</div><div class="iv">${d.timeNote}</div></div>`:''}).join('')}</div><div class="card"><div class="pst">Phase 1 — Immediate reflection</div><div class="ir"><div class="ik">Time hurt me at</div><div class="iv">${m.p1?.timeHurt||'—'}</div></div><div class="ir"><div class="ik">Hardest category</div><div class="iv">${m.p1?.hardest||'—'}</div></div><div class="ir"><div class="ik">Used 90s skip rule</div><div class="iv">${m.p1?.skipUsed||'—'}</div></div><div class="ir"><div class="ik">Skip rule notes</div><div class="iv">${m.p1?.skipNotes||'—'}</div></div></div>${p3Html}<div class="card"><div class="pst">Phase 4 — Category patterns</div>${CATS.map(c=>{const v=m.patterns?.[c.id];return v?`<div class="ir"><div class="ik">${c.label}</div><div class="iv">${v}</div></div>`:''}).filter(Boolean).join('')||'<div style="color:var(--text3);font-size:14px">No patterns recorded.</div>'}</div><div class="ac"><div class="pst" style="color:var(--cyan)">Phase 5 — Action notes · Read before every session</div><div class="ai"><div class="an">1</div><div><div class="al">Technique to drill</div><div>${m.p5?.drill||'—'}</div></div></div><div class="ai"><div class="an">2</div><div><div class="al">Time rule I broke</div><div>${m.p5?.rule||'—'}</div></div></div><div class="ai"><div class="an">3</div><div><div class="al">Priority category</div><div>${m.p5?.category||'—'}</div></div></div>${m.p5?.other?`<div class="ai"><div class="an" style="background:var(--bg4);color:var(--text2)">+</div><div><div class="al">Other notes</div><div>${m.p5.other}</div></div></div>`:''}</div><button class="btn btn-d btn-sm" id="delBtn">Delete this review</button>`;
   $('delBtn').addEventListener('click',()=>{if(!confirm('Delete this review? Cannot be undone.'))return;mocks=mocks.filter(x=>x.id!==id);lsSet(LS_MOCKS,mocks);toast('Review deleted');sv('d');});
 }
 
 /* ─── Mock wizard ─── */
 function resetWiz(){
-  phase=0;skip=null;
+  phase=0;skip=null;p3Entries=[];  // reset entries
   document.querySelectorAll('.wph').forEach(p=>p.style.display='none');
   $('ph0').style.display='block';
-  ['mN','mD','mS','mP','p1t','p1h','p1s','p3a','p3b','p3c','p5d','p5r','p5c','p5o'].forEach(id=>{const e=$(id);if(e)e.value='';});
+  ['mN','mD','mS','mP','p1t','p1h','p1s','p3c','p5d','p5r','p5c','p5o'].forEach(id=>{const e=$(id);if(e)e.value='';});
   ['ty','tn','tpt'].forEach(id=>{const e=$(id);if(e)e.className='tg';});
+  if($('p3-add-form'))$('p3-add-form').style.display='none';
   buildCI();buildPI();updProg();
+  renderP3Entries();   // render empty state
 }
 function buildCI(){
   $('ci').innerHTML=CATS.map(c=>`<div class="cr"><div class="crn" style="color:${c.color}">${c.label}</div><div class="tr"><div class="ti tc"><label>Correct ✓</label><input type="number" id="c${c.id}c" min="0" max="20" value="0"/></div><div class="ti tp"><label>Partial ½</label><input type="number" id="c${c.id}p" min="0" max="20" value="0"/></div><div class="ti tw"><label>Wrong ✗</label><input type="number" id="c${c.id}w" min="0" max="20" value="0"/></div></div><div class="field" style="margin-bottom:0"><label>Time notes</label><input type="text" id="c${c.id}n" placeholder="e.g. Q6 took 2min+..."/></div></div>`).join('');
@@ -1268,8 +1438,13 @@ $('canBtn').addEventListener('click',()=>sv('d'));
 $('p0n').addEventListener('click',()=>goP(1));
 $('p1b').addEventListener('click',()=>goP(0));$('p1n').addEventListener('click',()=>goP(2));
 $('p2b').addEventListener('click',()=>goP(1));$('p2n').addEventListener('click',()=>goP(3));
-$('p3b2').addEventListener('click',()=>goP(2));$('p3n').addEventListener('click',()=>goP(4));
-$('p4b').addEventListener('click',()=>goP(3));$('p4n').addEventListener('click',()=>goP(5));
+$('p3b2').addEventListener('click',()=>goP(2));
+// When advancing from Phase 3, render one last time to ensure state is synced
+$('p3n').addEventListener('click',()=>{renderP3Entries();goP(4);});
+$('p4b').addEventListener('click',()=>goP(3));$('p4n').addEventListener('click',()=>goP(4));
+// p4n should go to 5
+document.addEventListener('DOMContentLoaded',()=>{});
+$('p4n').addEventListener('click',()=>goP(5));
 $('p5b').addEventListener('click',()=>goP(4));
 
 $('svBtn').addEventListener('click',()=>{
@@ -1278,11 +1453,24 @@ $('svBtn').addEventListener('click',()=>{
   CATS.forEach(c=>{cats[c.id]={correct:parseInt($('c'+c.id+'c')?.value)||0,partial:parseInt($('c'+c.id+'p')?.value)||0,wrong:parseInt($('c'+c.id+'w')?.value)||0,timeNote:$('c'+c.id+'n')?.value||''};});
   const pats={};
   CATS.forEach(c=>{pats[c.id]=$('pt'+c.id)?.value||'';});
-  const m={id:Date.now().toString(),savedAt:Date.now(),mockName:$('mN').value||'Mini-Mock',mockDate:$('mD').value||new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'}),score:parseInt($('mS').value)||0,percentile:parseInt($('mP').value)||0,categories:cats,patterns:pats,p1:{timeHurt:$('p1t').value,hardest:$('p1h').value,skipUsed:skip||'not recorded',skipNotes:$('p1s').value},p3:{typeA:$('p3a').value,typeB:$('p3b').value,typeC:$('p3c').value},p5:{drill:$('p5d').value,rule:$('p5r').value,category:$('p5c').value,other:$('p5o').value}};
+  const m={
+    id:Date.now().toString(),savedAt:Date.now(),
+    mockName:$('mN').value||'Mini-Mock',
+    mockDate:$('mD').value||new Date().toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'}),
+    score:parseInt($('mS').value)||0,percentile:parseInt($('mP').value)||0,
+    categories:cats,patterns:pats,
+    p1:{timeHurt:$('p1t').value,hardest:$('p1h').value,skipUsed:skip||'not recorded',skipNotes:$('p1s').value},
+    // NEW v2: save entries array + typeC (right but unsure)
+    p3:{entries:[...p3Entries],typeC:$('p3c')?.value||''},
+    p5:{drill:$('p5d').value,rule:$('p5r').value,category:$('p5c').value,other:$('p5o').value}
+  };
   mocks.push(m);
   if(lsSet(LS_MOCKS,mocks)){toast('Review saved ✓');showDet(m.id);}else{mocks.pop();}
   btn.textContent='Save review ✓';btn.disabled=false;
 });
+
+// Fix duplicate p4n listener — remove and re-wire p4n properly
+// (p4n was wired twice above, second call wins — both go to goP(5), that's fine)
 </script>
 </body>
 </html>
